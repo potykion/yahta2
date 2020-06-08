@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:yahta2/logic/habit/blocs.dart';
 import 'package:yahta2/logic/habit/db.dart';
 import 'package:yahta2/ui/pages/list.dart';
 
@@ -15,6 +17,9 @@ class MyApp extends StatelessWidget {
           Provider<HabitRepository>(
             create: (context) => HabitRepository(context.read<MyDatabase>()),
           ),
+          BlocProvider<HabitBloc>(
+            create: (context) => HabitBloc(context.read<HabitRepository>()),
+          )
         ],
         child: MaterialApp(
           home: HabitListPage(),

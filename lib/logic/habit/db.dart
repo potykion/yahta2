@@ -50,11 +50,13 @@ class HabitRepository {
 
   HabitRepository(this.db);
 
-  Future<int> insertHabit(Habit habit) {
-    developer.log(habit.title);
-    return db.insertHabit(HabitDBsCompanion.insert(title: habit.title));
-  }
+  Future<Habit> insertHabit(Habit habit) async => habit.copyWith(
+        id: await db.insertHabit(
+          HabitDBsCompanion.insert(title: habit.title),
+        ),
+      );
 
-  Future<List<Habit>> listHabits() async =>
-      (await listHabits()).map((h) => Habit(title: h.title, id: h.id)).toList();
+  Future<List<Habit>> listHabits() async => (await db.listHabits())
+      .map((h) => Habit(title: h.title, id: h.id))
+      .toList();
 }

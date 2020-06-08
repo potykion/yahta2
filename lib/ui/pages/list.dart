@@ -1,10 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:yahta2/logic/habit/blocs.dart';
 import 'package:yahta2/logic/habit/db.dart';
 import 'package:yahta2/logic/habit/models.dart';
 
-class HabitListPage extends StatelessWidget {
+class HabitListPage extends StatefulWidget {
+  @override
+  _HabitListPageState createState() => _HabitListPageState();
+}
+
+class _HabitListPageState extends State<HabitListPage> {
+  @override
+  void initState() {
+    super.initState();
+    context.bloc<HabitBloc>().add(HabitsLoadStarted());
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -18,6 +31,14 @@ class HabitListPage extends StatelessWidget {
               ),
             )
           ],
+        ),
+        body: BlocBuilder<HabitBloc, HabitState>(
+          builder: (_, state) => ListView.builder(
+            itemBuilder: (_, index) => ListTile(
+              title: Text(state.habits[index].title),
+            ),
+            itemCount: state.habits.length,
+          ),
         ),
       );
 }
@@ -52,9 +73,7 @@ class _AddNewHabitCardState extends State<AddNewHabitCard> {
               IconButton(
                 icon: Icon(Icons.check),
                 onPressed: () {
-                  context
-                      .read<HabitRepository>()
-                      .insertHabit(Habit(title: controller.text));
+                  context.bloc<HabitBloc>().add(HabitCreated(controller.text));
                   Navigator.pop(context);
                 },
               )
