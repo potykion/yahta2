@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:yahta2/logic/habit/blocs.dart';
 import 'package:yahta2/logic/habit/db.dart';
 import 'package:yahta2/logic/habit/models.dart';
+import 'package:yahta2/logic/habit/view_models.dart';
 
 class HabitListPage extends StatefulWidget {
   @override
@@ -34,12 +35,35 @@ class _HabitListPageState extends State<HabitListPage> {
         ),
         body: BlocBuilder<HabitBloc, HabitState>(
           builder: (_, state) => ListView.builder(
-            itemBuilder: (_, index) => ListTile(
-              title: Text(state.habits[index].title),
-            ),
-            itemCount: state.habits.length,
+            itemBuilder: (_, index) =>
+                HabitListTile(habit: state.habitVMs[index]),
+            itemCount: state.habitVMs.length,
           ),
         ),
+      );
+}
+
+class HabitListTile extends StatelessWidget {
+  final HabitVM habit;
+
+  const HabitListTile({Key key, this.habit}) : super(key: key);
+
+  @override
+  Widget build(context) => Dismissible(
+        key: Key(habit.id.toString()),
+        child: ListTile(
+          title: Text(
+            habit.title,
+            style: TextStyle(
+              decoration: habit.done ? TextDecoration.lineThrough : null,
+            ),
+          ),
+        ),
+        direction: habit.done ? null : DismissDirection.endToStart,
+        confirmDismiss: (_) async {
+          context.bloc<HabitBloc>().add(HabitDone(habit.id));
+          return false;
+        },
       );
 }
 

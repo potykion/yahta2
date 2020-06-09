@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           home: HabitListPage(),
           theme: ThemeData(
+            primarySwatch: Colors.yellow,
             inputDecorationTheme: InputDecorationTheme(
               border: InputBorder.none,
             ),

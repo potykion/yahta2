@@ -4,6 +4,7 @@ import 'package:moor/moor.dart';
 import 'package:moor_ffi/moor_ffi.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:yahta2/logic/habit/utils.dart';
 import 'dart:developer' as developer;
 
 import 'models.dart';
@@ -43,6 +44,15 @@ class MyDatabase extends _$MyDatabase {
       into(habitDBs).insert(habit);
 
   Future<List<HabitDB>> listHabits() => (select(habitDBs)).get();
+
+  Future<List<HabitMarkDB>> listHabitMarksInDateRange(DateRange dateRange) =>
+      (select(habitMarkDBs)
+            ..where((tbl) =>
+                tbl.created.isBetweenValues(dateRange.from, dateRange.to)))
+          .get();
+
+  Future<int> insertHabitMark(HabitMarkDBsCompanion habitMark) =>
+      into(habitMarkDBs).insert(habitMark);
 }
 
 class HabitRepository {
@@ -59,4 +69,22 @@ class HabitRepository {
   Future<List<Habit>> listHabits() async => (await db.listHabits())
       .map((h) => Habit(title: h.title, id: h.id))
       .toList();
+
+  Future<List<HabitMark>> listTodayHabitMarks() async =>
+      (await db.listHabitMarksInDateRange(TodayDateRange()))
+          .map(
+            (hm) =>
+                HabitMark(id: hm.id, created: hm.created, habitId: hm.habitId),
+          )
+          .toList();
+
+  Future<HabitMark> insertHabitMark(HabitMark habitMark) async =>
+      habitMark.copyWith(
+        id: await db.insertHabitMark(
+          HabitMarkDBsCompanion.insert(
+            habitId: habitMark.habitId,
+            created: Value(habitMark.created),
+          ),
+        ),
+      );
 }
