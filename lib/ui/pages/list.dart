@@ -24,7 +24,7 @@ class _HabitListPageState extends State<HabitListPage> {
               builder: (BuildContext context) => IconButton(
                 icon: Icon(Icons.add),
                 onPressed: () => Scaffold.of(context)
-                    .showBottomSheet((_) => AddNewHabitCard()),
+                    .showBottomSheet((_) => HabitFormCard()),
               ),
             )
           ],
@@ -61,7 +61,12 @@ class HabitListTile extends StatelessWidget {
               if (action == HabitAction.delete) {
                 context.bloc<HabitBloc>().add(HabitDeleted(habit.id));
               } else if (action == HabitAction.edit) {
-//                todo
+                Scaffold.of(context).showBottomSheet(
+                  (_) => HabitFormCard(
+                    id: habit.id,
+                    title: habit.title,
+                  ),
+                );
               }
             },
             itemBuilder: (BuildContext context) =>
@@ -85,17 +90,34 @@ class HabitListTile extends StatelessWidget {
       );
 }
 
-class AddNewHabitCard extends StatefulWidget {
-  const AddNewHabitCard({
-    Key key,
-  }) : super(key: key);
+class HabitFormCard extends StatefulWidget {
+  final int id;
+  final String title;
+
+  const HabitFormCard({Key key, this.id, this.title}) : super(key: key);
 
   @override
-  _AddNewHabitCardState createState() => _AddNewHabitCardState();
+  _HabitFormCardState createState() => _HabitFormCardState();
 }
 
-class _AddNewHabitCardState extends State<AddNewHabitCard> {
+class _HabitFormCardState extends State<HabitFormCard> {
   TextEditingController controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.title != null) {
+      controller.text = widget.title;
+    }
+  }
+
+  @override
+  void didUpdateWidget(HabitFormCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.title != null) {
+      controller.text = widget.title;
+    }
+  }
 
   @override
   Widget build(context) => Card(
@@ -114,9 +136,9 @@ class _AddNewHabitCardState extends State<AddNewHabitCard> {
                 IconButton(
                   icon: Icon(Icons.check),
                   onPressed: () {
-                    context
-                        .bloc<HabitBloc>()
-                        .add(HabitCreated(controller.text));
+                    context.bloc<HabitBloc>().add(widget.id != null
+                        ? HabitUpdated(id: widget.id, title: controller.text)
+                        : HabitCreated(controller.text));
                     Navigator.pop(context);
                   },
                 )

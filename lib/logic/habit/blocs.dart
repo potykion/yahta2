@@ -6,6 +6,13 @@ import 'models.dart';
 
 class HabitEvent {}
 
+class HabitUpdated extends HabitEvent {
+  final int id;
+  final String title;
+
+  HabitUpdated({this.id, this.title});
+}
+
 class HabitDeleted extends HabitEvent {
   final int habitId;
 
@@ -35,15 +42,16 @@ class HabitState {
   Map<int, HabitMark> get idHabitMarks =>
       Map.fromEntries(habitMarks.map((hm) => MapEntry(hm.id, hm)));
 
-  List<HabitVM> get habitVMs => habits
-      .map(
-        (h) => HabitVM(
-          id: h.id,
-          title: h.title,
-          done: idHabitMarks.containsKey(h.id),
-        ),
-      )
-      .toList();
+  List<HabitVM> get habitVMs =>
+      (habits..sort((h1, h2) => h1.id.compareTo(h2.id)))
+          .map(
+            (h) => HabitVM(
+              id: h.id,
+              title: h.title,
+              done: idHabitMarks.containsKey(h.id),
+            ),
+          )
+          .toList();
 
   copyWith({List<Habit> habits, List<HabitMark> habitMarks}) => HabitState(
         habits: habits ?? this.habits,
@@ -84,6 +92,20 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
             .where((hm) => hm.habitId != event.habitId)
             .toList(),
       );
+    } else if (event is HabitUpdated) {
+      yield state.copyWith(
+        habits: [
+          ...state.habits.where((h) => h.id != event.id),
+          await _repo.updateHabit(
+            state.habits
+                .where((h) => h.id == event.id)
+                .first
+                .copyWith(title: event.title),
+          ),
+        ],
+      );
+    } else {
+      throw "UNHANDLED EVENT: $event";
     }
   }
 }
