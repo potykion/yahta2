@@ -6,6 +6,12 @@ import 'models.dart';
 
 class HabitEvent {}
 
+class HabitDeleted extends HabitEvent {
+  final int habitId;
+
+  HabitDeleted(this.habitId);
+}
+
 class HabitDone extends HabitEvent {
   final int habitId;
 
@@ -70,6 +76,14 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
         ...state.habitMarks,
         await _repo.insertHabitMark(HabitMark(habitId: event.habitId)),
       ]);
+    } else if (event is HabitDeleted) {
+      await _repo.deleteHabitAndMarks(event.habitId);
+      yield state.copyWith(
+        habits: state.habits.where((h) => h.id != event.habitId).toList(),
+        habitMarks: state.habitMarks
+            .where((hm) => hm.habitId != event.habitId)
+            .toList(),
+      );
     }
   }
 }

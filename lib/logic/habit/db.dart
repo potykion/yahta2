@@ -53,6 +53,12 @@ class MyDatabase extends _$MyDatabase {
 
   Future<int> insertHabitMark(HabitMarkDBsCompanion habitMark) =>
       into(habitMarkDBs).insert(habitMark);
+
+  Future deleteHabit(int id) =>
+      (delete(habitDBs)..where((tbl) => tbl.id.equals(id))).go();
+
+  Future deleteHabitMarks(int habitId) =>
+      (delete(habitMarkDBs)..where((tbl) => tbl.habitId.equals(habitId))).go();
 }
 
 class HabitRepository {
@@ -87,4 +93,9 @@ class HabitRepository {
           ),
         ),
       );
+
+  Future deleteHabitAndMarks(int habitId) async {
+    await db.deleteHabit(habitId);
+    await db.deleteHabitMarks(habitId);
+  }
 }

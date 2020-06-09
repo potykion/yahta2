@@ -1,10 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:yahta2/logic/habit/blocs.dart';
-import 'package:yahta2/logic/habit/db.dart';
-import 'package:yahta2/logic/habit/models.dart';
 import 'package:yahta2/logic/habit/view_models.dart';
 
 class HabitListPage extends StatefulWidget {
@@ -43,6 +39,8 @@ class _HabitListPageState extends State<HabitListPage> {
       );
 }
 
+enum HabitAction { edit, delete }
+
 class HabitListTile extends StatelessWidget {
   final HabitVM habit;
 
@@ -57,6 +55,26 @@ class HabitListTile extends StatelessWidget {
             style: TextStyle(
               decoration: habit.done ? TextDecoration.lineThrough : null,
             ),
+          ),
+          trailing: PopupMenuButton<HabitAction>(
+            onSelected: (action) {
+              if (action == HabitAction.delete) {
+                context.bloc<HabitBloc>().add(HabitDeleted(habit.id));
+              } else if (action == HabitAction.edit) {
+//                todo
+              }
+            },
+            itemBuilder: (BuildContext context) =>
+                <PopupMenuEntry<HabitAction>>[
+              const PopupMenuItem<HabitAction>(
+                value: HabitAction.edit,
+                child: Text('Изменить'),
+              ),
+              const PopupMenuItem<HabitAction>(
+                value: HabitAction.delete,
+                child: Text('Удалить'),
+              ),
+            ],
           ),
         ),
         direction: habit.done ? null : DismissDirection.endToStart,
@@ -80,31 +98,31 @@ class _AddNewHabitCardState extends State<AddNewHabitCard> {
   TextEditingController controller = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-        child: SizedBox(
-          height: 60,
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: TextFormField(
-                  decoration: InputDecoration(hintText: "Чем займешься?"),
-                  controller: controller,
+  Widget build(context) => Card(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+          child: SizedBox(
+            height: 60,
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: TextFormField(
+                    decoration: InputDecoration(hintText: "Чем займешься?"),
+                    controller: controller,
+                  ),
                 ),
-              ),
-              IconButton(
-                icon: Icon(Icons.check),
-                onPressed: () {
-                  context.bloc<HabitBloc>().add(HabitCreated(controller.text));
-                  Navigator.pop(context);
-                },
-              )
-            ],
+                IconButton(
+                  icon: Icon(Icons.check),
+                  onPressed: () {
+                    context
+                        .bloc<HabitBloc>()
+                        .add(HabitCreated(controller.text));
+                    Navigator.pop(context);
+                  },
+                )
+              ],
+            ),
           ),
         ),
-      ),
-    );
-  }
+      );
 }
