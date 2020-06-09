@@ -43,7 +43,7 @@ class HabitState {
       Map.fromEntries(habitMarks.map((hm) => MapEntry(hm.id, hm)));
 
   List<HabitVM> get habitVMs =>
-      (habits..sort((h1, h2) => h1.id.compareTo(h2.id)))
+      (habits.toList()..sort((h1, h2) => h1.id.compareTo(h2.id)))
           .map(
             (h) => HabitVM(
               id: h.id,
