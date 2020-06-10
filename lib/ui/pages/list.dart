@@ -54,6 +54,7 @@ class HabitListTile extends StatelessWidget {
             habit.title,
             style: TextStyle(
               decoration: habit.done ? TextDecoration.lineThrough : null,
+              color: habit.done ? Colors.grey : null,
             ),
           ),
           trailing: PopupMenuButton<HabitAction>(

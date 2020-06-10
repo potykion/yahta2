@@ -40,7 +40,7 @@ class HabitState {
   HabitState({this.habits = const [], this.habitMarks = const []});
 
   Map<int, HabitMark> get idHabitMarks =>
-      Map.fromEntries(habitMarks.map((hm) => MapEntry(hm.id, hm)));
+      Map.fromEntries(habitMarks.map((hm) => MapEntry(hm.habitId, hm)));
 
   List<HabitVM> get habitVMs =>
       (habits.toList()..sort((h1, h2) => h1.id.compareTo(h2.id)))
