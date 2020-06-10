@@ -1,12 +1,16 @@
+import 'package:flutter/cupertino.dart';
+
 class Habit {
   final int id;
   final String title;
+  final int order;
 
-  Habit({this.id, this.title});
+  Habit({this.id, @required this.title, this.order});
 
-  Habit copyWith({id, title}) => Habit(
+  Habit copyWith({id, title, order}) => Habit(
         id: id ?? this.id,
         title: title ?? this.title,
+        order: order ?? this.order,
       );
 }
 

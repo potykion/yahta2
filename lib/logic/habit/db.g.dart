@@ -10,7 +10,8 @@ part of 'db.dart';
 class HabitDB extends DataClass implements Insertable<HabitDB> {
   final int id;
   final String title;
-  HabitDB({@required this.id, @required this.title});
+  final int order;
+  HabitDB({@required this.id, @required this.title, @required this.order});
   factory HabitDB.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -20,6 +21,7 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       title:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
+      order: intType.mapFromDatabaseResponse(data['${effectivePrefix}order']),
     );
   }
   @override
@@ -31,6 +33,9 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
     if (!nullToAbsent || title != null) {
       map['title'] = Variable<String>(title);
     }
+    if (!nullToAbsent || order != null) {
+      map['order'] = Variable<int>(order);
+    }
     return map;
   }
 
@@ -39,6 +44,8 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       title:
           title == null && nullToAbsent ? const Value.absent() : Value(title),
+      order:
+          order == null && nullToAbsent ? const Value.absent() : Value(order),
     );
   }
 
@@ -48,6 +55,7 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
     return HabitDB(
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
+      order: serializer.fromJson<int>(json['order']),
     );
   }
   @override
@@ -56,55 +64,70 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
+      'order': serializer.toJson<int>(order),
     };
   }
 
-  HabitDB copyWith({int id, String title}) => HabitDB(
+  HabitDB copyWith({int id, String title, int order}) => HabitDB(
         id: id ?? this.id,
         title: title ?? this.title,
+        order: order ?? this.order,
       );
   @override
   String toString() {
     return (StringBuffer('HabitDB(')
           ..write('id: $id, ')
-          ..write('title: $title')
+          ..write('title: $title, ')
+          ..write('order: $order')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode, title.hashCode));
+  int get hashCode =>
+      $mrjf($mrjc(id.hashCode, $mrjc(title.hashCode, order.hashCode)));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
-      (other is HabitDB && other.id == this.id && other.title == this.title);
+      (other is HabitDB &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.order == this.order);
 }
 
 class HabitDBsCompanion extends UpdateCompanion<HabitDB> {
   final Value<int> id;
   final Value<String> title;
+  final Value<int> order;
   const HabitDBsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
+    this.order = const Value.absent(),
   });
   HabitDBsCompanion.insert({
     this.id = const Value.absent(),
     @required String title,
-  }) : title = Value(title);
+    @required int order,
+  })  : title = Value(title),
+        order = Value(order);
   static Insertable<HabitDB> custom({
     Expression<int> id,
     Expression<String> title,
+    Expression<int> order,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
+      if (order != null) 'order': order,
     });
   }
 
-  HabitDBsCompanion copyWith({Value<int> id, Value<String> title}) {
+  HabitDBsCompanion copyWith(
+      {Value<int> id, Value<String> title, Value<int> order}) {
     return HabitDBsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
+      order: order ?? this.order,
     );
   }
 
@@ -116,6 +139,9 @@ class HabitDBsCompanion extends UpdateCompanion<HabitDB> {
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
+    }
+    if (order.present) {
+      map['order'] = Variable<int>(order.value);
     }
     return map;
   }
@@ -142,8 +168,20 @@ class $HabitDBsTable extends HabitDBs with TableInfo<$HabitDBsTable, HabitDB> {
     return GeneratedTextColumn('title', $tableName, false, minTextLength: 1);
   }
 
+  final VerificationMeta _orderMeta = const VerificationMeta('order');
+  GeneratedIntColumn _order;
   @override
-  List<GeneratedColumn> get $columns => [id, title];
+  GeneratedIntColumn get order => _order ??= _constructOrder();
+  GeneratedIntColumn _constructOrder() {
+    return GeneratedIntColumn(
+      'order',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, title, order];
   @override
   $HabitDBsTable get asDslTable => this;
   @override
@@ -163,6 +201,12 @@ class $HabitDBsTable extends HabitDBs with TableInfo<$HabitDBsTable, HabitDB> {
           _titleMeta, title.isAcceptableOrUnknown(data['title'], _titleMeta));
     } else if (isInserting) {
       context.missing(_titleMeta);
+    }
+    if (data.containsKey('order')) {
+      context.handle(
+          _orderMeta, order.isAcceptableOrUnknown(data['order'], _orderMeta));
+    } else if (isInserting) {
+      context.missing(_orderMeta);
     }
     return context;
   }

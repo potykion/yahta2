@@ -15,6 +15,11 @@ class HabitDBs extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   TextColumn get title => text().withLength(min: 1)();
+
+  IntColumn get order => integer()();
+
+  @override
+  Set<Column> get primaryKey => {id};
 }
 
 class HabitMarkDBs extends Table {
@@ -62,6 +67,13 @@ class MyDatabase extends _$MyDatabase {
 
   Future updateHabit(HabitDB updatedHabit) =>
       update(habitDBs).replace(updatedHabit);
+
+  Future<int> getMaxOrder() async {
+    var query = "select coalesce(max([order]), 0) as max_order "
+        "from ${$HabitDBsTable(null).actualTableName}";
+    var row = await customSelect(query).getSingle();
+    return row.data["max_order"] as int;
+  }
 }
 
 class HabitRepository {
@@ -69,14 +81,21 @@ class HabitRepository {
 
   HabitRepository(this.db);
 
-  Future<Habit> insertHabit(Habit habit) async => habit.copyWith(
-        id: await db.insertHabit(
-          HabitDBsCompanion.insert(title: habit.title),
+  Future<Habit> insertHabit(Habit habit) async {
+    var newOrder = await db.getMaxOrder() + 1;
+    return habit.copyWith(
+      id: await db.insertHabit(
+        HabitDBsCompanion.insert(
+          title: habit.title,
+          order: newOrder,
         ),
-      );
+      ),
+      order: newOrder,
+    );
+  }
 
   Future<List<Habit>> listHabits() async => (await db.listHabits())
-      .map((h) => Habit(title: h.title, id: h.id))
+      .map((h) => Habit(title: h.title, id: h.id, order: h.order))
       .toList();
 
   Future<List<HabitMark>> listTodayHabitMarks() async =>
@@ -104,7 +123,10 @@ class HabitRepository {
 
   Future<Habit> updateHabit(Habit habitToUpdate) async {
     await db.updateHabit(
-      HabitDB(id: habitToUpdate.id, title: habitToUpdate.title),
+      HabitDB(
+          id: habitToUpdate.id,
+          title: habitToUpdate.title,
+          order: habitToUpdate.order),
     );
     return habitToUpdate;
   }

@@ -48,6 +48,7 @@ class HabitState {
             (h) => HabitVM(
               id: h.id,
               title: h.title,
+              order: h.order,
               done: idHabitMarks.containsKey(h.id),
             ),
           )

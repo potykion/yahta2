@@ -50,6 +50,7 @@ class HabitListTile extends StatelessWidget {
   Widget build(context) => Dismissible(
         key: Key(habit.id.toString()),
         child: ListTile(
+          leading: Text(habit.order.toString()),
           title: Text(
             habit.title,
             style: TextStyle(
