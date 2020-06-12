@@ -5,7 +5,6 @@ import 'package:moor_ffi/moor_ffi.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:yahta2/logic/habit/utils.dart';
-import 'dart:developer' as developer;
 
 import 'models.dart';
 
@@ -124,9 +123,10 @@ class HabitRepository {
   Future<Habit> updateHabit(Habit habitToUpdate) async {
     await db.updateHabit(
       HabitDB(
-          id: habitToUpdate.id,
-          title: habitToUpdate.title,
-          order: habitToUpdate.order),
+        id: habitToUpdate.id,
+        title: habitToUpdate.title,
+        order: habitToUpdate.order,
+      ),
     );
     return habitToUpdate;
   }

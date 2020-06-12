@@ -1,30 +1,22 @@
-import 'package:flutter/cupertino.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 
-class Habit {
-  final int id;
-  final String title;
-  final int order;
+part 'models.freezed.dart';
 
-  Habit({this.id, @required this.title, this.order});
-
-  Habit copyWith({id, title, order}) => Habit(
-        id: id ?? this.id,
-        title: title ?? this.title,
-        order: order ?? this.order,
-      );
+@freezed
+abstract class Habit with _$Habit {
+  factory Habit({
+    int id,
+    @required String title,
+    int order,
+  }) = _Habit;
 }
 
-class HabitMark {
-  final int id;
-  final int habitId;
-  final DateTime created;
-
-  HabitMark({this.id, this.habitId, created})
-      : this.created = created ?? DateTime.now();
-
-  copyWith({int id, int habitId, DateTime dateTime}) => HabitMark(
-        id: id ?? this.id,
-        habitId: habitId ?? this.habitId,
-        created: created ?? this.created,
-      );
+@freezed
+abstract class HabitMark with _$HabitMark {
+  factory HabitMark({
+    int id,
+    @required int habitId,
+    @required DateTime created,
+  }) = _HabitMark;
 }

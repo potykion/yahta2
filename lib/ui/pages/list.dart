@@ -30,10 +30,18 @@ class _HabitListPageState extends State<HabitListPage> {
           ],
         ),
         body: BlocBuilder<HabitBloc, HabitState>(
-          builder: (_, state) => ListView.builder(
-            itemBuilder: (_, index) =>
-                HabitListTile(habit: state.habitVMs[index]),
-            itemCount: state.habitVMs.length,
+          builder: (_, state) => ReorderableListView(
+            onReorder: (oldIndex, newIndex) => context
+                .bloc<HabitBloc>()
+                .add(HabitReordered(oldIndex, newIndex)),
+            children: state.habitVMs
+                .map(
+                  (vm) => HabitListTile(
+                    habit: vm,
+                    key: Key(vm.id.toString()),
+                  ),
+                )
+                .toList(),
           ),
         ),
       );
@@ -50,7 +58,6 @@ class HabitListTile extends StatelessWidget {
   Widget build(context) => Dismissible(
         key: Key(habit.id.toString()),
         child: ListTile(
-          leading: Text(habit.order.toString()),
           title: Text(
             habit.title,
             style: TextStyle(
