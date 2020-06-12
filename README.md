@@ -9,3 +9,4 @@ Yet Another Habit TrAcker (second attempt)
 - [Moor](https://moor.simonbinder.eu/) to work with SQLite
 - [Bloc](https://bloclibrary.dev/#/) for state management
 - [Provider](https://pub.dev/packages/provider) for dependency injection
+- [Freezed](https://pub.dev/packages/freezed) for dataclasses
