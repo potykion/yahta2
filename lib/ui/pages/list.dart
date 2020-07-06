@@ -140,6 +140,7 @@ class _HabitFormCardState extends State<HabitFormCard> {
                   child: TextFormField(
                     decoration: InputDecoration(hintText: "Чем займешься?"),
                     controller: controller,
+                    autofocus: true,
                   ),
                 ),
                 IconButton(
