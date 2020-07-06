@@ -43,6 +43,10 @@ dependencies:
   # dataclasses
   freezed_annotation:
 
+  # пуши
+  flutter_local_notifications: ^1.4.4+1
+
+
 
 dev_dependencies:
   flutter_test:
