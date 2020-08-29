@@ -22,7 +22,7 @@ Future<void> main() async {
     0,
     'Все сделал?',
     'Проверь, все ли привычки отмечены',
-    Time(15, 0, 0),
+    Time(12, 0, 0),
     NotificationDetails(
       AndroidNotificationDetails(
         'all-checked',
