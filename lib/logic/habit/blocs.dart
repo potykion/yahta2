@@ -35,8 +35,9 @@ class HabitDone extends HabitEvent {
 
 class HabitCreated extends HabitEvent {
   final String title;
+  final HabitFrequency frequency;
 
-  HabitCreated(this.title);
+  HabitCreated({this.title, this.frequency});
 }
 
 class HabitsLoadStarted extends HabitEvent {}
@@ -88,7 +89,9 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
     } else if (event is HabitCreated) {
       yield state.copyWith(habits: [
         ...state.habits,
-        await _repo.insertHabit(Habit(title: event.title)),
+        await _repo.insertHabit(
+          Habit(title: event.title, frequency: event.frequency),
+        ),
       ]);
     } else if (event is HabitDone) {
       yield state.copyWith(habitMarks: [

@@ -11,7 +11,12 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
   final int id;
   final String title;
   final int order;
-  HabitDB({@required this.id, @required this.title, @required this.order});
+  final HabitFrequency frequency;
+  HabitDB(
+      {@required this.id,
+      @required this.title,
+      @required this.order,
+      @required this.frequency});
   factory HabitDB.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -22,6 +27,8 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
       title:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
       order: intType.mapFromDatabaseResponse(data['${effectivePrefix}order']),
+      frequency: $HabitDBsTable.$converter0.mapToDart(
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}frequency'])),
     );
   }
   @override
@@ -36,6 +43,10 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
     if (!nullToAbsent || order != null) {
       map['order'] = Variable<int>(order);
     }
+    if (!nullToAbsent || frequency != null) {
+      final converter = $HabitDBsTable.$converter0;
+      map['frequency'] = Variable<int>(converter.mapToSql(frequency));
+    }
     return map;
   }
 
@@ -46,6 +57,9 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
           title == null && nullToAbsent ? const Value.absent() : Value(title),
       order:
           order == null && nullToAbsent ? const Value.absent() : Value(order),
+      frequency: frequency == null && nullToAbsent
+          ? const Value.absent()
+          : Value(frequency),
     );
   }
 
@@ -56,6 +70,7 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       order: serializer.fromJson<int>(json['order']),
+      frequency: serializer.fromJson<HabitFrequency>(json['frequency']),
     );
   }
   @override
@@ -65,69 +80,85 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
       'order': serializer.toJson<int>(order),
+      'frequency': serializer.toJson<HabitFrequency>(frequency),
     };
   }
 
-  HabitDB copyWith({int id, String title, int order}) => HabitDB(
+  HabitDB copyWith(
+          {int id, String title, int order, HabitFrequency frequency}) =>
+      HabitDB(
         id: id ?? this.id,
         title: title ?? this.title,
         order: order ?? this.order,
+        frequency: frequency ?? this.frequency,
       );
   @override
   String toString() {
     return (StringBuffer('HabitDB(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('order: $order')
+          ..write('order: $order, ')
+          ..write('frequency: $frequency')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      $mrjf($mrjc(id.hashCode, $mrjc(title.hashCode, order.hashCode)));
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(title.hashCode, $mrjc(order.hashCode, frequency.hashCode))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is HabitDB &&
           other.id == this.id &&
           other.title == this.title &&
-          other.order == this.order);
+          other.order == this.order &&
+          other.frequency == this.frequency);
 }
 
 class HabitDBsCompanion extends UpdateCompanion<HabitDB> {
   final Value<int> id;
   final Value<String> title;
   final Value<int> order;
+  final Value<HabitFrequency> frequency;
   const HabitDBsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.order = const Value.absent(),
+    this.frequency = const Value.absent(),
   });
   HabitDBsCompanion.insert({
     this.id = const Value.absent(),
     @required String title,
     @required int order,
+    @required HabitFrequency frequency,
   })  : title = Value(title),
-        order = Value(order);
+        order = Value(order),
+        frequency = Value(frequency);
   static Insertable<HabitDB> custom({
     Expression<int> id,
     Expression<String> title,
     Expression<int> order,
+    Expression<int> frequency,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (order != null) 'order': order,
+      if (frequency != null) 'frequency': frequency,
     });
   }
 
   HabitDBsCompanion copyWith(
-      {Value<int> id, Value<String> title, Value<int> order}) {
+      {Value<int> id,
+      Value<String> title,
+      Value<int> order,
+      Value<HabitFrequency> frequency}) {
     return HabitDBsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
       order: order ?? this.order,
+      frequency: frequency ?? this.frequency,
     );
   }
 
@@ -142,6 +173,10 @@ class HabitDBsCompanion extends UpdateCompanion<HabitDB> {
     }
     if (order.present) {
       map['order'] = Variable<int>(order.value);
+    }
+    if (frequency.present) {
+      final converter = $HabitDBsTable.$converter0;
+      map['frequency'] = Variable<int>(converter.mapToSql(frequency.value));
     }
     return map;
   }
@@ -180,8 +215,20 @@ class $HabitDBsTable extends HabitDBs with TableInfo<$HabitDBsTable, HabitDB> {
     );
   }
 
+  final VerificationMeta _frequencyMeta = const VerificationMeta('frequency');
+  GeneratedIntColumn _frequency;
   @override
-  List<GeneratedColumn> get $columns => [id, title, order];
+  GeneratedIntColumn get frequency => _frequency ??= _constructFrequency();
+  GeneratedIntColumn _constructFrequency() {
+    return GeneratedIntColumn(
+      'frequency',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, title, order, frequency];
   @override
   $HabitDBsTable get asDslTable => this;
   @override
@@ -208,6 +255,7 @@ class $HabitDBsTable extends HabitDBs with TableInfo<$HabitDBsTable, HabitDB> {
     } else if (isInserting) {
       context.missing(_orderMeta);
     }
+    context.handle(_frequencyMeta, const VerificationResult.success());
     return context;
   }
 
@@ -223,6 +271,9 @@ class $HabitDBsTable extends HabitDBs with TableInfo<$HabitDBsTable, HabitDB> {
   $HabitDBsTable createAlias(String alias) {
     return $HabitDBsTable(_db, alias);
   }
+
+  static TypeConverter<HabitFrequency, int> $converter0 =
+      const EnumIndexConverter<HabitFrequency>(HabitFrequency.values);
 }
 
 class HabitMarkDB extends DataClass implements Insertable<HabitMarkDB> {

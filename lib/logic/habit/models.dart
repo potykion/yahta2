@@ -9,6 +9,7 @@ abstract class Habit with _$Habit {
     int id,
     @required String title,
     int order,
+    @Default(HabitFrequency.daily) HabitFrequency frequency
   }) = _Habit;
 }
 
@@ -20,3 +21,5 @@ abstract class HabitMark with _$HabitMark {
     @required DateTime created,
   }) = _HabitMark;
 }
+
+enum HabitFrequency { daily, weekly, monthly }

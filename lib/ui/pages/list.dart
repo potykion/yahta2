@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yahta2/logic/habit/blocs.dart';
+import 'package:yahta2/logic/habit/models.dart';
 import 'package:yahta2/logic/habit/view_models.dart';
 
 class HabitListPage extends StatefulWidget {
@@ -148,7 +149,10 @@ class _HabitFormCardState extends State<HabitFormCard> {
                   onPressed: () {
                     context.bloc<HabitBloc>().add(widget.id != null
                         ? HabitUpdated(id: widget.id, title: controller.text)
-                        : HabitCreated(controller.text));
+                        : HabitCreated(
+                            title: controller.text,
+                            frequency: HabitFrequency.daily,
+                          ));
                     Navigator.pop(context);
                   },
                 )

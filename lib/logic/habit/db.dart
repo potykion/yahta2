@@ -17,8 +17,7 @@ class HabitDBs extends Table {
 
   IntColumn get order => integer()();
 
-  @override
-  Set<Column> get primaryKey => {id};
+  IntColumn get frequency => intEnum<HabitFrequency>()();
 }
 
 class HabitMarkDBs extends Table {
@@ -82,26 +81,35 @@ class HabitRepository {
 
   Future<Habit> insertHabit(Habit habit) async {
     var newOrder = await db.getMaxOrder() + 1;
-    return habit.copyWith(
-      id: await db.insertHabit(
-        HabitDBsCompanion.insert(
-          title: habit.title,
-          order: newOrder,
-        ),
+    var habitId = await db.insertHabit(
+      HabitDBsCompanion.insert(
+        title: habit.title,
+        order: newOrder,
+        frequency: habit.frequency,
       ),
-      order: newOrder,
     );
+    return habit.copyWith(id: habitId, order: newOrder);
   }
 
   Future<List<Habit>> listHabits() async => (await db.listHabits())
-      .map((h) => Habit(title: h.title, id: h.id, order: h.order))
+      .map(
+        (h) => Habit(
+          title: h.title,
+          id: h.id,
+          order: h.order,
+          frequency: h.frequency,
+        ),
+      )
       .toList();
 
   Future<List<HabitMark>> listTodayHabitMarks() async =>
       (await db.listHabitMarksInDateRange(TodayDateRange()))
           .map(
-            (hm) =>
-                HabitMark(id: hm.id, created: hm.created, habitId: hm.habitId),
+            (hm) => HabitMark(
+              id: hm.id,
+              created: hm.created,
+              habitId: hm.habitId,
+            ),
           )
           .toList();
 
@@ -126,6 +134,7 @@ class HabitRepository {
         id: habitToUpdate.id,
         title: habitToUpdate.title,
         order: habitToUpdate.order,
+        frequency: habitToUpdate.frequency,
       ),
     );
     return habitToUpdate;

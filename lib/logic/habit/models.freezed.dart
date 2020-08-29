@@ -12,11 +12,16 @@ T _$identity<T>(T value) => value;
 class _$HabitTearOff {
   const _$HabitTearOff();
 
-  _Habit call({int id, @required String title, int order}) {
+  _Habit call(
+      {int id,
+      @required String title,
+      int order,
+      @required HabitFrequency frequency}) {
     return _Habit(
       id: id,
       title: title,
       order: order,
+      frequency: frequency,
     );
   }
 }
@@ -28,6 +33,7 @@ mixin _$Habit {
   int get id;
   String get title;
   int get order;
+  HabitFrequency get frequency;
 
   $HabitCopyWith<Habit> get copyWith;
 }
@@ -35,7 +41,7 @@ mixin _$Habit {
 abstract class $HabitCopyWith<$Res> {
   factory $HabitCopyWith(Habit value, $Res Function(Habit) then) =
       _$HabitCopyWithImpl<$Res>;
-  $Res call({int id, String title, int order});
+  $Res call({int id, String title, int order, HabitFrequency frequency});
 }
 
 class _$HabitCopyWithImpl<$Res> implements $HabitCopyWith<$Res> {
@@ -50,11 +56,14 @@ class _$HabitCopyWithImpl<$Res> implements $HabitCopyWith<$Res> {
     Object id = freezed,
     Object title = freezed,
     Object order = freezed,
+    Object frequency = freezed,
   }) {
     return _then(_value.copyWith(
       id: id == freezed ? _value.id : id as int,
       title: title == freezed ? _value.title : title as String,
       order: order == freezed ? _value.order : order as int,
+      frequency:
+          frequency == freezed ? _value.frequency : frequency as HabitFrequency,
     ));
   }
 }
@@ -63,7 +72,7 @@ abstract class _$HabitCopyWith<$Res> implements $HabitCopyWith<$Res> {
   factory _$HabitCopyWith(_Habit value, $Res Function(_Habit) then) =
       __$HabitCopyWithImpl<$Res>;
   @override
-  $Res call({int id, String title, int order});
+  $Res call({int id, String title, int order, HabitFrequency frequency});
 }
 
 class __$HabitCopyWithImpl<$Res> extends _$HabitCopyWithImpl<$Res>
@@ -79,17 +88,23 @@ class __$HabitCopyWithImpl<$Res> extends _$HabitCopyWithImpl<$Res>
     Object id = freezed,
     Object title = freezed,
     Object order = freezed,
+    Object frequency = freezed,
   }) {
     return _then(_Habit(
       id: id == freezed ? _value.id : id as int,
       title: title == freezed ? _value.title : title as String,
       order: order == freezed ? _value.order : order as int,
+      frequency:
+          frequency == freezed ? _value.frequency : frequency as HabitFrequency,
     ));
   }
 }
 
 class _$_Habit with DiagnosticableTreeMixin implements _Habit {
-  _$_Habit({this.id, @required this.title, this.order}) : assert(title != null);
+  _$_Habit(
+      {this.id, @required this.title, this.order, @required this.frequency})
+      : assert(title != null),
+        assert(frequency != null);
 
   @override
   final int id;
@@ -97,10 +112,12 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
   final String title;
   @override
   final int order;
+  @override
+  final HabitFrequency frequency;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Habit(id: $id, title: $title, order: $order)';
+    return 'Habit(id: $id, title: $title, order: $order, frequency: $frequency)';
   }
 
   @override
@@ -110,7 +127,8 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
       ..add(DiagnosticsProperty('type', 'Habit'))
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('title', title))
-      ..add(DiagnosticsProperty('order', order));
+      ..add(DiagnosticsProperty('order', order))
+      ..add(DiagnosticsProperty('frequency', frequency));
   }
 
   @override
@@ -122,7 +140,10 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
             (identical(other.title, title) ||
                 const DeepCollectionEquality().equals(other.title, title)) &&
             (identical(other.order, order) ||
-                const DeepCollectionEquality().equals(other.order, order)));
+                const DeepCollectionEquality().equals(other.order, order)) &&
+            (identical(other.frequency, frequency) ||
+                const DeepCollectionEquality()
+                    .equals(other.frequency, frequency)));
   }
 
   @override
@@ -130,7 +151,8 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
       runtimeType.hashCode ^
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(title) ^
-      const DeepCollectionEquality().hash(order);
+      const DeepCollectionEquality().hash(order) ^
+      const DeepCollectionEquality().hash(frequency);
 
   @override
   _$HabitCopyWith<_Habit> get copyWith =>
@@ -138,7 +160,11 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
 }
 
 abstract class _Habit implements Habit {
-  factory _Habit({int id, @required String title, int order}) = _$_Habit;
+  factory _Habit(
+      {int id,
+      @required String title,
+      int order,
+      @required HabitFrequency frequency}) = _$_Habit;
 
   @override
   int get id;
@@ -146,6 +172,8 @@ abstract class _Habit implements Habit {
   String get title;
   @override
   int get order;
+  @override
+  HabitFrequency get frequency;
   @override
   _$HabitCopyWith<_Habit> get copyWith;
 }
