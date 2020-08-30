@@ -17,8 +17,9 @@ class HabitReordered extends HabitEvent {
 class HabitUpdated extends HabitEvent {
   final int id;
   final String title;
+  final HabitFrequency frequency;
 
-  HabitUpdated({this.id, this.title});
+  HabitUpdated({this.id, this.title, this.frequency});
 }
 
 class HabitDeleted extends HabitEvent {
@@ -59,6 +60,7 @@ class HabitState {
         (h) => HabitVM(
           id: h.id,
           title: h.title,
+          frequency: h.frequency,
           order: h.order,
           done: idHabitMarks.containsKey(h.id),
         ),
@@ -115,7 +117,7 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
             state.habits
                 .where((h) => h.id == event.id)
                 .first
-                .copyWith(title: event.title),
+                .copyWith(title: event.title, frequency: event.frequency),
           ),
         ],
       );

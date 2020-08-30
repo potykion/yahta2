@@ -55,6 +55,10 @@ class MyApp extends StatelessWidget {
             inputDecorationTheme: InputDecorationTheme(
               border: InputBorder.none,
             ),
+            chipTheme: Theme.of(context).chipTheme.copyWith(
+                  secondaryLabelStyle: TextStyle(color: Colors.black),
+                  secondarySelectedColor: Colors.yellow,
+                ),
           ),
         ),
       );
