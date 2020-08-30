@@ -84,7 +84,7 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
     if (event is HabitsLoadStarted) {
       yield state.copyWith(
         habits: await _repo.listHabits(),
-        habitMarks: await _repo.listTodayHabitMarks(),
+        habitMarks: await _repo.listHabitMarksDependingOnFreq(),
       );
     } else if (event is HabitCreated) {
       yield state.copyWith(habits: [

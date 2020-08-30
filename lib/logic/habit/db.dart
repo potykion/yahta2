@@ -48,11 +48,35 @@ class MyDatabase extends _$MyDatabase {
 
   Future<List<HabitDB>> listHabits() => (select(habitDBs)).get();
 
-  Future<List<HabitMarkDB>> listHabitMarksInDateRange(DateRange dateRange) =>
-      (select(habitMarkDBs)
-            ..where((tbl) =>
-                tbl.created.isBetweenValues(dateRange.from, dateRange.to)))
-          .get();
+  Future<List<HabitMarkDB>> listHabitMarksDependingOnFreq() {
+    var dayDateRange = DayDateRange();
+    var dayWhere = habitMarkDBs.created.isBetweenValues(
+          dayDateRange.from,
+          dayDateRange.to,
+        ) &
+        habitDBs.frequency.equals(HabitFrequency.daily.index);
+
+    var weekDateRange = WeekDateRange();
+    var weekWhere = habitMarkDBs.created.isBetweenValues(
+          weekDateRange.from,
+          weekDateRange.to,
+        ) &
+        habitDBs.frequency.equals(HabitFrequency.weekly.index);
+
+    var monthDateRange = MonthDateRange();
+    var monthWhere = habitMarkDBs.created.isBetweenValues(
+          monthDateRange.from,
+          monthDateRange.to,
+        ) &
+        habitDBs.frequency.equals(HabitFrequency.monthly.index);
+
+    return (select(habitMarkDBs).join([
+      innerJoin(habitDBs, habitMarkDBs.habitId.equalsExp(habitDBs.id)),
+    ])
+          ..where(dayWhere | weekWhere | monthWhere))
+        .map((row) => row.readTable(habitMarkDBs))
+        .get();
+  }
 
   Future<int> insertHabitMark(HabitMarkDBsCompanion habitMark) =>
       into(habitMarkDBs).insert(habitMark);
@@ -102,8 +126,8 @@ class HabitRepository {
       )
       .toList();
 
-  Future<List<HabitMark>> listTodayHabitMarks() async =>
-      (await db.listHabitMarksInDateRange(TodayDateRange()))
+  Future<List<HabitMark>> listHabitMarksDependingOnFreq() async =>
+      (await db.listHabitMarksDependingOnFreq())
           .map(
             (hm) => HabitMark(
               id: hm.id,

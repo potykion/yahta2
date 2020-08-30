@@ -1,19 +1,43 @@
 import 'models.dart';
 
 abstract class DateRange {
+  final DateTime now;
+
+  DateRange({now}) : this.now = now ?? DateTime.now();
+
   DateTime get from;
 
   DateTime get to;
 }
 
-class TodayDateRange extends DateRange {
-  final DateTime now;
-
-  TodayDateRange({now}) : this.now = now ?? DateTime.now();
+class DayDateRange extends DateRange {
+  DayDateRange({now}) : super(now: now);
 
   DateTime get from => DateTime(now.year, now.month, now.day);
 
   DateTime get to => DateTime(now.year, now.month, now.day, 23, 59, 59);
+}
+
+class WeekDateRange extends DateRange {
+  WeekDateRange({now}) : super(now: now);
+
+  DateTime get weekStart => now.add(Duration(days: -now.weekday + 1));
+
+  DateTime get weekEnd => weekStart.add(Duration(days: 6));
+
+  DateTime get from => DateTime(weekStart.year, weekStart.month, weekStart.day);
+
+  DateTime get to =>
+      DateTime(weekEnd.year, weekEnd.month, weekEnd.day, 23, 59, 59);
+}
+
+class MonthDateRange extends DateRange {
+  MonthDateRange({now}) : super(now: now);
+
+  DateTime get from => DateTime(now.year, now.month, 1);
+
+  // 0 - end of the previous mouth
+  DateTime get to => DateTime(now.year, now.month + 1, 0, 23, 59, 59);
 }
 
 simpleEquals(a, b) => a == b;
