@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:yahta2/logic/habit/utils.dart';
 
 part 'models.freezed.dart';
 
@@ -34,5 +35,21 @@ extension HabitFrequencyToStr on HabitFrequency {
     if (this == HabitFrequency.monthly) {
       return "Ежемесячно";
     }
+    throw "Dunno how to handle: $this";
+  }
+}
+
+extension HabitFrequencyToDateRange on HabitFrequency {
+  DateRange toDateRange() {
+    if (this == HabitFrequency.daily) {
+      return DayDateRange();
+    }
+    if (this == HabitFrequency.weekly) {
+      return WeekDateRange();
+    }
+    if (this == HabitFrequency.monthly) {
+      return MonthDateRange();
+    }
+    throw "Dunno how to handle: $this";
   }
 }

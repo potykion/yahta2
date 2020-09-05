@@ -34,6 +34,13 @@ class HabitDone extends HabitEvent {
   HabitDone(this.habitId);
 }
 
+class HabitUndone extends HabitEvent {
+  final int habitId;
+  final HabitFrequency habitFrequency;
+
+  HabitUndone({this.habitId, this.habitFrequency});
+}
+
 class HabitCreated extends HabitEvent {
   final String title;
   final HabitFrequency frequency;
@@ -101,6 +108,23 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
         await _repo.insertHabitMark(
             HabitMark(habitId: event.habitId, created: DateTime.now())),
       ]);
+    } else if (event is HabitUndone) {
+      var dateRange = event.habitFrequency.toDateRange();
+
+      var habitMarksToDelete = state.habitMarks
+          .where((hm) =>
+              hm.habitId == event.habitId &&
+              hm.created.isAfter(dateRange.from) &&
+              hm.created.isBefore(dateRange.to))
+          .map((hm) => hm.id)
+          .toList();
+      await _repo.deleteHabitMarks(habitMarksToDelete);
+
+      var habitMarksWithoutDeleted = state.habitMarks
+          .where((hm) => !habitMarksToDelete.contains(hm.id))
+          .toList();
+
+      yield state.copyWith(habitMarks: habitMarksWithoutDeleted);
     } else if (event is HabitDeleted) {
       await _repo.deleteHabitAndMarks(event.habitId);
       yield state.copyWith(

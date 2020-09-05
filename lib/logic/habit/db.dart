@@ -84,8 +84,11 @@ class MyDatabase extends _$MyDatabase {
   Future deleteHabit(int id) =>
       (delete(habitDBs)..where((tbl) => tbl.id.equals(id))).go();
 
-  Future deleteHabitMarks(int habitId) =>
+  Future deleteHabitMarksByHabitId(int habitId) =>
       (delete(habitMarkDBs)..where((tbl) => tbl.habitId.equals(habitId))).go();
+
+  Future deleteHabitMarksByIds(List<int> ids) =>
+      (delete(habitMarkDBs)..where((tbl) => tbl.habitId.isIn(ids))).go();
 
   Future updateHabit(HabitDB updatedHabit) =>
       update(habitDBs).replace(updatedHabit);
@@ -149,7 +152,11 @@ class HabitRepository {
 
   Future deleteHabitAndMarks(int habitId) async {
     await db.deleteHabit(habitId);
-    await db.deleteHabitMarks(habitId);
+    await db.deleteHabitMarksByHabitId(habitId);
+  }
+
+  Future deleteHabitMarks(List<int> habitMarkIds) async {
+    await db.deleteHabitMarksByIds(habitMarkIds);
   }
 
   Future<Habit> updateHabit(Habit habitToUpdate) async {
