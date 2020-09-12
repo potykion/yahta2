@@ -50,6 +50,7 @@ class MyApp extends StatelessWidget {
         ],
         child: MaterialApp(
           home: HabitListPage(),
+          // home: HomePage(),
           theme: ThemeData(
             primarySwatch: Colors.yellow,
             inputDecorationTheme: InputDecorationTheme(
@@ -63,3 +64,18 @@ class MyApp extends StatelessWidget {
         ),
       );
 }
+
+
+// class HomePage extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('DraggableScrollableSheet'),
+//       ),
+//       body: SizedBox.expand(
+//         child:,
+//       ),
+//     );
+//   }
+// }

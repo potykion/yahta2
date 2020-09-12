@@ -47,52 +47,73 @@ class _HabitFormCardState extends State<HabitFormCard> {
   Widget build(context) => Card(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          child: SizedBox(
-            height: 100,
-            child: Column(
-              children: [
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: TextFormField(
-                        decoration: InputDecoration(hintText: "Чем займешься?"),
-                        controller: controller,
-                        autofocus: true,
-                      ),
+          child: SizedBox.expand(
+            // height: 50,
+            child: DraggableScrollableSheet(
+              initialChildSize: 0.25,
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
+                return ListView(
+                  controller: scrollController,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey[300], width: 2.5),
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
+                          width: 30,
+                        ),
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.center,
                     ),
-                    IconButton(
-                      icon: Icon(Icons.check),
-                      onPressed: () {
-                        context.bloc<HabitBloc>().add(
-                              widget.id != null
-                                  ? HabitUpdated(
-                                      id: widget.id,
-                                      title: controller.text,
-                                      frequency: selectedFrequency,
-                                    )
-                                  : HabitCreated(
-                                      title: controller.text,
-                                      frequency: selectedFrequency,
-                                    ),
-                            );
-                        Navigator.pop(context);
-                      },
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: TextFormField(
+                            decoration:
+                                InputDecoration(hintText: "Чем займешься?"),
+                            controller: controller,
+                            autofocus: true,
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.check),
+                          onPressed: () {
+                            context.bloc<HabitBloc>().add(
+                                  widget.id != null
+                                      ? HabitUpdated(
+                                          id: widget.id,
+                                          title: controller.text,
+                                          frequency: selectedFrequency,
+                                        )
+                                      : HabitCreated(
+                                          title: controller.text,
+                                          frequency: selectedFrequency,
+                                        ),
+                                );
+                            Navigator.pop(context);
+                          },
+                        )
+                      ],
+                    ),
+                    Wrap(
+                      spacing: 25,
+                      children: List.generate(
+                        HabitFrequency.values.length,
+                        (index) => ChoiceChip(
+                          label:
+                              Text(HabitFrequency.values[index].toVerboseStr()),
+                          onSelected: (selected) => setState(
+                              () => this.selectedFrequencyIndex = index),
+                          selected: selectedFrequencyIndex == index,
+                        ),
+                      ),
                     )
                   ],
-                ),
-                Wrap(
-                  spacing: 25,
-                  children: List.generate(
-                    HabitFrequency.values.length,
-                    (index) => ChoiceChip(
-                      label: Text(HabitFrequency.values[index].toVerboseStr()),
-                      onSelected: (selected) =>
-                          setState(() => this.selectedFrequencyIndex = index),
-                      selected: selectedFrequencyIndex == index,
-                    ),
-                  ),
-                )
-              ],
+                );
+              },
             ),
           ),
         ),
