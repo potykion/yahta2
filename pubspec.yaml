@@ -46,6 +46,8 @@ dependencies:
   # пуши
   flutter_local_notifications: ^1.4.4+1
 
+  # звуки
+  audioplayers: ^0.16.1
 
 
 dev_dependencies:
@@ -70,9 +72,10 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/sport_badminton_racket_fast_movement_swoosh_002.mp3
+    - assets/sport_badminton_racket_fast_movement_swoosh_003.mp3
+    - assets/sport_badminton_racket_fast_movement_swoosh_006.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yahta2/logic/habit/blocs.dart';
@@ -57,14 +61,26 @@ class HabitListTile extends StatelessWidget {
             ? DismissDirection.startToEnd
             : DismissDirection.endToStart,
         confirmDismiss: (DismissDirection dir) async {
-          var event = dir == DismissDirection.endToStart
-              ? HabitDone(habit.id)
-              : dir == DismissDirection.startToEnd
+          var event;
+          if (dir == DismissDirection.endToStart) {
+            var player = AudioCache();
+            var sounds = [
+              "sport_badminton_racket_fast_movement_swoosh_002.mp3",
+              "sport_badminton_racket_fast_movement_swoosh_003.mp3",
+              "sport_badminton_racket_fast_movement_swoosh_006.mp3",
+            ];
+            var random = new Random();
+            player.play(sounds[random.nextInt(sounds.length)], mode: PlayerMode.LOW_LATENCY);
+
+            event = HabitDone(habit.id);
+          } else {
+            event = dir == DismissDirection.startToEnd
                   ? HabitUndone(
                       habitId: habit.id,
                       habitFrequency: habit.frequency,
                     )
                   : null;
+          }
           context.bloc<HabitBloc>().add(event);
 
           return false;
