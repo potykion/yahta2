@@ -62,25 +62,14 @@ class HabitListTile extends StatelessWidget {
             : DismissDirection.endToStart,
         confirmDismiss: (DismissDirection dir) async {
           var event;
-          if (dir == DismissDirection.endToStart) {
-            var player = AudioCache();
-            var sounds = [
-              "sport_badminton_racket_fast_movement_swoosh_002.mp3",
-              "sport_badminton_racket_fast_movement_swoosh_003.mp3",
-              "sport_badminton_racket_fast_movement_swoosh_006.mp3",
-            ];
-            var random = new Random();
-            player.play(sounds[random.nextInt(sounds.length)], mode: PlayerMode.LOW_LATENCY);
-
-            event = HabitDone(habit.id);
-          } else {
-            event = dir == DismissDirection.startToEnd
+          event = dir == DismissDirection.endToStart
+              ? HabitDone(habit.id)
+              : dir == DismissDirection.startToEnd
                   ? HabitUndone(
                       habitId: habit.id,
                       habitFrequency: habit.frequency,
                     )
                   : null;
-          }
           context.bloc<HabitBloc>().add(event);
 
           return false;

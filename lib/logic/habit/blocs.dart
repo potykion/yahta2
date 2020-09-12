@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:bloc/bloc.dart';
 import 'package:yahta2/logic/habit/db.dart';
 import 'package:yahta2/logic/habit/utils.dart';
@@ -60,21 +64,25 @@ class HabitState {
       Map.fromEntries(habitMarks.map((hm) => MapEntry(hm.habitId, hm)));
 
   List<Habit> get orderedHabits =>
-      (habits.toList()..sort((h1, h2) => h1.order.compareTo(h2.order)));
+      (habits.toList()
+        ..sort((h1, h2) => h1.order.compareTo(h2.order)));
 
-  List<HabitVM> get habitVMs => orderedHabits
-      .map(
-        (h) => HabitVM(
-          id: h.id,
-          title: h.title,
-          frequency: h.frequency,
-          order: h.order,
-          done: idHabitMarks.containsKey(h.id),
-        ),
+  List<HabitVM> get habitVMs =>
+      orderedHabits
+          .map(
+            (h) =>
+            HabitVM(
+              id: h.id,
+              title: h.title,
+              frequency: h.frequency,
+              order: h.order,
+              done: idHabitMarks.containsKey(h.id),
+            ),
       )
-      .toList();
+          .toList();
 
-  copyWith({List<Habit> habits, List<HabitMark> habitMarks}) => HabitState(
+  copyWith({List<Habit> habits, List<HabitMark> habitMarks}) =>
+      HabitState(
         habits: habits ?? this.habits,
         habitMarks: habitMarks ?? this.habitMarks,
       );
@@ -103,19 +111,38 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
         ),
       ]);
     } else if (event is HabitDone) {
+      var sounds = [
+        "sport_badminton_racket_fast_movement_swoosh_002.mp3",
+        "sport_badminton_racket_fast_movement_swoosh_003.mp3",
+        "sport_badminton_racket_fast_movement_swoosh_006.mp3",
+      ];
+      AudioCache().play(
+        sounds[new Random().nextInt(sounds.length)],
+        mode: PlayerMode.LOW_LATENCY,
+      );
       yield state.copyWith(habitMarks: [
         ...state.habitMarks,
         await _repo.insertHabitMark(
             HabitMark(habitId: event.habitId, created: DateTime.now())),
       ]);
     } else if (event is HabitUndone) {
+      var sounds = [
+        "zapsplat_warfare_knife_blade_draw_004_23989.mp3",
+        "zapsplat_warfare_knife_blade_draw_005_23990.mp3",
+        "zapsplat_warfare_knife_blade_draw_008_23993.mp3",
+      ];
+      AudioCache().play(
+        sounds[new Random().nextInt(sounds.length)],
+        mode: PlayerMode.LOW_LATENCY,
+      );
+
       var dateRange = event.habitFrequency.toDateRange();
 
       var habitMarksToDelete = state.habitMarks
           .where((hm) =>
-              hm.habitId == event.habitId &&
-              hm.created.isAfter(dateRange.from) &&
-              hm.created.isBefore(dateRange.to))
+      hm.habitId == event.habitId &&
+          hm.created.isAfter(dateRange.from) &&
+          hm.created.isBefore(dateRange.to))
           .map((hm) => hm.id)
           .toList();
       await _repo.deleteHabitMarks(habitMarksToDelete);

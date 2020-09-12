@@ -76,6 +76,9 @@ flutter:
     - assets/sport_badminton_racket_fast_movement_swoosh_002.mp3
     - assets/sport_badminton_racket_fast_movement_swoosh_003.mp3
     - assets/sport_badminton_racket_fast_movement_swoosh_006.mp3
+    - assets/zapsplat_warfare_knife_blade_draw_004_23989.mp3
+    - assets/zapsplat_warfare_knife_blade_draw_005_23990.mp3
+    - assets/zapsplat_warfare_knife_blade_draw_008_23993.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
