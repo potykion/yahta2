@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yahta2/logic/habit/blocs.dart';
-import 'package:yahta2/ui/components/form.dart';
 import 'package:yahta2/ui/components/list_tile.dart';
+import 'package:yahta2/ui/pages/form.dart';
 
 class HabitListPage extends StatefulWidget {
+  static const routeName = "/list";
+
   @override
   _HabitListPageState createState() => _HabitListPageState();
 }
@@ -21,12 +23,10 @@ class _HabitListPageState extends State<HabitListPage> {
         appBar: AppBar(
           title: Text("План на сегодня"),
           actions: <Widget>[
-            Builder(
-              builder: (BuildContext context) => IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () => Scaffold.of(context)
-                    .showBottomSheet((_) => HabitFormCard()),
-              ),
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () =>
+                  Navigator.pushNamed(context, HabitFormPage.routeName),
             )
           ],
         ),
@@ -38,7 +38,7 @@ class _HabitListPageState extends State<HabitListPage> {
             children: state.habitVMs
                 .map(
                   (vm) => HabitListTile(
-                    habit: vm,
+                    vm: vm,
                     key: Key(vm.id.toString()),
                   ),
                 )

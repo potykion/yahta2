@@ -6,41 +6,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yahta2/logic/habit/blocs.dart';
 import 'package:yahta2/logic/habit/view_models.dart';
+import 'package:yahta2/ui/pages/form.dart';
 
 import 'form.dart';
 
 enum HabitAction { edit, delete }
 
 class HabitListTile extends StatelessWidget {
-  final HabitVM habit;
+  final HabitVM vm;
 
-  const HabitListTile({Key key, this.habit}) : super(key: key);
+  const HabitListTile({Key key, this.vm}) : super(key: key);
 
   @override
   Widget build(context) => Dismissible(
-        key: Key(habit.id.toString()),
+        key: Key(vm.id.toString()),
         child: ListTile(
           title: Text(
-            habit.title,
+            vm.title,
             style: TextStyle(
-              decoration: habit.done ? TextDecoration.lineThrough : null,
-              color: habit.done ? Colors.grey : null,
-              fontWeight: !habit.done && habit.timeToPerformHabit
-                  ? FontWeight.bold
-                  : null,
+              decoration: vm.done ? TextDecoration.lineThrough : null,
+              color: vm.done ? Colors.grey : null,
+              fontWeight:
+                  !vm.done && vm.timeToPerformHabit ? FontWeight.bold : null,
             ),
           ),
           trailing: PopupMenuButton<HabitAction>(
             onSelected: (action) {
               if (action == HabitAction.delete) {
-                context.bloc<HabitBloc>().add(HabitDeleted(habit.id));
+                context.bloc<HabitBloc>().add(HabitDeleted(vm.id));
               } else if (action == HabitAction.edit) {
-                Scaffold.of(context).showBottomSheet(
-                  (_) => HabitFormCard(
-                    id: habit.id,
-                    title: habit.title,
-                    frequency: habit.frequency,
-                  ),
+                Navigator.pushNamed(
+                  context,
+                  HabitFormPage.routeName,
+                  arguments: vm.toHabit(),
                 );
               }
             },
@@ -57,18 +55,14 @@ class HabitListTile extends StatelessWidget {
             ],
           ),
         ),
-        direction: habit.done
-            ? DismissDirection.startToEnd
-            : DismissDirection.endToStart,
+        direction:
+            vm.done ? DismissDirection.startToEnd : DismissDirection.endToStart,
         confirmDismiss: (DismissDirection dir) async {
           var event;
           event = dir == DismissDirection.endToStart
-              ? HabitDone(habit.id)
+              ? HabitDone(vm.toHabit())
               : dir == DismissDirection.startToEnd
-                  ? HabitUndone(
-                      habitId: habit.id,
-                      habitFrequency: habit.frequency,
-                    )
+                  ? HabitUndone(vm.toHabit())
                   : null;
           context.bloc<HabitBloc>().add(event);
 

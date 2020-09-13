@@ -17,7 +17,13 @@ class HabitDBs extends Table {
 
   IntColumn get order => integer()();
 
-  IntColumn get frequency => intEnum<HabitFrequency>()();
+  IntColumn get frequency => integer()();
+
+  IntColumn get periodValue => integer()();
+
+  IntColumn get periodType => intEnum<PeriodType>()();
+
+  IntColumn get weekStart => intEnum<Weekday>()();
 }
 
 class HabitMarkDBs extends Table {
@@ -113,6 +119,9 @@ class HabitRepository {
         title: habit.title,
         order: newOrder,
         frequency: habit.frequency,
+        periodType: habit.periodType,
+        periodValue: habit.periodValue,
+        weekStart: habit.weekStart
       ),
     );
     return habit.copyWith(id: habitId, order: newOrder);
@@ -125,6 +134,9 @@ class HabitRepository {
           id: h.id,
           order: h.order,
           frequency: h.frequency,
+          periodType: h.periodType,
+          periodValue: h.periodValue,
+          weekStart: h.weekStart,
         ),
       )
       .toList();
@@ -166,6 +178,9 @@ class HabitRepository {
         title: habitToUpdate.title,
         order: habitToUpdate.order,
         frequency: habitToUpdate.frequency,
+        periodValue: habitToUpdate.periodValue,
+        weekStart: habitToUpdate.weekStart,
+        periodType: habitToUpdate.periodType,
       ),
     );
     return habitToUpdate;

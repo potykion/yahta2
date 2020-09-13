@@ -4,6 +4,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:yahta2/logic/habit/blocs.dart';
 import 'package:yahta2/logic/habit/db.dart';
+import 'package:yahta2/ui/pages/form.dart';
 import 'package:yahta2/ui/pages/list.dart';
 
 var flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -50,7 +51,6 @@ class MyApp extends StatelessWidget {
         ],
         child: MaterialApp(
           home: HabitListPage(),
-          // home: HomePage(),
           theme: ThemeData(
             primarySwatch: Colors.yellow,
             inputDecorationTheme: InputDecorationTheme(
@@ -61,10 +61,13 @@ class MyApp extends StatelessWidget {
                   secondarySelectedColor: Colors.yellow,
                 ),
           ),
+          routes: {
+            HabitListPage.routeName: (_) => HabitListPage(),
+            HabitFormPage.routeName: (_) => HabitFormPage(),
+          },
         ),
       );
 }
-
 
 // class HomePage extends StatelessWidget {
 //   @override

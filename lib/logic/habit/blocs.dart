@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bloc/bloc.dart';
+import 'package:collection/collection.dart';
+
 import 'package:yahta2/logic/habit/db.dart';
 import 'package:yahta2/logic/habit/utils.dart';
 import 'package:yahta2/logic/habit/view_models.dart';
@@ -21,9 +23,32 @@ class HabitReordered extends HabitEvent {
 class HabitUpdated extends HabitEvent {
   final int id;
   final String title;
-  final HabitFrequency frequency;
+  final int order;
+  final int frequency;
+  final int periodValue;
+  final PeriodType periodType;
+  final Weekday weekStart;
 
-  HabitUpdated({this.id, this.title, this.frequency});
+  HabitUpdated({
+    this.id,
+    this.title,
+    this.order,
+    this.frequency,
+    this.periodValue,
+    this.periodType,
+    this.weekStart,
+  });
+
+  Habit updateHabit(Habit habit) {
+    return habit.copyWith(
+      title: title,
+      order: order,
+      frequency: frequency,
+      periodValue: periodValue,
+      periodType: periodType,
+      weekStart: weekStart,
+    );
+  }
 }
 
 class HabitDeleted extends HabitEvent {
@@ -33,23 +58,43 @@ class HabitDeleted extends HabitEvent {
 }
 
 class HabitDone extends HabitEvent {
-  final int habitId;
+  final Habit habit;
 
-  HabitDone(this.habitId);
+  HabitDone(this.habit);
 }
 
 class HabitUndone extends HabitEvent {
-  final int habitId;
-  final HabitFrequency habitFrequency;
+  final Habit habit;
 
-  HabitUndone({this.habitId, this.habitFrequency});
+  HabitUndone(this.habit);
 }
 
 class HabitCreated extends HabitEvent {
   final String title;
-  final HabitFrequency frequency;
+  final int order;
+  final int frequency;
+  final int periodValue;
+  final PeriodType periodType;
+  final Weekday weekStart;
 
-  HabitCreated({this.title, this.frequency});
+  HabitCreated({
+    this.title,
+    this.order,
+    this.frequency,
+    this.periodValue,
+    this.periodType,
+    this.weekStart,
+  });
+
+  Habit toHabit() {
+    return Habit(
+      periodValue: this.periodValue,
+      periodType: this.periodType,
+      order: this.order,
+      title: this.title,
+      frequency: this.frequency,
+    );
+  }
 }
 
 class HabitsLoadStarted extends HabitEvent {}
@@ -60,29 +105,16 @@ class HabitState {
 
   HabitState({this.habits = const [], this.habitMarks = const []});
 
-  Map<int, HabitMark> get idHabitMarks =>
-      Map.fromEntries(habitMarks.map((hm) => MapEntry(hm.habitId, hm)));
+  Map<int, List<HabitMark>> get idHabitMarks =>
+      groupBy(habitMarks, (HabitMark hm) => hm.habitId);
 
   List<Habit> get orderedHabits =>
-      (habits.toList()
-        ..sort((h1, h2) => h1.order.compareTo(h2.order)));
+      (habits.toList()..sort((h1, h2) => h1.order.compareTo(h2.order)));
 
   List<HabitVM> get habitVMs =>
-      orderedHabits
-          .map(
-            (h) =>
-            HabitVM(
-              id: h.id,
-              title: h.title,
-              frequency: h.frequency,
-              order: h.order,
-              done: idHabitMarks.containsKey(h.id),
-            ),
-      )
-          .toList();
+      orderedHabits.map((h) => HabitVM.build(h, idHabitMarks[h.id] ?? [])).toList();
 
-  copyWith({List<Habit> habits, List<HabitMark> habitMarks}) =>
-      HabitState(
+  copyWith({List<Habit> habits, List<HabitMark> habitMarks}) => HabitState(
         habits: habits ?? this.habits,
         habitMarks: habitMarks ?? this.habitMarks,
       );
@@ -106,9 +138,7 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
     } else if (event is HabitCreated) {
       yield state.copyWith(habits: [
         ...state.habits,
-        await _repo.insertHabit(
-          Habit(title: event.title, frequency: event.frequency),
-        ),
+        await _repo.insertHabit(event.toHabit()),
       ]);
     } else if (event is HabitDone) {
       var sounds = [
@@ -123,7 +153,7 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
       yield state.copyWith(habitMarks: [
         ...state.habitMarks,
         await _repo.insertHabitMark(
-            HabitMark(habitId: event.habitId, created: DateTime.now())),
+            HabitMark(habitId: event.habit.id, created: DateTime.now())),
       ]);
     } else if (event is HabitUndone) {
       var sounds = [
@@ -136,22 +166,23 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
         mode: PlayerMode.LOW_LATENCY,
       );
 
-      var dateRange = event.habitFrequency.toDateRange();
-
-      var habitMarksToDelete = state.habitMarks
-          .where((hm) =>
-      hm.habitId == event.habitId &&
-          hm.created.isAfter(dateRange.from) &&
-          hm.created.isBefore(dateRange.to))
-          .map((hm) => hm.id)
-          .toList();
-      await _repo.deleteHabitMarks(habitMarksToDelete);
-
-      var habitMarksWithoutDeleted = state.habitMarks
-          .where((hm) => !habitMarksToDelete.contains(hm.id))
-          .toList();
-
-      yield state.copyWith(habitMarks: habitMarksWithoutDeleted);
+      // todo
+      // var dateRange = event.habitFrequency.toDateRange();
+      //
+      // var habitMarksToDelete = state.habitMarks
+      //     .where((hm) =>
+      //         hm.habitId == event.habitId &&
+      //         hm.created.isAfter(dateRange.from) &&
+      //         hm.created.isBefore(dateRange.to))
+      //     .map((hm) => hm.id)
+      //     .toList();
+      // await _repo.deleteHabitMarks(habitMarksToDelete);
+      //
+      // var habitMarksWithoutDeleted = state.habitMarks
+      //     .where((hm) => !habitMarksToDelete.contains(hm.id))
+      //     .toList();
+      //
+      // yield state.copyWith(habitMarks: habitMarksWithoutDeleted);
     } else if (event is HabitDeleted) {
       await _repo.deleteHabitAndMarks(event.habitId);
       yield state.copyWith(
@@ -165,10 +196,9 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
         habits: [
           ...state.habits.where((h) => h.id != event.id),
           await _repo.updateHabit(
-            state.habits
-                .where((h) => h.id == event.id)
-                .first
-                .copyWith(title: event.title, frequency: event.frequency),
+            event.updateHabit(
+              state.habits.where((h) => h.id == event.id).first,
+            ),
           ),
         ],
       );

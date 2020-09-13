@@ -49,6 +49,10 @@ dependencies:
   # звуки
   audioplayers: ^0.16.1
 
+  # груп-бай и все такое
+  collection: ^1.14.13
+
+
 
 dev_dependencies:
   flutter_test:

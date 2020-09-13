@@ -16,12 +16,18 @@ class _$HabitTearOff {
       {int id,
       @required String title,
       int order,
-      @required HabitFrequency frequency}) {
+      int frequency = 1,
+      int periodValue = 1,
+      PeriodType periodType = PeriodType.days,
+      Weekday weekStart = Weekday.monday}) {
     return _Habit(
       id: id,
       title: title,
       order: order,
       frequency: frequency,
+      periodValue: periodValue,
+      periodType: periodType,
+      weekStart: weekStart,
     );
   }
 }
@@ -33,7 +39,10 @@ mixin _$Habit {
   int get id;
   String get title;
   int get order;
-  HabitFrequency get frequency;
+  int get frequency;
+  int get periodValue;
+  PeriodType get periodType;
+  Weekday get weekStart;
 
   $HabitCopyWith<Habit> get copyWith;
 }
@@ -41,7 +50,14 @@ mixin _$Habit {
 abstract class $HabitCopyWith<$Res> {
   factory $HabitCopyWith(Habit value, $Res Function(Habit) then) =
       _$HabitCopyWithImpl<$Res>;
-  $Res call({int id, String title, int order, HabitFrequency frequency});
+  $Res call(
+      {int id,
+      String title,
+      int order,
+      int frequency,
+      int periodValue,
+      PeriodType periodType,
+      Weekday weekStart});
 }
 
 class _$HabitCopyWithImpl<$Res> implements $HabitCopyWith<$Res> {
@@ -57,13 +73,20 @@ class _$HabitCopyWithImpl<$Res> implements $HabitCopyWith<$Res> {
     Object title = freezed,
     Object order = freezed,
     Object frequency = freezed,
+    Object periodValue = freezed,
+    Object periodType = freezed,
+    Object weekStart = freezed,
   }) {
     return _then(_value.copyWith(
       id: id == freezed ? _value.id : id as int,
       title: title == freezed ? _value.title : title as String,
       order: order == freezed ? _value.order : order as int,
-      frequency:
-          frequency == freezed ? _value.frequency : frequency as HabitFrequency,
+      frequency: frequency == freezed ? _value.frequency : frequency as int,
+      periodValue:
+          periodValue == freezed ? _value.periodValue : periodValue as int,
+      periodType:
+          periodType == freezed ? _value.periodType : periodType as PeriodType,
+      weekStart: weekStart == freezed ? _value.weekStart : weekStart as Weekday,
     ));
   }
 }
@@ -72,7 +95,14 @@ abstract class _$HabitCopyWith<$Res> implements $HabitCopyWith<$Res> {
   factory _$HabitCopyWith(_Habit value, $Res Function(_Habit) then) =
       __$HabitCopyWithImpl<$Res>;
   @override
-  $Res call({int id, String title, int order, HabitFrequency frequency});
+  $Res call(
+      {int id,
+      String title,
+      int order,
+      int frequency,
+      int periodValue,
+      PeriodType periodType,
+      Weekday weekStart});
 }
 
 class __$HabitCopyWithImpl<$Res> extends _$HabitCopyWithImpl<$Res>
@@ -89,22 +119,38 @@ class __$HabitCopyWithImpl<$Res> extends _$HabitCopyWithImpl<$Res>
     Object title = freezed,
     Object order = freezed,
     Object frequency = freezed,
+    Object periodValue = freezed,
+    Object periodType = freezed,
+    Object weekStart = freezed,
   }) {
     return _then(_Habit(
       id: id == freezed ? _value.id : id as int,
       title: title == freezed ? _value.title : title as String,
       order: order == freezed ? _value.order : order as int,
-      frequency:
-          frequency == freezed ? _value.frequency : frequency as HabitFrequency,
+      frequency: frequency == freezed ? _value.frequency : frequency as int,
+      periodValue:
+          periodValue == freezed ? _value.periodValue : periodValue as int,
+      periodType:
+          periodType == freezed ? _value.periodType : periodType as PeriodType,
+      weekStart: weekStart == freezed ? _value.weekStart : weekStart as Weekday,
     ));
   }
 }
 
 class _$_Habit with DiagnosticableTreeMixin implements _Habit {
   _$_Habit(
-      {this.id, @required this.title, this.order, @required this.frequency})
+      {this.id,
+      @required this.title,
+      this.order,
+      this.frequency = 1,
+      this.periodValue = 1,
+      this.periodType = PeriodType.days,
+      this.weekStart = Weekday.monday})
       : assert(title != null),
-        assert(frequency != null);
+        assert(frequency != null),
+        assert(periodValue != null),
+        assert(periodType != null),
+        assert(weekStart != null);
 
   @override
   final int id;
@@ -112,12 +158,22 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
   final String title;
   @override
   final int order;
+  @JsonKey(defaultValue: 1)
   @override
-  final HabitFrequency frequency;
+  final int frequency;
+  @JsonKey(defaultValue: 1)
+  @override
+  final int periodValue;
+  @JsonKey(defaultValue: PeriodType.days)
+  @override
+  final PeriodType periodType;
+  @JsonKey(defaultValue: Weekday.monday)
+  @override
+  final Weekday weekStart;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Habit(id: $id, title: $title, order: $order, frequency: $frequency)';
+    return 'Habit(id: $id, title: $title, order: $order, frequency: $frequency, periodValue: $periodValue, periodType: $periodType, weekStart: $weekStart)';
   }
 
   @override
@@ -128,7 +184,10 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('title', title))
       ..add(DiagnosticsProperty('order', order))
-      ..add(DiagnosticsProperty('frequency', frequency));
+      ..add(DiagnosticsProperty('frequency', frequency))
+      ..add(DiagnosticsProperty('periodValue', periodValue))
+      ..add(DiagnosticsProperty('periodType', periodType))
+      ..add(DiagnosticsProperty('weekStart', weekStart));
   }
 
   @override
@@ -143,7 +202,16 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
                 const DeepCollectionEquality().equals(other.order, order)) &&
             (identical(other.frequency, frequency) ||
                 const DeepCollectionEquality()
-                    .equals(other.frequency, frequency)));
+                    .equals(other.frequency, frequency)) &&
+            (identical(other.periodValue, periodValue) ||
+                const DeepCollectionEquality()
+                    .equals(other.periodValue, periodValue)) &&
+            (identical(other.periodType, periodType) ||
+                const DeepCollectionEquality()
+                    .equals(other.periodType, periodType)) &&
+            (identical(other.weekStart, weekStart) ||
+                const DeepCollectionEquality()
+                    .equals(other.weekStart, weekStart)));
   }
 
   @override
@@ -152,7 +220,10 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(title) ^
       const DeepCollectionEquality().hash(order) ^
-      const DeepCollectionEquality().hash(frequency);
+      const DeepCollectionEquality().hash(frequency) ^
+      const DeepCollectionEquality().hash(periodValue) ^
+      const DeepCollectionEquality().hash(periodType) ^
+      const DeepCollectionEquality().hash(weekStart);
 
   @override
   _$HabitCopyWith<_Habit> get copyWith =>
@@ -164,7 +235,10 @@ abstract class _Habit implements Habit {
       {int id,
       @required String title,
       int order,
-      @required HabitFrequency frequency}) = _$_Habit;
+      int frequency,
+      int periodValue,
+      PeriodType periodType,
+      Weekday weekStart}) = _$_Habit;
 
   @override
   int get id;
@@ -173,7 +247,13 @@ abstract class _Habit implements Habit {
   @override
   int get order;
   @override
-  HabitFrequency get frequency;
+  int get frequency;
+  @override
+  int get periodValue;
+  @override
+  PeriodType get periodType;
+  @override
+  Weekday get weekStart;
   @override
   _$HabitCopyWith<_Habit> get copyWith;
 }
