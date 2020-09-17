@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yahta2/logic/habit/blocs.dart';
@@ -29,8 +31,11 @@ class HabitListTile extends StatelessWidget {
               ),
               subtitle: vm.done || vm.frequency == 1
                   ? null
-                  : LinearProgressIndicator(
-                      value: vm.habitMarks.length / vm.frequency,
+                  : Transform.rotate(
+                      angle: pi,
+                      child: LinearProgressIndicator(
+                        value: vm.habitMarks.length / vm.frequency,
+                      ),
                     ),
               trailing: PopupMenuButton<HabitAction>(
                 onSelected: (action) {
