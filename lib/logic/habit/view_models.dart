@@ -9,6 +9,7 @@ class HabitVM {
   final PeriodType periodType;
   final Weekday weekStart;
   final bool done;
+  final bool partiallyDone;
 
   HabitVM({
     this.id,
@@ -19,6 +20,7 @@ class HabitVM {
     this.periodType,
     this.weekStart,
     this.done,
+    this.partiallyDone
   });
 
   factory HabitVM.build(Habit habit, List<HabitMark> habitMarks) {
@@ -31,6 +33,7 @@ class HabitVM {
       periodType: habit.periodType,
       weekStart: habit.weekStart,
       done: habitMarks.length == habit.frequency,
+      partiallyDone: habitMarks.length > 0 && habitMarks.length < habit.frequency
     );
   }
 

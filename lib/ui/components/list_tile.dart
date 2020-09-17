@@ -1,14 +1,8 @@
-import 'dart:math';
-
-import 'package:audioplayers/audio_cache.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yahta2/logic/habit/blocs.dart';
 import 'package:yahta2/logic/habit/view_models.dart';
 import 'package:yahta2/ui/pages/form.dart';
-
-import 'form.dart';
 
 enum HabitAction { edit, delete }
 
@@ -55,8 +49,9 @@ class HabitListTile extends StatelessWidget {
             ],
           ),
         ),
-        direction:
-            vm.done ? DismissDirection.startToEnd : DismissDirection.endToStart,
+        direction: vm.done || vm.partiallyDone
+            ? DismissDirection.startToEnd
+            : DismissDirection.endToStart,
         confirmDismiss: (DismissDirection dir) async {
           var event;
           event = dir == DismissDirection.endToStart

@@ -111,8 +111,9 @@ class HabitState {
   List<Habit> get orderedHabits =>
       (habits.toList()..sort((h1, h2) => h1.order.compareTo(h2.order)));
 
-  List<HabitVM> get habitVMs =>
-      orderedHabits.map((h) => HabitVM.build(h, idHabitMarks[h.id] ?? [])).toList();
+  List<HabitVM> get habitVMs => orderedHabits
+      .map((h) => HabitVM.build(h, idHabitMarks[h.id] ?? []))
+      .toList();
 
   copyWith({List<Habit> habits, List<HabitMark> habitMarks}) => HabitState(
         habits: habits ?? this.habits,
@@ -166,23 +167,17 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
         mode: PlayerMode.LOW_LATENCY,
       );
 
-      // todo
-      // var dateRange = event.habitFrequency.toDateRange();
-      //
-      // var habitMarksToDelete = state.habitMarks
-      //     .where((hm) =>
-      //         hm.habitId == event.habitId &&
-      //         hm.created.isAfter(dateRange.from) &&
-      //         hm.created.isBefore(dateRange.to))
-      //     .map((hm) => hm.id)
-      //     .toList();
-      // await _repo.deleteHabitMarks(habitMarksToDelete);
-      //
-      // var habitMarksWithoutDeleted = state.habitMarks
-      //     .where((hm) => !habitMarksToDelete.contains(hm.id))
-      //     .toList();
-      //
-      // yield state.copyWith(habitMarks: habitMarksWithoutDeleted);
+      var habitMarkIdToDelete =
+          (state.habitMarks.where((hm) => hm.habitId == event.habit.id).toList()
+                ..sort((hm2, hm1) => hm1.created.compareTo(hm2.created)))
+              .map((hm) => hm.id)
+              .first;
+      await _repo.deleteHabitMarks([habitMarkIdToDelete]);
+
+      var habitMarksWithoutDeleted = state.habitMarks
+        ..removeWhere((hm) => hm.id == habitMarkIdToDelete);
+
+      yield state.copyWith(habitMarks: habitMarksWithoutDeleted);
     } else if (event is HabitDeleted) {
       await _repo.deleteHabitAndMarks(event.habitId);
       yield state.copyWith(
