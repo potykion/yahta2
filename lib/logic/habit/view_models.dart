@@ -40,8 +40,9 @@ class HabitVM {
           // Через 4 часа - конец дня
           DateTime.now().hour >= 24 - 4 ||
       this.frequency == HabitFrequency.weekly &&
-          // Через 2 дня - конец недели
-          DateTime.now().weekday >= 7 - 2 ||
+          // Через 2 дня - конец недели (+ учет начала недели)
+          DateTime.now().weekday == (weekStart.index + 5) % 7 + 1 ||
+          DateTime.now().weekday == (weekStart.index + 6) % 7 + 1 ||
       this.frequency == HabitFrequency.monthly &&
           // Через 10 дней - конец месяца
           DateTime.now().day >= 30 - 10;

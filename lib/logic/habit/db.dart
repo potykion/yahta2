@@ -62,6 +62,7 @@ class MyDatabase extends _$MyDatabase {
         ) &
         habitDBs.frequency.equals(HabitFrequency.daily.index);
 
+    // todo week start handling
     var weekDateRange = WeekDateRange();
     var weekWhere = habitMarkDBs.created.isBetweenValues(
           weekDateRange.from,

@@ -19,11 +19,17 @@ class DayDateRange extends DateRange {
 }
 
 class WeekDateRange extends DateRange {
-  WeekDateRange({now}) : super(now: now);
+  Weekday weekStartDay;
 
-  DateTime get weekStart => now.add(Duration(days: -now.weekday + 1));
+  WeekDateRange({now, this.weekStartDay = Weekday.monday}) : super(now: now);
 
-  DateTime get weekEnd => weekStart.add(Duration(days: 6));
+  DateTime get weekStart => now
+      .add(Duration(days: -now.weekday + 1))
+      .add(Duration(days: weekStartDay.index - 1));
+
+  DateTime get weekEnd => weekStart
+      .add(Duration(days: 6))
+      .add(Duration(days: weekStartDay.index - 1));
 
   DateTime get from => DateTime(weekStart.year, weekStart.month, weekStart.day);
 

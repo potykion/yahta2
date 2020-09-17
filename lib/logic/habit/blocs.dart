@@ -23,7 +23,6 @@ class HabitReordered extends HabitEvent {
 class HabitUpdated extends HabitEvent {
   final int id;
   final String title;
-  final int order;
   final int frequency;
   final int periodValue;
   final PeriodType periodType;
@@ -32,7 +31,6 @@ class HabitUpdated extends HabitEvent {
   HabitUpdated({
     this.id,
     this.title,
-    this.order,
     this.frequency,
     this.periodValue,
     this.periodType,
@@ -42,7 +40,6 @@ class HabitUpdated extends HabitEvent {
   Habit updateHabit(Habit habit) {
     return habit.copyWith(
       title: title,
-      order: order,
       frequency: frequency,
       periodValue: periodValue,
       periodType: periodType,

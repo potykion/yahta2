@@ -31,12 +31,6 @@ class _HabitFormPageState extends State<HabitFormPage> {
   PeriodType hPeriodType = PeriodType.days;
   Weekday hWeekStart = Weekday.monday;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //
-  //
-  // }
 
   @override
   void didChangeDependencies() {
@@ -70,17 +64,6 @@ class _HabitFormPageState extends State<HabitFormPage> {
       }),
     );
   }
-
-  // @override
-  // void didUpdateWidget(HabitFormPage oldWidget) {
-  //   super.didUpdateWidget(oldWidget);
-  //   if (widget.title != null) {
-  //     habitTitleController.text = widget.title;
-  //   }
-  //   if (widget.frequency != null) {
-  //     selectedFrequencyIndex = widget.frequency.index;
-  //   }
-  // }
 
   String get frequencyAndPeriodStr => FrequencyAndPeriodStr(
         frequency: hFrequency,
