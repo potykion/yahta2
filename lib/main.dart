@@ -60,6 +60,7 @@ class MyApp extends StatelessWidget {
                   secondaryLabelStyle: TextStyle(color: Colors.black),
                   secondarySelectedColor: Colors.yellow,
                 ),
+            backgroundColor: Colors.yellow[100]
           ),
           routes: {
             HabitListPage.routeName: (_) => HabitListPage(),

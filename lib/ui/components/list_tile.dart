@@ -14,44 +14,56 @@ class HabitListTile extends StatelessWidget {
   @override
   Widget build(context) => Dismissible(
         key: Key(vm.id.toString()),
-        child: ListTile(
-          title: Text(
-            vm.title,
-            style: TextStyle(
-              decoration: vm.done ? TextDecoration.lineThrough : null,
-              color: vm.done ? Colors.grey : null,
-              fontWeight:
-                  !vm.done && vm.timeToPerformHabit ? FontWeight.bold : null,
-            ),
-          ),
-          trailing: PopupMenuButton<HabitAction>(
-            onSelected: (action) {
-              if (action == HabitAction.delete) {
-                context.bloc<HabitBloc>().add(HabitDeleted(vm.id));
-              } else if (action == HabitAction.edit) {
-                Navigator.pushNamed(
-                  context,
-                  HabitFormPage.routeName,
-                  arguments: vm.toHabit(),
-                );
-              }
-            },
-            itemBuilder: (BuildContext context) =>
-                <PopupMenuEntry<HabitAction>>[
-              const PopupMenuItem<HabitAction>(
-                value: HabitAction.edit,
-                child: Text('Изменить'),
+        child: Stack(
+          children: [
+            ListTile(
+              title: Text(
+                vm.title,
+                style: TextStyle(
+                  decoration: vm.done ? TextDecoration.lineThrough : null,
+                  color: vm.done ? Colors.grey : null,
+                  fontWeight: !vm.done && vm.timeToPerformHabit
+                      ? FontWeight.bold
+                      : null,
+                ),
               ),
-              const PopupMenuItem<HabitAction>(
-                value: HabitAction.delete,
-                child: Text('Удалить'),
+              subtitle: vm.done || vm.frequency == 1
+                  ? null
+                  : LinearProgressIndicator(
+                      value: vm.habitMarks.length / vm.frequency,
+                    ),
+              trailing: PopupMenuButton<HabitAction>(
+                onSelected: (action) {
+                  if (action == HabitAction.delete) {
+                    context.bloc<HabitBloc>().add(HabitDeleted(vm.id));
+                  } else if (action == HabitAction.edit) {
+                    Navigator.pushNamed(
+                      context,
+                      HabitFormPage.routeName,
+                      arguments: vm.toHabit(),
+                    );
+                  }
+                },
+                itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry<HabitAction>>[
+                  const PopupMenuItem<HabitAction>(
+                    value: HabitAction.edit,
+                    child: Text('Изменить'),
+                  ),
+                  const PopupMenuItem<HabitAction>(
+                    value: HabitAction.delete,
+                    child: Text('Удалить'),
+                  ),
+                ],
               ),
-            ],
-          ),
+            )
+          ],
         ),
-        direction: vm.done || vm.partiallyDone
+        direction: vm.done
             ? DismissDirection.startToEnd
-            : DismissDirection.endToStart,
+            : vm.partiallyDone
+                ? DismissDirection.horizontal
+                : DismissDirection.endToStart,
         confirmDismiss: (DismissDirection dir) async {
           var event;
           event = dir == DismissDirection.endToStart
