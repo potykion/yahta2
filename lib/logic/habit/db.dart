@@ -54,35 +54,8 @@ class MyDatabase extends _$MyDatabase {
 
   Future<List<HabitDB>> listHabits() => (select(habitDBs)).get();
 
-  Future<List<HabitMarkDB>> listHabitMarksDependingOnFreq() {
-    var dayDateRange = DayDateRange();
-    var dayWhere = habitMarkDBs.created.isBetweenValues(
-          dayDateRange.from,
-          dayDateRange.to,
-        ) &
-        habitDBs.frequency.equals(HabitFrequency.daily.index);
-
-    // todo week start handling
-    var weekDateRange = WeekDateRange();
-    var weekWhere = habitMarkDBs.created.isBetweenValues(
-          weekDateRange.from,
-          weekDateRange.to,
-        ) &
-        habitDBs.frequency.equals(HabitFrequency.weekly.index);
-
-    var monthDateRange = MonthDateRange();
-    var monthWhere = habitMarkDBs.created.isBetweenValues(
-          monthDateRange.from,
-          monthDateRange.to,
-        ) &
-        habitDBs.frequency.equals(HabitFrequency.monthly.index);
-
-    return (select(habitMarkDBs).join([
-      innerJoin(habitDBs, habitMarkDBs.habitId.equalsExp(habitDBs.id)),
-    ])
-          ..where(dayWhere | weekWhere | monthWhere))
-        .map((row) => row.readTable(habitMarkDBs))
-        .get();
+  Future<List<HabitMarkDB>> listHabitMarks() {
+    return select(habitMarkDBs).get();
   }
 
   Future<int> insertHabitMark(HabitMarkDBsCompanion habitMark) =>
@@ -117,13 +90,12 @@ class HabitRepository {
     var newOrder = await db.getMaxOrder() + 1;
     var habitId = await db.insertHabit(
       HabitDBsCompanion.insert(
-        title: habit.title,
-        order: newOrder,
-        frequency: habit.frequency,
-        periodType: habit.periodType,
-        periodValue: habit.periodValue,
-        weekStart: habit.weekStart
-      ),
+          title: habit.title,
+          order: newOrder,
+          frequency: habit.frequency,
+          periodType: habit.periodType,
+          periodValue: habit.periodValue,
+          weekStart: habit.weekStart),
     );
     return habit.copyWith(id: habitId, order: newOrder);
   }
@@ -142,16 +114,28 @@ class HabitRepository {
       )
       .toList();
 
-  Future<List<HabitMark>> listHabitMarksDependingOnFreq() async =>
-      (await db.listHabitMarksDependingOnFreq())
-          .map(
-            (hm) => HabitMark(
-              id: hm.id,
-              created: hm.created,
-              habitId: hm.habitId,
-            ),
-          )
-          .toList();
+  Future<List<HabitMark>> listHabitMarks() async => (await db.listHabitMarks())
+      .map(
+        (hm) => HabitMark(
+          id: hm.id,
+          created: hm.created,
+          habitId: hm.habitId,
+        ),
+      )
+      .toList();
+
+  Future<List<HabitMark>> listHabitMarksDependingOnFreq() async {
+    List<Habit> habits = await this.listHabits();
+    Map<int, DateRange> habitIdToFreq = Map.fromIterables(
+        habits.map((h) => h.id), habits.map((h) => h.dateRange));
+
+    var habitMarks = await this.listHabitMarks();
+
+    var habitMarksInDateRange = habitMarks
+        .where((hm) => habitIdToFreq[hm.habitId].containsDate(hm.created))
+        .toList();
+    return habitMarksInDateRange;
+  }
 
   Future<HabitMark> insertHabitMark(HabitMark habitMark) async =>
       habitMark.copyWith(

@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:yahta2/logic/habit/models.dart';
 import 'package:yahta2/logic/habit/utils.dart';
 
 main() {
@@ -17,6 +18,10 @@ main() {
       dateRange = WeekDateRange(now: DateTime(2020, 9, 1));
       expect(dateRange.from, DateTime(2020, 8, 31));
       expect(dateRange.to, DateTime(2020, 9, 6, 23, 59, 59));
+
+      dateRange = WeekDateRange(now: DateTime(2020, 9, 14), weekStartDay: Weekday.tuesday);
+      expect(dateRange.from, DateTime(2020, 9, 8));
+      expect(dateRange.to, DateTime(2020, 9, 14, 23, 59, 59));
     });
 
     test("Тестим дейт ренж месяца", () {

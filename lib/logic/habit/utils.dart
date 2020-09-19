@@ -8,6 +8,8 @@ abstract class DateRange {
   DateTime get from;
 
   DateTime get to;
+
+  containsDate(DateTime date) => date.isAfter(from) && date.isBefore(to);
 }
 
 class DayDateRange extends DateRange {
@@ -23,13 +25,13 @@ class WeekDateRange extends DateRange {
 
   WeekDateRange({now, this.weekStartDay = Weekday.monday}) : super(now: now);
 
-  DateTime get weekStart => now
-      .add(Duration(days: -now.weekday + 1))
-      .add(Duration(days: weekStartDay.index - 1));
+  List<int> get weekStartDays =>
+      List.generate(7, (index) => (weekStartDay.index + index) % 7 + 1);
 
-  DateTime get weekEnd => weekStart
-      .add(Duration(days: 6))
-      .add(Duration(days: weekStartDay.index - 1));
+  DateTime get weekStart =>
+      now.add(Duration(days: -weekStartDays.indexOf(now.weekday)));
+
+  DateTime get weekEnd => weekStart.add(Duration(days: 6));
 
   DateTime get from => DateTime(weekStart.year, weekStart.month, weekStart.day);
 

@@ -34,6 +34,8 @@ class _HabitFormPageState extends State<HabitFormPage> {
 
   @override
   void didChangeDependencies() {
+    super.didChangeDependencies();
+
     Habit habit = ModalRoute.of(context).settings.arguments;
 
     setState(() {
@@ -48,7 +50,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
 
     habitFrequencyTEC.text = hFrequency.toString();
     habitFrequencyTEC.addListener(
-      () => setState(() {
+          () => setState(() {
         if (habitFrequencyTEC.text.isNotEmpty) {
           hFrequency = int.parse(habitFrequencyTEC.text);
         }
@@ -57,7 +59,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
 
     habitPeriodValueTEC.text = hPeriodValue.toString();
     habitPeriodValueTEC.addListener(
-      () => setState(() {
+          () => setState(() {
         if (habitPeriodValueTEC.text.isNotEmpty) {
           hPeriodValue = int.parse(habitPeriodValueTEC.text);
         }

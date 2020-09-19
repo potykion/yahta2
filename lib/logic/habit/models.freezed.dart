@@ -171,9 +171,25 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
   @override
   final Weekday weekStart;
 
+  bool _diddateRange = false;
+  DateRange _dateRange;
+
+  @override
+  DateRange get dateRange {
+    if (_diddateRange == false) {
+      _diddateRange = true;
+      _dateRange = this.periodType == PeriodType.days
+          ? DayDateRange()
+          : this.periodType == PeriodType.weeks
+              ? WeekDateRange(weekStartDay: this.weekStart)
+              : MonthDateRange();
+    }
+    return _dateRange;
+  }
+
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Habit(id: $id, title: $title, order: $order, frequency: $frequency, periodValue: $periodValue, periodType: $periodType, weekStart: $weekStart)';
+    return 'Habit(id: $id, title: $title, order: $order, frequency: $frequency, periodValue: $periodValue, periodType: $periodType, weekStart: $weekStart, dateRange: $dateRange)';
   }
 
   @override
@@ -187,7 +203,8 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
       ..add(DiagnosticsProperty('frequency', frequency))
       ..add(DiagnosticsProperty('periodValue', periodValue))
       ..add(DiagnosticsProperty('periodType', periodType))
-      ..add(DiagnosticsProperty('weekStart', weekStart));
+      ..add(DiagnosticsProperty('weekStart', weekStart))
+      ..add(DiagnosticsProperty('dateRange', dateRange));
   }
 
   @override

@@ -36,14 +36,14 @@ class HabitVM {
 
   /// В зависимости от частоты определяет пора ли реализовывать привычку
   get timeToPerformHabit =>
-      this.frequency == HabitFrequency.daily &&
+      this.periodType == PeriodType.days &&
           // Через 4 часа - конец дня
           DateTime.now().hour >= 24 - 4 ||
-      this.frequency == HabitFrequency.weekly &&
+      this.periodType == PeriodType.weeks &&
           // Через 2 дня - конец недели (+ учет начала недели)
           DateTime.now().weekday == (weekStart.index + 5) % 7 + 1 ||
           DateTime.now().weekday == (weekStart.index + 6) % 7 + 1 ||
-      this.frequency == HabitFrequency.monthly &&
+      this.periodType == PeriodType.months &&
           // Через 10 дней - конец месяца
           DateTime.now().day >= 30 - 10;
 

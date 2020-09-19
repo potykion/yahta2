@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yahta2/logic/habit/models.dart';
-import 'package:yahta2/logic/habit/utils.dart';
 
 main() {
   group('Тестим генерацию строки "Частота + период"', () {

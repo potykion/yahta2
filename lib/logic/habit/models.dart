@@ -15,6 +15,13 @@ abstract class Habit with _$Habit {
     @Default(PeriodType.days) PeriodType periodType,
     @Default(Weekday.monday) Weekday weekStart,
   }) = _Habit;
+
+  @late
+  DateRange get dateRange => this.periodType == PeriodType.days
+      ? DayDateRange()
+      : this.periodType == PeriodType.weeks
+          ? WeekDateRange(weekStartDay: this.weekStart)
+          : MonthDateRange();
 }
 
 @freezed
@@ -117,28 +124,37 @@ class FrequencyAndPeriodStr {
 
   @override
   String toString() {
-    var frequencyStr = this.frequency == 1 ? "раз"
-        : this.frequency == 2 || this.frequency == 3 || this.frequency == 4 ? "раза"
-        : "раз";
+    var frequencyStr = this.frequency == 1
+        ? "раз"
+        : this.frequency == 2 || this.frequency == 3 || this.frequency == 4
+            ? "раза"
+            : "раз";
 
     var periodStr = this.periodType == PeriodType.days
         ? this.periodValue == 1
-          ? "день"
-          : this.periodValue == 2 || this.periodValue == 3 || this.periodValue == 4
-            ? "$periodValue дня"
-            : "$periodValue дней"
+            ? "день"
+            : this.periodValue == 2 ||
+                    this.periodValue == 3 ||
+                    this.periodValue == 4
+                ? "$periodValue дня"
+                : "$periodValue дней"
         : this.periodType == PeriodType.weeks
-          ? this.periodValue == 1 ? "неделю"
-          : this.periodValue == 2 || this.periodValue == 3 || this.periodValue == 4
-            ? "$periodValue недели"
-            : "$periodValue недель"
-        : this.periodType == PeriodType.months
-          ? this.periodValue == 1
-            ? "месяц"
-            : this.periodValue == 2 || this.periodValue == 3 || this.periodValue == 4
-              ? "$periodValue месяца"
-              : "$periodValue месяцев"
-        : "wtf: $this";
+            ? this.periodValue == 1
+                ? "неделю"
+                : this.periodValue == 2 ||
+                        this.periodValue == 3 ||
+                        this.periodValue == 4
+                    ? "$periodValue недели"
+                    : "$periodValue недель"
+            : this.periodType == PeriodType.months
+                ? this.periodValue == 1
+                    ? "месяц"
+                    : this.periodValue == 2 ||
+                            this.periodValue == 3 ||
+                            this.periodValue == 4
+                        ? "$periodValue месяца"
+                        : "$periodValue месяцев"
+                : "wtf: $this";
     return "$frequency $frequencyStr в $periodStr";
   }
 }
