@@ -90,6 +90,7 @@ class HabitCreated extends HabitEvent {
       order: this.order,
       title: this.title,
       frequency: this.frequency,
+      weekStart: this.weekStart
     );
   }
 }
