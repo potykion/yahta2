@@ -68,7 +68,7 @@ class MyDatabase extends _$MyDatabase {
       (delete(habitMarkDBs)..where((tbl) => tbl.habitId.equals(habitId))).go();
 
   Future deleteHabitMarksByIds(List<int> ids) =>
-      (delete(habitMarkDBs)..where((tbl) => tbl.habitId.isIn(ids))).go();
+      (delete(habitMarkDBs)..where((tbl) => tbl.id.isIn(ids))).go();
 
   Future updateHabit(HabitDB updatedHabit) =>
       update(habitDBs).replace(updatedHabit);

@@ -10,16 +10,15 @@ class HabitVM {
   final Weekday weekStart;
   final List<HabitMark> habitMarks;
 
-  HabitVM({
-    this.id,
-    this.title,
-    this.order,
-    this.frequency,
-    this.periodValue,
-    this.periodType,
-    this.weekStart,
-    this.habitMarks
-  });
+  HabitVM(
+      {this.id,
+      this.title,
+      this.order,
+      this.frequency,
+      this.periodValue,
+      this.periodType,
+      this.weekStart,
+      this.habitMarks});
 
   factory HabitVM.build(Habit habit, List<HabitMark> habitMarks) {
     return HabitVM(
@@ -35,21 +34,24 @@ class HabitVM {
   }
 
   /// В зависимости от частоты определяет пора ли реализовывать привычку
-  get timeToPerformHabit =>
-      this.periodType == PeriodType.days &&
-          // Через 4 часа - конец дня
-          DateTime.now().hour >= 24 - 4 ||
-      this.periodType == PeriodType.weeks &&
-          // Через 2 дня - конец недели (+ учет начала недели)
-          DateTime.now().weekday == (weekStart.index + 5) % 7 + 1 ||
-          DateTime.now().weekday == (weekStart.index + 6) % 7 + 1 ||
-      this.periodType == PeriodType.months &&
-          // Через 10 дней - конец месяца
-          DateTime.now().day >= 30 - 10;
+  get timeToPerformHabit {
+    if (this.periodType == PeriodType.days) {
+      // Через 4 часа - конец дня
+      return DateTime.now().hour >= 24 - 4;
+    } else if (this.periodType == PeriodType.weeks) {
+      // Через 2 дня - конец недели (+ учет начала недели)
+      return DateTime.now().weekday == (weekStart.index + 5) % 7 + 1 ||
+          DateTime.now().weekday == (weekStart.index + 6) % 7 + 1;
+    } else if (this.periodType == PeriodType.months) {
+      // Через 10 дней - конец месяца
+      return DateTime.now().day >= 30 - 10;
+    }
+    return false;
+  }
 
   get done => habitMarks.length == frequency;
-  get partiallyDone => habitMarks.length > 0 && habitMarks.length < frequency;
 
+  get partiallyDone => habitMarks.length > 0 && habitMarks.length != frequency;
 
   Habit toHabit() {
     return Habit(
