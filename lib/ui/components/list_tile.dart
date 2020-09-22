@@ -14,71 +14,77 @@ class HabitListTile extends StatelessWidget {
   const HabitListTile({Key key, this.vm}) : super(key: key);
 
   @override
-  Widget build(context) => Dismissible(
-        key: Key(vm.id.toString()),
-        child: Stack(
-          children: [
-            ListTile(
-              title: Text(
-                vm.title,
-                style: TextStyle(
-                  decoration: vm.done ? TextDecoration.lineThrough : null,
-                  color: vm.done ? Colors.grey : null,
-                  fontWeight: !vm.done && vm.timeToPerformHabit
-                      ? FontWeight.bold
-                      : null,
-                ),
-              ),
-              subtitle: vm.done || vm.frequency == 1
-                  ? null
-                  : Transform.rotate(
-                      angle: pi,
-                      child: LinearProgressIndicator(
-                        value: vm.habitMarks.length / vm.frequency,
-                      ),
-                    ),
-              trailing: PopupMenuButton<HabitAction>(
-                onSelected: (action) {
-                  if (action == HabitAction.delete) {
-                    context.bloc<HabitBloc>().add(HabitDeleted(vm.id));
-                  } else if (action == HabitAction.edit) {
-                    Navigator.pushNamed(
-                      context,
-                      HabitFormPage.routeName,
-                      arguments: vm.toHabit(),
-                    );
-                  }
-                },
-                itemBuilder: (BuildContext context) =>
-                    <PopupMenuEntry<HabitAction>>[
-                  const PopupMenuItem<HabitAction>(
-                    value: HabitAction.edit,
-                    child: Text('Изменить'),
-                  ),
-                  const PopupMenuItem<HabitAction>(
-                    value: HabitAction.delete,
-                    child: Text('Удалить'),
-                  ),
-                ],
-              ),
-            )
-          ],
+  Widget build(context) => withHabitDoneDismiss(
+        context,
+        ListTile(
+          title: Text(vm.title, style: vm.textStyle),
+          subtitle: vm.done || vm.frequency == 1
+              ? null
+              : HabitFrequencyProgress(vm: vm),
+          trailing: HabitListTileActions(vm: vm),
         ),
-        direction: vm.done
-            ? DismissDirection.startToEnd
-            : vm.partiallyDone
-                ? DismissDirection.horizontal
-                : DismissDirection.endToStart,
+      );
+
+  Dismissible withHabitDoneDismiss(BuildContext context, Widget child) =>
+      Dismissible(
+        key: Key(vm.id.toString()),
+        child: child,
+        direction: vm.swipeDirection,
         confirmDismiss: (DismissDirection dir) async {
           var event;
-          event = dir == DismissDirection.endToStart
-              ? HabitDone(vm.toHabit())
-              : dir == DismissDirection.startToEnd
-                  ? HabitUndone(vm.toHabit())
-                  : null;
+          if (dir == DismissDirection.endToStart) {
+            event = HabitDone(vm.toHabit());
+          } else if (dir == DismissDirection.startToEnd) {
+            event = HabitUndone(vm.toHabit());
+          }
           context.bloc<HabitBloc>().add(event);
 
           return false;
         },
+      );
+}
+
+class HabitListTileActions extends StatelessWidget {
+  const HabitListTileActions({
+    Key key,
+    @required this.vm,
+  }) : super(key: key);
+
+  final HabitVM vm;
+
+  @override
+  Widget build(BuildContext context) => PopupMenuButton<HabitAction>(
+        onSelected: (action) {
+          if (action == HabitAction.delete) {
+            context.bloc<HabitBloc>().add(HabitDeleted(vm.id));
+          } else if (action == HabitAction.edit) {
+            Navigator.pushNamed(
+              context,
+              HabitFormPage.routeName,
+              arguments: vm.toHabit(),
+            );
+          }
+        },
+        itemBuilder: (BuildContext context) => <PopupMenuEntry<HabitAction>>[
+          PopupMenuItem(value: HabitAction.edit, child: Text('Изменить')),
+          PopupMenuItem(value: HabitAction.delete, child: Text('Удалить')),
+        ],
+      );
+}
+
+class HabitFrequencyProgress extends StatelessWidget {
+  const HabitFrequencyProgress({
+    Key key,
+    @required this.vm,
+  }) : super(key: key);
+
+  final HabitVM vm;
+
+  @override
+  Widget build(BuildContext context) => Transform.rotate(
+        angle: pi,
+        child: LinearProgressIndicator(
+          value: vm.habitMarks.length / vm.frequency,
+        ),
       );
 }

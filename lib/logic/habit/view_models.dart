@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:yahta2/logic/habit/models.dart';
 
 class HabitVM {
@@ -52,6 +53,18 @@ class HabitVM {
   get done => habitMarks.length == frequency;
 
   get partiallyDone => habitMarks.length > 0 && habitMarks.length != frequency;
+
+  get swipeDirection => done
+      ? DismissDirection.startToEnd
+      : partiallyDone
+          ? DismissDirection.horizontal
+          : DismissDirection.endToStart;
+
+  get textStyle => TextStyle(
+        decoration: done ? TextDecoration.lineThrough : null,
+        color: done ? Colors.grey : null,
+        fontWeight: !done && timeToPerformHabit ? FontWeight.bold : null,
+      );
 
   Habit toHabit() {
     return Habit(
