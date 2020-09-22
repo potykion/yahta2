@@ -2,50 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:yahta2/logic/habit/models.dart';
 
 class HabitVM {
-  final int id;
-  final String title;
-  final int order;
-  final int frequency;
-  final int periodValue;
-  final PeriodType periodType;
-  final Weekday weekStart;
+  final Habit habit;
   final List<HabitMark> habitMarks;
 
-  HabitVM(
-      {this.id,
-      this.title,
-      this.order,
-      this.frequency,
-      this.periodValue,
-      this.periodType,
-      this.weekStart,
-      this.habitMarks});
+  HabitVM({this.habit, this.habitMarks});
 
-  factory HabitVM.build(Habit habit, List<HabitMark> habitMarks) {
-    return HabitVM(
-      id: habit.id,
-      title: habit.title,
-      order: habit.order,
-      frequency: habit.frequency,
-      periodValue: habit.periodValue,
-      periodType: habit.periodType,
-      weekStart: habit.weekStart,
-      habitMarks: habitMarks,
-    );
-  }
+  factory HabitVM.build(Habit habit, List<HabitMark> habitMarks) =>
+      HabitVM(habit: habit, habitMarks: habitMarks);
 
   /// В зависимости от частоты определяет пора ли реализовывать привычку
   get timeToPerformHabit {
-    if (this.periodType == PeriodType.days) {
-      // Через 4 часа - конец дня
-      return DateTime.now().hour >= 24 - 4;
-    } else if (this.periodType == PeriodType.weeks) {
-      // Через 2 дня - конец недели (+ учет начала недели)
-      return DateTime.now().weekday == (weekStart.index + 5) % 7 + 1 ||
-          DateTime.now().weekday == (weekStart.index + 6) % 7 + 1;
-    } else if (this.periodType == PeriodType.months) {
-      // Через 10 дней - конец месяца
-      return DateTime.now().day >= 30 - 10;
+    if (this.habit.periodType == PeriodType.days) {
+      // 4 часа (* periodValue) осталось до конца дня
+      return this.habit.dateRange.to.difference(DateTime.now()).inHours <
+          4 * this.habit.periodValue;
+    } else if (this.habit.periodType == PeriodType.weeks) {
+      // Через 2 дня (* periodValue) - конец недели
+      return this.habit.dateRange.to.difference(DateTime.now()).inDays <
+          2 * this.habit.periodValue;
+    } else if (this.habit.periodType == PeriodType.months) {
+      // Через 10 дней (* periodValue) - конец месяца
+      return this.habit.dateRange.to.difference(DateTime.now()).inDays <
+          10 * this.habit.periodValue;
     }
     return false;
   }
