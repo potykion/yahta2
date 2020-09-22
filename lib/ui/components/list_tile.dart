@@ -17,17 +17,15 @@ class HabitListTile extends StatelessWidget {
   Widget build(context) => withHabitDoneDismiss(
         context,
         ListTile(
-          title: Text(vm.title, style: vm.textStyle),
-          subtitle: vm.done || vm.frequency == 1
-              ? null
-              : HabitFrequencyProgress(vm: vm),
+          title: Text(vm.habit.title, style: vm.textStyle),
+          subtitle: vm.showProgress ? HabitFrequencyProgress(vm: vm) : null,
           trailing: HabitListTileActions(vm: vm),
         ),
       );
 
   Dismissible withHabitDoneDismiss(BuildContext context, Widget child) =>
       Dismissible(
-        key: Key(vm.id.toString()),
+        key: vm.key,
         child: child,
         direction: vm.swipeDirection,
         confirmDismiss: (DismissDirection dir) async {
@@ -56,7 +54,7 @@ class HabitListTileActions extends StatelessWidget {
   Widget build(BuildContext context) => PopupMenuButton<HabitAction>(
         onSelected: (action) {
           if (action == HabitAction.delete) {
-            context.bloc<HabitBloc>().add(HabitDeleted(vm.id));
+            context.bloc<HabitBloc>().add(HabitDeleted(vm.habit.id));
           } else if (action == HabitAction.edit) {
             Navigator.pushNamed(
               context,
@@ -84,7 +82,7 @@ class HabitFrequencyProgress extends StatelessWidget {
   Widget build(BuildContext context) => Transform.rotate(
         angle: pi,
         child: LinearProgressIndicator(
-          value: vm.habitMarks.length / vm.frequency,
+          value: vm.habitMarks.length / vm.habit.frequency,
         ),
       );
 }

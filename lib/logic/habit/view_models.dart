@@ -12,25 +12,30 @@ class HabitVM {
 
   /// В зависимости от частоты определяет пора ли реализовывать привычку
   get timeToPerformHabit {
-    if (this.habit.periodType == PeriodType.days) {
+    if (habit.periodType == PeriodType.days) {
       // 4 часа (* periodValue) осталось до конца дня
-      return this.habit.dateRange.to.difference(DateTime.now()).inHours <
-          4 * this.habit.periodValue;
-    } else if (this.habit.periodType == PeriodType.weeks) {
+      return habit.dateRange.to.difference(DateTime.now()).inHours <
+          4 * habit.periodValue;
+    } else if (habit.periodType == PeriodType.weeks) {
       // Через 2 дня (* periodValue) - конец недели
-      return this.habit.dateRange.to.difference(DateTime.now()).inDays <
-          2 * this.habit.periodValue;
-    } else if (this.habit.periodType == PeriodType.months) {
+      return habit.dateRange.to.difference(DateTime.now()).inDays <
+          2 * habit.periodValue;
+    } else if (habit.periodType == PeriodType.months) {
       // Через 10 дней (* periodValue) - конец месяца
-      return this.habit.dateRange.to.difference(DateTime.now()).inDays <
-          10 * this.habit.periodValue;
+      return habit.dateRange.to.difference(DateTime.now()).inDays <
+          10 * habit.periodValue;
     }
     return false;
   }
 
-  get done => habitMarks.length == frequency;
+  get done => habitMarks.length == habit.frequency;
 
-  get partiallyDone => habitMarks.length > 0 && habitMarks.length != frequency;
+  get partiallyDone =>
+      habitMarks.length > 0 && habitMarks.length != habit.frequency;
+
+  get showProgress => !done && habit.frequency != 1;
+
+  get key => Key(habit.id.toString());
 
   get swipeDirection => done
       ? DismissDirection.startToEnd
@@ -44,15 +49,5 @@ class HabitVM {
         fontWeight: !done && timeToPerformHabit ? FontWeight.bold : null,
       );
 
-  Habit toHabit() {
-    return Habit(
-      id: id,
-      title: title,
-      order: order,
-      frequency: frequency,
-      periodValue: periodValue,
-      periodType: periodType,
-      weekStart: weekStart,
-    );
-  }
+  Habit toHabit() => this.habit;
 }

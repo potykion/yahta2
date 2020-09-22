@@ -36,12 +36,7 @@ class _HabitListPageState extends State<HabitListPage> {
                 .bloc<HabitBloc>()
                 .add(HabitReordered(oldIndex, newIndex)),
             children: state.habitVMs
-                .map(
-                  (vm) => HabitListTile(
-                    vm: vm,
-                    key: Key(vm.id.toString()),
-                  ),
-                )
+                .map((vm) => HabitListTile(vm: vm, key: vm.key))
                 .toList(),
           ),
         ),
