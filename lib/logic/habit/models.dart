@@ -18,10 +18,10 @@ abstract class Habit with _$Habit {
 
   @late
   DateRange get dateRange => this.periodType == PeriodType.days
-      ? DayDateRange()
+      ? DayDateRange(value: this.periodValue)
       : this.periodType == PeriodType.weeks
-          ? WeekDateRange(weekStartDay: this.weekStart)
-          : MonthDateRange();
+          ? WeekDateRange(weekStartDay: this.weekStart, value: this.periodValue)
+          : MonthDateRange(value: this.periodValue);
 }
 
 @freezed
@@ -68,21 +68,6 @@ extension HabitFrequencyToStr on HabitFrequency {
     }
     if (this == HabitFrequency.monthly) {
       return "Ежемесячно";
-    }
-    throw "Dunno how to handle: $this";
-  }
-}
-
-extension HabitFrequencyToDateRange on HabitFrequency {
-  DateRange toDateRange() {
-    if (this == HabitFrequency.daily) {
-      return DayDateRange();
-    }
-    if (this == HabitFrequency.weekly) {
-      return WeekDateRange();
-    }
-    if (this == HabitFrequency.monthly) {
-      return MonthDateRange();
     }
     throw "Dunno how to handle: $this";
   }

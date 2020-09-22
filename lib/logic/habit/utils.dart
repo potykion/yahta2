@@ -2,8 +2,11 @@ import 'models.dart';
 
 abstract class DateRange {
   final DateTime now;
+  final int value;
 
-  DateRange({now}) : this.now = now ?? DateTime.now();
+  DateRange({now, value})
+      : this.now = now ?? DateTime.now(),
+        this.value = value ?? 1;
 
   DateTime get from;
 
@@ -13,25 +16,28 @@ abstract class DateRange {
 }
 
 class DayDateRange extends DateRange {
-  DayDateRange({now}) : super(now: now);
+  DayDateRange({now, value}) : super(now: now, value: value);
 
   DateTime get from => DateTime(now.year, now.month, now.day);
 
-  DateTime get to => DateTime(now.year, now.month, now.day, 23, 59, 59);
+  DateTime get to => DateTime(now.year, now.month, now.day, 23, 59, 59)
+      .add(Duration(days: value - 1));
 }
 
 class WeekDateRange extends DateRange {
   Weekday weekStartDay;
 
-  WeekDateRange({now, this.weekStartDay = Weekday.monday}) : super(now: now);
+  WeekDateRange({now, value, this.weekStartDay = Weekday.monday})
+      : super(now: now, value: value);
 
-  List<int> get weekStartDays =>
+  List<int> get weekDaysFromStart =>
       List.generate(7, (index) => (weekStartDay.index + index) % 7 + 1);
 
   DateTime get weekStart =>
-      now.add(Duration(days: -weekStartDays.indexOf(now.weekday)));
+      now.add(Duration(days: -weekDaysFromStart.indexOf(now.weekday)));
 
-  DateTime get weekEnd => weekStart.add(Duration(days: 6));
+  DateTime get weekEnd =>
+      weekStart.add(Duration(days: 6)).add(Duration(days: 7 * (value - 1)));
 
   DateTime get from => DateTime(weekStart.year, weekStart.month, weekStart.day);
 
@@ -40,12 +46,13 @@ class WeekDateRange extends DateRange {
 }
 
 class MonthDateRange extends DateRange {
-  MonthDateRange({now}) : super(now: now);
+  MonthDateRange({now, value}) : super(now: now, value: value);
 
   DateTime get from => DateTime(now.year, now.month, 1);
 
   // 0 - end of the previous mouth
-  DateTime get to => DateTime(now.year, now.month + 1, 0, 23, 59, 59);
+  DateTime get to =>
+      DateTime(now.year, now.month + 1 + value - 1, 0, 23, 59, 59);
 }
 
 simpleEquals(a, b) => a == b;
