@@ -4,6 +4,7 @@ import 'package:moor/moor.dart';
 import 'package:moor_ffi/moor_ffi.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yahta2/logic/habit/utils.dart';
 
 import 'models.dart';
@@ -79,6 +80,14 @@ class MyDatabase extends _$MyDatabase {
     var row = await customSelect(query).getSingle();
     return row.data["max_order"] as int;
   }
+}
+
+class SettingsRepository {
+  Future setShowDone(bool showDone) async =>
+      (await SharedPreferences.getInstance()).setBool("showDone", showDone);
+
+  Future<bool> getShowDone() async =>
+      (await SharedPreferences.getInstance()).getBool("showDone");
 }
 
 class HabitRepository {

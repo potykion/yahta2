@@ -19,26 +19,45 @@ class _HabitListPageState extends State<HabitListPage> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Text("План на сегодня"),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () =>
-                  Navigator.pushNamed(context, HabitFormPage.routeName),
-            )
-          ],
+  Widget build(BuildContext context) => BlocBuilder<HabitBloc, HabitState>(
+        builder: (_, state) => Scaffold(
+          appBar: buildAppBar(context, state),
+          body: buildReorderableListView(context, state),
         ),
-        body: BlocBuilder<HabitBloc, HabitState>(
-          builder: (_, state) => ReorderableListView(
-            onReorder: (oldIndex, newIndex) => context
-                .bloc<HabitBloc>()
-                .add(HabitReordered(oldIndex, newIndex)),
-            children: state.habitVMs
-                .map((vm) => HabitListTile(vm: vm, key: vm.key))
-                .toList(),
+      );
+
+  ReorderableListView buildReorderableListView(
+    BuildContext context,
+    HabitState state,
+  ) =>
+      ReorderableListView(
+        onReorder: (oldIndex, newIndex) => context.bloc<HabitBloc>().add(
+              HabitReordered(oldIndex, newIndex),
+            ),
+        children: state.habitVMs
+            .map((vm) => HabitListTile(vm: vm, key: vm.key))
+            .toList(),
+      );
+
+  AppBar buildAppBar(
+    BuildContext context,
+    HabitState state,
+  ) =>
+      AppBar(
+        title: Text("План на сегодня"),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () =>
+                context.bloc<HabitBloc>().add(ToggleShowDoneEvent()),
+            icon: state.showDone
+                ? Icon(Icons.visibility_off)
+                : Icon(Icons.visibility),
           ),
-        ),
+          IconButton(
+            icon: Icon(Icons.add),
+            onPressed: () =>
+                Navigator.pushNamed(context, HabitFormPage.routeName),
+          )
+        ],
       );
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yahta2/logic/habit/blocs.dart';
 import 'package:yahta2/logic/habit/db.dart';
 import 'package:yahta2/ui/pages/form.dart';
@@ -39,29 +40,37 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   @override
-  Widget build(context) => MultiProvider(
+  Widget build(context) =>
+      MultiProvider(
         providers: [
           Provider<MyDatabase>(create: (_) => MyDatabase()),
           Provider<HabitRepository>(
             create: (context) => HabitRepository(context.read<MyDatabase>()),
           ),
+          Provider<SettingsRepository>(create: (_) => SettingsRepository()),
           BlocProvider<HabitBloc>(
-            create: (context) => HabitBloc(context.read<HabitRepository>()),
+            create: (context) =>
+                HabitBloc(
+                  habitRepo: context.read<HabitRepository>(),
+                  settingsRepository: context.read<SettingsRepository>(),
+                ),
           )
         ],
         child: MaterialApp(
           home: HabitListPage(),
           theme: ThemeData(
-            primarySwatch: Colors.yellow,
-            inputDecorationTheme: InputDecorationTheme(
-              border: InputBorder.none,
-            ),
-            chipTheme: Theme.of(context).chipTheme.copyWith(
-                  secondaryLabelStyle: TextStyle(color: Colors.black),
-                  secondarySelectedColor: Colors.yellow,
-                ),
-            backgroundColor: Colors.yellow[100]
-          ),
+              primarySwatch: Colors.yellow,
+              inputDecorationTheme: InputDecorationTheme(
+                border: InputBorder.none,
+              ),
+              chipTheme: Theme
+                  .of(context)
+                  .chipTheme
+                  .copyWith(
+                secondaryLabelStyle: TextStyle(color: Colors.black),
+                secondarySelectedColor: Colors.yellow,
+              ),
+              backgroundColor: Colors.yellow[100]),
           routes: {
             HabitListPage.routeName: (_) => HabitListPage(),
             HabitFormPage.routeName: (_) => HabitFormPage(),

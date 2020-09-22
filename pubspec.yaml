@@ -52,6 +52,8 @@ dependencies:
   # груп-бай и все такое
   collection: ^1.14.13
 
+  # персистенс мелочи
+  shared_preferences: ^0.5.11
 
 
 dev_dependencies:

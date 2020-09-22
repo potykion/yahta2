@@ -4,6 +4,7 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:yahta2/logic/habit/db.dart';
 import 'package:yahta2/logic/habit/utils.dart';
@@ -12,6 +13,8 @@ import 'package:yahta2/logic/habit/view_models.dart';
 import 'models.dart';
 
 class HabitEvent {}
+
+class ToggleShowDoneEvent extends HabitEvent {}
 
 class HabitReordered extends HabitEvent {
   final int oldIndex;
@@ -85,13 +88,12 @@ class HabitCreated extends HabitEvent {
 
   Habit toHabit() {
     return Habit(
-      periodValue: this.periodValue,
-      periodType: this.periodType,
-      order: this.order,
-      title: this.title,
-      frequency: this.frequency,
-      weekStart: this.weekStart
-    );
+        periodValue: this.periodValue,
+        periodType: this.periodType,
+        order: this.order,
+        title: this.title,
+        frequency: this.frequency,
+        weekStart: this.weekStart);
   }
 }
 
@@ -100,8 +102,13 @@ class HabitsLoadStarted extends HabitEvent {}
 class HabitState {
   final List<Habit> habits;
   final List<HabitMark> habitMarks;
+  final bool showDone;
 
-  HabitState({this.habits = const [], this.habitMarks = const []});
+  HabitState({
+    this.habits = const [],
+    this.habitMarks = const [],
+    this.showDone = true,
+  });
 
   Map<int, List<HabitMark>> get idHabitMarks =>
       groupBy(habitMarks, (HabitMark hm) => hm.habitId);
@@ -111,18 +118,26 @@ class HabitState {
 
   List<HabitVM> get habitVMs => orderedHabits
       .map((h) => HabitVM.build(h, idHabitMarks[h.id] ?? []))
+      .where((vm) => showDone || !vm.done)
       .toList();
 
-  copyWith({List<Habit> habits, List<HabitMark> habitMarks}) => HabitState(
+  copyWith({
+    List<Habit> habits,
+    List<HabitMark> habitMarks,
+    bool showDone,
+  }) =>
+      HabitState(
         habits: habits ?? this.habits,
         habitMarks: habitMarks ?? this.habitMarks,
+        showDone: showDone ?? this.showDone,
       );
 }
 
 class HabitBloc extends Bloc<HabitEvent, HabitState> {
-  final HabitRepository _repo;
+  final HabitRepository habitRepo;
+  final SettingsRepository settingsRepository;
 
-  HabitBloc(this._repo);
+  HabitBloc({this.habitRepo, this.settingsRepository});
 
   @override
   HabitState get initialState => HabitState();
@@ -131,13 +146,18 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
   Stream<HabitState> mapEventToState(HabitEvent event) async* {
     if (event is HabitsLoadStarted) {
       yield state.copyWith(
-        habits: await _repo.listHabits(),
-        habitMarks: await _repo.listHabitMarksDependingOnFreq(),
+        habits: await habitRepo.listHabits(),
+        habitMarks: await habitRepo.listHabitMarksDependingOnFreq(),
+        showDone: await settingsRepository.getShowDone(),
       );
+    } else if (event is ToggleShowDoneEvent) {
+      var newShowDone = !state.showDone;
+      await settingsRepository.setShowDone(newShowDone);
+      yield state.copyWith(showDone: newShowDone);
     } else if (event is HabitCreated) {
       yield state.copyWith(habits: [
         ...state.habits,
-        await _repo.insertHabit(event.toHabit()),
+        await habitRepo.insertHabit(event.toHabit()),
       ]);
     } else if (event is HabitDone) {
       var sounds = [
@@ -151,7 +171,7 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
       );
       yield state.copyWith(habitMarks: [
         ...state.habitMarks,
-        await _repo.insertHabitMark(
+        await habitRepo.insertHabitMark(
             HabitMark(habitId: event.habit.id, created: DateTime.now())),
       ]);
     } else if (event is HabitUndone) {
@@ -170,14 +190,14 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
                 ..sort((hm2, hm1) => hm1.created.compareTo(hm2.created)))
               .map((hm) => hm.id)
               .first;
-      await _repo.deleteHabitMarks([habitMarkIdToDelete]);
+      await habitRepo.deleteHabitMarks([habitMarkIdToDelete]);
 
       var habitMarksWithoutDeleted = state.habitMarks
         ..removeWhere((hm) => hm.id == habitMarkIdToDelete);
 
       yield state.copyWith(habitMarks: habitMarksWithoutDeleted);
     } else if (event is HabitDeleted) {
-      await _repo.deleteHabitAndMarks(event.habitId);
+      await habitRepo.deleteHabitAndMarks(event.habitId);
       yield state.copyWith(
         habits: state.habits.where((h) => h.id != event.habitId).toList(),
         habitMarks: state.habitMarks
@@ -188,7 +208,7 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
       yield state.copyWith(
         habits: [
           ...state.habits.where((h) => h.id != event.id),
-          await _repo.updateHabit(
+          await habitRepo.updateHabit(
             event.updateHabit(
               state.habits.where((h) => h.id == event.id).first,
             ),
@@ -201,7 +221,7 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
         event.oldIndex,
         event.newIndex,
       );
-      await Future.wait(newHabits.map((h) => _repo.updateHabit(h)));
+      await Future.wait(newHabits.map((h) => habitRepo.updateHabit(h)));
       yield state.copyWith(habits: newHabits);
     } else {
       throw "UNHANDLED EVENT: $event";
