@@ -29,11 +29,7 @@ class _HabitListPageState extends State<HabitListPage> {
         ),
       );
 
-  AppBar buildAppBar(
-    BuildContext context,
-    HabitState state,
-  ) =>
-      AppBar(
+  AppBar buildAppBar(BuildContext context, HabitState state) => AppBar(
         title: Text("План на сегодня"),
         actions: <Widget>[
           IconButton(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:yahta2/logic/habit/blocs.dart';
 import 'package:yahta2/logic/habit/models.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:yahta2/ui/components/form.dart';
 
 class HabitFormPage extends StatefulWidget {
   static const routeName = "/form";
@@ -31,7 +32,6 @@ class _HabitFormPageState extends State<HabitFormPage> {
   PeriodType hPeriodType = PeriodType.days;
   Weekday hWeekStart = Weekday.monday;
 
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -50,7 +50,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
 
     habitFrequencyTEC.text = hFrequency.toString();
     habitFrequencyTEC.addListener(
-          () => setState(() {
+      () => setState(() {
         if (habitFrequencyTEC.text.isNotEmpty) {
           hFrequency = int.parse(habitFrequencyTEC.text);
         }
@@ -59,7 +59,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
 
     habitPeriodValueTEC.text = hPeriodValue.toString();
     habitPeriodValueTEC.addListener(
-          () => setState(() {
+      () => setState(() {
         if (habitPeriodValueTEC.text.isNotEmpty) {
           hPeriodValue = int.parse(habitPeriodValueTEC.text);
         }
@@ -93,85 +93,65 @@ class _HabitFormPageState extends State<HabitFormPage> {
         ),
       );
 
-  Column buildForm(BuildContext context) {
-    var children = [
-      Row(
-        children: <Widget>[
-          Expanded(
-            child: TextFormField(
-              decoration: InputDecoration(labelText: "Чем займешься?"),
-              controller: habitTitleTEC,
-              autofocus: true,
-            ),
-          ),
-        ],
-      ),
-      TextFormField(
-        decoration: InputDecoration(
-          labelText: "Частота",
-          hintText: "Сколько раз в период?",
-        ),
-        controller: habitFrequencyTEC,
-        keyboardType: TextInputType.number,
-      ),
-      Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+  Column buildForm(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Flexible(
-            child: TextFormField(
-              decoration: InputDecoration(labelText: "Период"),
-              controller: habitPeriodValueTEC,
-              keyboardType: TextInputType.number,
-            ),
+          HabitTitleInput(habitTitleTEC: habitTitleTEC),
+          HabitFrequencyInput(habitFrequencyTEC: habitFrequencyTEC),
+          buildPeriodInput(),
+          HabitFrequencyAndPeriodLabel(
+            frequencyAndPeriodStr: frequencyAndPeriodStr,
           ),
-          Expanded(
-            flex: 4,
-            child: DropdownButton<PeriodType>(
-              isExpanded: true,
-              underline: Container(),
-              value: hPeriodType,
-              items: PeriodType.values
-                  .map(
-                    (p) => DropdownMenuItem<PeriodType>(
-                      child: Text(p.toVerboseStr(hPeriodValue)),
-                      value: p,
-                    ),
-                  )
-                  .toList(),
-              onChanged: (periodType) =>
-                  setState(() => hPeriodType = periodType),
+          hPeriodType == PeriodType.weeks ? buildWeekStartInput() : Container()
+        ],
+      );
+
+  DropdownButtonFormField<Weekday> buildWeekStartInput() {
+    return DropdownButtonFormField<Weekday>(
+      decoration: InputDecoration(labelText: "Начало недели"),
+      isExpanded: true,
+      value: hWeekStart,
+      items: Weekday.values
+          .map(
+            (w) => DropdownMenuItem<Weekday>(
+              child: Text(w.toVerboseStr()),
+              value: w,
             ),
           )
-        ],
-      ),
-      Text(
-        "Частота + период: $frequencyAndPeriodStr",
-        style: Theme.of(context).textTheme.caption,
-      ),
-      SizedBox(
-        height: 16,
-      ),
-    ];
-    if (hPeriodType == PeriodType.weeks) {
-      children.add(DropdownButtonFormField<Weekday>(
-        decoration: InputDecoration(labelText: "Начало недели"),
-        isExpanded: true,
-        value: hWeekStart,
-        items: Weekday.values
-            .map(
-              (w) => DropdownMenuItem<Weekday>(
-                child: Text(w.toVerboseStr()),
-                value: w,
-              ),
-            )
-            .toList(),
-        onChanged: (w) => setState(() => hWeekStart = w),
-      ));
-    }
+          .toList(),
+      onChanged: (w) => setState(() => hWeekStart = w),
+    );
+  }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: children,
+  Row buildPeriodInput() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Flexible(
+          child: TextFormField(
+            decoration: InputDecoration(labelText: "Период"),
+            controller: habitPeriodValueTEC,
+            keyboardType: TextInputType.number,
+          ),
+        ),
+        Expanded(
+          flex: 4,
+          child: DropdownButton<PeriodType>(
+            isExpanded: true,
+            underline: Container(),
+            value: hPeriodType,
+            items: PeriodType.values
+                .map(
+                  (p) => DropdownMenuItem<PeriodType>(
+                    child: Text(p.toVerboseStr(hPeriodValue)),
+                    value: p,
+                  ),
+                )
+                .toList(),
+            onChanged: (periodType) => setState(() => hPeriodType = periodType),
+          ),
+        )
+      ],
     );
   }
 

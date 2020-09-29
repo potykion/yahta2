@@ -1,26 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:yahta2/logic/habit/models.dart';
 
-class HabitFormCard extends StatefulWidget {
-  final int id;
-  final String title;
-  final HabitFrequency frequency;
+class HabitTitleInput extends StatelessWidget {
+  const HabitTitleInput({
+    Key key,
+    @required this.habitTitleTEC,
+  }) : super(key: key);
 
-  const HabitFormCard({Key key, this.id, this.title, this.frequency})
-      : super(key: key);
-
-  @override
-  _HabitFormCardState createState() => _HabitFormCardState();
-}
-
-class _HabitFormCardState extends State<HabitFormCard> {
-
+  final TextEditingController habitTitleTEC;
 
   @override
-  Widget build(context) => Card(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          child: Container()
-        ),
+  Widget build(BuildContext context) => TextFormField(
+        decoration: InputDecoration(labelText: "Чем займешься?"),
+        controller: habitTitleTEC,
+        autofocus: true,
       );
 }
+
+class HabitFrequencyInput extends StatelessWidget {
+  const HabitFrequencyInput({
+    Key key,
+    @required this.habitFrequencyTEC,
+  }) : super(key: key);
+
+  final TextEditingController habitFrequencyTEC;
+
+  @override
+  Widget build(BuildContext context) => TextFormField(
+        decoration: InputDecoration(
+          labelText: "Частота",
+          hintText: "Сколько раз в период?",
+        ),
+        controller: habitFrequencyTEC,
+        keyboardType: TextInputType.number,
+      );
+}
+
+class HabitFrequencyAndPeriodLabel extends StatelessWidget {
+  const HabitFrequencyAndPeriodLabel({
+    Key key,
+    @required this.frequencyAndPeriodStr,
+  }) : super(key: key);
+
+  final String frequencyAndPeriodStr;
+
+  @override
+  Widget build(BuildContext context) => Column(
+        children: [
+          Text(
+            "Частота + период: $frequencyAndPeriodStr",
+            style: Theme.of(context).textTheme.caption,
+          ),
+          SizedBox(height: 16),
+        ],
+      );
+}
+
+
