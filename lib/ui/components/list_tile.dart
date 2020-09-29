@@ -11,7 +11,7 @@ enum HabitAction { edit, delete }
 class HabitListTile extends StatelessWidget {
   final HabitVM vm;
 
-  const HabitListTile({Key key, this.vm}) : super(key: key);
+  const HabitListTile({this.vm});
 
   @override
   Widget build(context) => withHabitDoneDismiss(

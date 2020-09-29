@@ -22,21 +22,11 @@ class _HabitListPageState extends State<HabitListPage> {
   Widget build(BuildContext context) => BlocBuilder<HabitBloc, HabitState>(
         builder: (_, state) => Scaffold(
           appBar: buildAppBar(context, state),
-          body: buildReorderableListView(context, state),
+          body: ListView(
+            children:
+                state.habitVMs.map((vm) => HabitListTile(vm: vm)).toList(),
+          ),
         ),
-      );
-
-  ReorderableListView buildReorderableListView(
-    BuildContext context,
-    HabitState state,
-  ) =>
-      ReorderableListView(
-        onReorder: (oldIndex, newIndex) => context.bloc<HabitBloc>().add(
-              HabitReordered(oldIndex, newIndex),
-            ),
-        children: state.habitVMs
-            .map((vm) => HabitListTile(vm: vm, key: vm.key))
-            .toList(),
       );
 
   AppBar buildAppBar(

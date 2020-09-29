@@ -16,13 +16,6 @@ class HabitEvent {}
 
 class ToggleShowDoneEvent extends HabitEvent {}
 
-class HabitReordered extends HabitEvent {
-  final int oldIndex;
-  final int newIndex;
-
-  HabitReordered(this.oldIndex, this.newIndex);
-}
-
 class HabitUpdated extends HabitEvent {
   final int id;
   final String title;
@@ -215,14 +208,6 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
           ),
         ],
       );
-    } else if (event is HabitReordered) {
-      var newHabits = reorderHabits(
-        state.orderedHabits,
-        event.oldIndex,
-        event.newIndex,
-      );
-      await Future.wait(newHabits.map((h) => habitRepo.updateHabit(h)));
-      yield state.copyWith(habits: newHabits);
     } else {
       throw "UNHANDLED EVENT: $event";
     }
