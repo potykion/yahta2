@@ -224,3 +224,46 @@ class _HabitWeekStartInputState extends State<HabitWeekStartInput> {
     );
   }
 }
+
+typedef OnStartTimeChange = void Function(TimeOfDay time);
+
+class HabitStartTimeInput extends StatefulWidget {
+  final TimeOfDay initialStartTime;
+  final OnStartTimeChange onStartTimeChange;
+
+  const HabitStartTimeInput(
+      {Key key, this.initialStartTime, this.onStartTimeChange})
+      : super(key: key);
+
+  @override
+  _HabitStartTimeInputState createState() => _HabitStartTimeInputState();
+}
+
+class _HabitStartTimeInputState extends State<HabitStartTimeInput> {
+  TextEditingController controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    controller.text = widget.initialStartTime.format(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(labelText: "Когда делать привычку?"),
+      readOnly: true,
+      onTap: () async {
+        TimeOfDay selectedTime = await showTimePicker(
+          context: context,
+          initialTime: widget.initialStartTime,
+        );
+        if (selectedTime != null) {
+          controller.text = selectedTime.format(context);
+          widget.onStartTimeChange(selectedTime);
+        }
+      },
+    );
+  }
+}

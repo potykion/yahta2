@@ -7,9 +7,7 @@ import 'package:yahta2/ui/components/form.dart';
 class HabitFormPage extends StatefulWidget {
   static const routeName = "/form";
 
-  const HabitFormPage({
-    Key key,
-  }) : super(key: key);
+  const HabitFormPage({Key key}) : super(key: key);
 
   @override
   _HabitFormPageState createState() => _HabitFormPageState();
@@ -55,39 +53,38 @@ class _HabitFormPageState extends State<HabitFormPage> {
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          child: buildForm(context),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              HabitTitleInput(
+                initialTitle: hTitle,
+                onTitleChange: (title) => setState(() => hTitle = title),
+              ),
+              HabitFrequencyInput(
+                initialFreq: hFrequency,
+                onFreqChange: (freq) => setState(() => hFrequency = freq),
+              ),
+              HabitPeriodInput(
+                initialPeriodValue: hPeriodValue,
+                initialPeriodType: hPeriodType,
+                onPeriodValueChange: (v) => setState(() => hPeriodValue = v),
+                onPeriodTypeChange: (t) => setState(() => hPeriodType = t),
+              ),
+              HabitFrequencyAndPeriodLabel(
+                frequency: hFrequency,
+                periodValue: hPeriodValue,
+                periodType: hPeriodType,
+              ),
+              hPeriodType == PeriodType.weeks
+                  ? HabitWeekStartInput(
+                      initialWeekStart: hWeekStart,
+                      onWeekStartChange: (w) => setState(() => hWeekStart = w),
+                    )
+                  : Container(),
+              HabitStartTimeInput()
+            ],
+          ),
         ),
-      );
-
-  Column buildForm(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          HabitTitleInput(
-            initialTitle: hTitle,
-            onTitleChange: (title) => setState(() => hTitle = title),
-          ),
-          HabitFrequencyInput(
-            initialFreq: hFrequency,
-            onFreqChange: (freq) => setState(() => hFrequency = freq),
-          ),
-          HabitPeriodInput(
-            initialPeriodValue: hPeriodValue,
-            initialPeriodType: hPeriodType,
-            onPeriodValueChange: (v) => setState(() => hPeriodValue = v),
-            onPeriodTypeChange: (t) => setState(() => hPeriodType = t),
-          ),
-          HabitFrequencyAndPeriodLabel(
-            frequency: hFrequency,
-            periodValue: hPeriodValue,
-            periodType: hPeriodType,
-          ),
-          hPeriodType == PeriodType.weeks
-              ? HabitWeekStartInput(
-                  initialWeekStart: hWeekStart,
-                  onWeekStartChange: (w) => setState(() => hWeekStart = w),
-                )
-              : Container()
-        ],
       );
 
   HabitEvent buildHabitEvent() {
