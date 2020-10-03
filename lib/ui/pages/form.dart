@@ -7,10 +7,6 @@ import 'package:yahta2/ui/components/form.dart';
 class HabitFormPage extends StatefulWidget {
   static const routeName = "/form";
 
-  final int id = 1;
-  final String title = "a";
-  final HabitFrequency frequency = HabitFrequency.monthly;
-
   const HabitFormPage({
     Key key,
   }) : super(key: key);
@@ -21,32 +17,34 @@ class HabitFormPage extends StatefulWidget {
 
 class _HabitFormPageState extends State<HabitFormPage> {
   // TEC = TextEditingController
-  TextEditingController habitTitleTEC = TextEditingController();
   TextEditingController habitFrequencyTEC = TextEditingController();
   TextEditingController habitPeriodValueTEC = TextEditingController();
 
   // h = habit
-  int hId;
+  String hTitle;
   int hFrequency = 1;
   int hPeriodValue = 1;
   PeriodType hPeriodType = PeriodType.days;
   Weekday hWeekStart = Weekday.monday;
 
+  Habit get habit => ModalRoute.of(context).settings.arguments;
+
+  String get frequencyAndPeriodStr => FrequencyAndPeriodStr(
+    frequency: hFrequency,
+    periodValue: hPeriodValue,
+    periodType: hPeriodType,
+  ).toString();
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    Habit habit = ModalRoute.of(context).settings.arguments;
-
     setState(() {
-      hId = habit?.id;
       hFrequency = habit?.frequency ?? hFrequency;
       hPeriodValue = habit?.periodValue ?? hPeriodValue;
       hPeriodType = habit?.periodType ?? hPeriodType;
       hWeekStart = habit?.weekStart ?? hWeekStart;
     });
-
-    habitTitleTEC.text = habit?.title;
 
     habitFrequencyTEC.text = hFrequency.toString();
     habitFrequencyTEC.addListener(
@@ -67,11 +65,6 @@ class _HabitFormPageState extends State<HabitFormPage> {
     );
   }
 
-  String get frequencyAndPeriodStr => FrequencyAndPeriodStr(
-        frequency: hFrequency,
-        periodValue: hPeriodValue,
-        periodType: hPeriodType,
-      ).toString();
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -96,7 +89,10 @@ class _HabitFormPageState extends State<HabitFormPage> {
   Column buildForm(BuildContext context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          HabitTitleInput(habitTitleTEC: habitTitleTEC),
+          HabitTitleInput(
+            initialTitle: habit?.title,
+            onTitleChange: (title) => setState(() => hTitle = title),
+          ),
           HabitFrequencyInput(habitFrequencyTEC: habitFrequencyTEC),
           buildPeriodInput(),
           HabitFrequencyAndPeriodLabel(
@@ -123,6 +119,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
     );
   }
 
+  // todo create stateful widget with initialPeriodValue/Type + onPeriodValue/TypeChange
   Row buildPeriodInput() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -156,17 +153,17 @@ class _HabitFormPageState extends State<HabitFormPage> {
   }
 
   HabitEvent buildHabitEvent() {
-    return hId != null
+    return habit?.id != null
         ? HabitUpdated(
-            id: hId,
-            title: habitTitleTEC.text,
+            id: habit?.id,
+            title: hTitle,
             frequency: hFrequency,
             periodValue: hPeriodValue,
             periodType: hPeriodType,
             weekStart: hWeekStart,
           )
         : HabitCreated(
-            title: habitTitleTEC.text,
+            title: hTitle,
             frequency: hFrequency,
             periodValue: hPeriodValue,
             periodType: hPeriodType,

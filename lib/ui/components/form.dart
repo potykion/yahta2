@@ -1,12 +1,27 @@
 import 'package:flutter/material.dart';
 
-class HabitTitleInput extends StatelessWidget {
-  const HabitTitleInput({
-    Key key,
-    @required this.habitTitleTEC,
-  }) : super(key: key);
+typedef OnTitleChange = void Function(String title);
 
-  final TextEditingController habitTitleTEC;
+class HabitTitleInput extends StatefulWidget {
+  final String initialTitle;
+  final OnTitleChange onTitleChange;
+
+  const HabitTitleInput({Key key, this.initialTitle, this.onTitleChange})
+      : super(key: key);
+
+  @override
+  _HabitTitleInputState createState() => _HabitTitleInputState();
+}
+
+class _HabitTitleInputState extends State<HabitTitleInput> {
+  TextEditingController habitTitleTEC;
+
+  @override
+  void initState() {
+    super.initState();
+    habitTitleTEC = TextEditingController(text: widget.initialTitle ?? "");
+    habitTitleTEC.addListener(() => widget.onTitleChange(habitTitleTEC.text));
+  }
 
   @override
   Widget build(BuildContext context) => TextFormField(
@@ -22,6 +37,7 @@ class HabitFrequencyInput extends StatelessWidget {
     @required this.habitFrequencyTEC,
   }) : super(key: key);
 
+  // todo initial freq + on freq change
   final TextEditingController habitFrequencyTEC;
 
   @override
@@ -54,5 +70,3 @@ class HabitFrequencyAndPeriodLabel extends StatelessWidget {
         ],
       );
 }
-
-
