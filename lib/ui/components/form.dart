@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 typedef OnTitleChange = void Function(String title);
@@ -14,12 +15,12 @@ class HabitTitleInput extends StatefulWidget {
 }
 
 class _HabitTitleInputState extends State<HabitTitleInput> {
-  TextEditingController habitTitleTEC;
+  TextEditingController habitTitleTEC = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    habitTitleTEC = TextEditingController(text: widget.initialTitle ?? "");
+    habitTitleTEC.text = widget.initialTitle ?? "";
     habitTitleTEC.addListener(() => widget.onTitleChange(habitTitleTEC.text));
   }
 
@@ -31,14 +32,34 @@ class _HabitTitleInputState extends State<HabitTitleInput> {
       );
 }
 
-class HabitFrequencyInput extends StatelessWidget {
-  const HabitFrequencyInput({
-    Key key,
-    @required this.habitFrequencyTEC,
-  }) : super(key: key);
+typedef OnFreqChange = void Function(int freq);
 
-  // todo initial freq + on freq change
-  final TextEditingController habitFrequencyTEC;
+class HabitFrequencyInput extends StatefulWidget {
+  final int initialFreq;
+  final OnFreqChange onFreqChange;
+
+  const HabitFrequencyInput({Key key, this.initialFreq, this.onFreqChange})
+      : super(key: key);
+
+  @override
+  _HabitFrequencyInputState createState() => _HabitFrequencyInputState();
+}
+
+class _HabitFrequencyInputState extends State<HabitFrequencyInput> {
+  final TextEditingController habitFrequencyTEC = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    habitFrequencyTEC.text = widget.initialFreq.toString();
+    habitFrequencyTEC.addListener(
+      () => setState(() {
+        if (habitFrequencyTEC.text.isNotEmpty) {
+          widget.onFreqChange(int.parse(habitFrequencyTEC.text));
+        }
+      }),
+    );
+  }
 
   @override
   Widget build(BuildContext context) => TextFormField(

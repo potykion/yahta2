@@ -30,30 +30,20 @@ class _HabitFormPageState extends State<HabitFormPage> {
   Habit get habit => ModalRoute.of(context).settings.arguments;
 
   String get frequencyAndPeriodStr => FrequencyAndPeriodStr(
-    frequency: hFrequency,
-    periodValue: hPeriodValue,
-    periodType: hPeriodType,
-  ).toString();
+        frequency: hFrequency,
+        periodValue: hPeriodValue,
+        periodType: hPeriodType,
+      ).toString();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
     setState(() {
-      hFrequency = habit?.frequency ?? hFrequency;
       hPeriodValue = habit?.periodValue ?? hPeriodValue;
       hPeriodType = habit?.periodType ?? hPeriodType;
       hWeekStart = habit?.weekStart ?? hWeekStart;
     });
-
-    habitFrequencyTEC.text = hFrequency.toString();
-    habitFrequencyTEC.addListener(
-      () => setState(() {
-        if (habitFrequencyTEC.text.isNotEmpty) {
-          hFrequency = int.parse(habitFrequencyTEC.text);
-        }
-      }),
-    );
 
     habitPeriodValueTEC.text = hPeriodValue.toString();
     habitPeriodValueTEC.addListener(
@@ -64,7 +54,6 @@ class _HabitFormPageState extends State<HabitFormPage> {
       }),
     );
   }
-
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -93,7 +82,10 @@ class _HabitFormPageState extends State<HabitFormPage> {
             initialTitle: habit?.title,
             onTitleChange: (title) => setState(() => hTitle = title),
           ),
-          HabitFrequencyInput(habitFrequencyTEC: habitFrequencyTEC),
+          HabitFrequencyInput(
+            initialFreq: habit?.frequency,
+            onFreqChange: (freq) => setState(() => hFrequency = freq),
+          ),
           buildPeriodInput(),
           HabitFrequencyAndPeriodLabel(
             frequencyAndPeriodStr: frequencyAndPeriodStr,
