@@ -16,43 +16,27 @@ class HabitFormPage extends StatefulWidget {
 }
 
 class _HabitFormPageState extends State<HabitFormPage> {
-  // TEC = TextEditingController
-  TextEditingController habitFrequencyTEC = TextEditingController();
-  TextEditingController habitPeriodValueTEC = TextEditingController();
-
   // h = habit
+  int hId;
   String hTitle;
-  int hFrequency = 1;
-  int hPeriodValue = 1;
-  PeriodType hPeriodType = PeriodType.days;
-  Weekday hWeekStart = Weekday.monday;
-
-  Habit get habit => ModalRoute.of(context).settings.arguments;
-
-  String get frequencyAndPeriodStr => FrequencyAndPeriodStr(
-        frequency: hFrequency,
-        periodValue: hPeriodValue,
-        periodType: hPeriodType,
-      ).toString();
+  int hFrequency;
+  int hPeriodValue;
+  PeriodType hPeriodType;
+  Weekday hWeekStart;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
+    Habit habit = ModalRoute.of(context).settings.arguments;
     setState(() {
-      hPeriodValue = habit?.periodValue ?? hPeriodValue;
-      hPeriodType = habit?.periodType ?? hPeriodType;
-      hWeekStart = habit?.weekStart ?? hWeekStart;
+      hId = habit?.id;
+      hTitle = habit?.title ?? "";
+      hFrequency = habit?.frequency ?? 1;
+      hPeriodValue = habit?.periodValue ?? 1;
+      hPeriodType = habit?.periodType ?? PeriodType.days;
+      hWeekStart = habit?.weekStart ?? Weekday.monday;
     });
-
-    habitPeriodValueTEC.text = hPeriodValue.toString();
-    habitPeriodValueTEC.addListener(
-      () => setState(() {
-        if (habitPeriodValueTEC.text.isNotEmpty) {
-          hPeriodValue = int.parse(habitPeriodValueTEC.text);
-        }
-      }),
-    );
   }
 
   @override
@@ -79,75 +63,37 @@ class _HabitFormPageState extends State<HabitFormPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           HabitTitleInput(
-            initialTitle: habit?.title,
+            initialTitle: hTitle,
             onTitleChange: (title) => setState(() => hTitle = title),
           ),
           HabitFrequencyInput(
-            initialFreq: habit?.frequency,
+            initialFreq: hFrequency,
             onFreqChange: (freq) => setState(() => hFrequency = freq),
           ),
-          buildPeriodInput(),
-          HabitFrequencyAndPeriodLabel(
-            frequencyAndPeriodStr: frequencyAndPeriodStr,
+          HabitPeriodInput(
+            initialPeriodValue: hPeriodValue,
+            initialPeriodType: hPeriodType,
+            onPeriodValueChange: (v) => setState(() => hPeriodValue = v),
+            onPeriodTypeChange: (t) => setState(() => hPeriodType = t),
           ),
-          hPeriodType == PeriodType.weeks ? buildWeekStartInput() : Container()
+          HabitFrequencyAndPeriodLabel(
+            frequency: hFrequency,
+            periodValue: hPeriodValue,
+            periodType: hPeriodType,
+          ),
+          hPeriodType == PeriodType.weeks
+              ? HabitWeekStartInput(
+                  initialWeekStart: hWeekStart,
+                  onWeekStartChange: (w) => setState(() => hWeekStart = w),
+                )
+              : Container()
         ],
       );
 
-  DropdownButtonFormField<Weekday> buildWeekStartInput() {
-    return DropdownButtonFormField<Weekday>(
-      decoration: InputDecoration(labelText: "Начало недели"),
-      isExpanded: true,
-      value: hWeekStart,
-      items: Weekday.values
-          .map(
-            (w) => DropdownMenuItem<Weekday>(
-              child: Text(w.toVerboseStr()),
-              value: w,
-            ),
-          )
-          .toList(),
-      onChanged: (w) => setState(() => hWeekStart = w),
-    );
-  }
-
-  // todo create stateful widget with initialPeriodValue/Type + onPeriodValue/TypeChange
-  Row buildPeriodInput() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Flexible(
-          child: TextFormField(
-            decoration: InputDecoration(labelText: "Период"),
-            controller: habitPeriodValueTEC,
-            keyboardType: TextInputType.number,
-          ),
-        ),
-        Expanded(
-          flex: 4,
-          child: DropdownButton<PeriodType>(
-            isExpanded: true,
-            underline: Container(),
-            value: hPeriodType,
-            items: PeriodType.values
-                .map(
-                  (p) => DropdownMenuItem<PeriodType>(
-                    child: Text(p.toVerboseStr(hPeriodValue)),
-                    value: p,
-                  ),
-                )
-                .toList(),
-            onChanged: (periodType) => setState(() => hPeriodType = periodType),
-          ),
-        )
-      ],
-    );
-  }
-
   HabitEvent buildHabitEvent() {
-    return habit?.id != null
+    return hId != null
         ? HabitUpdated(
-            id: habit?.id,
+            id: hId,
             title: hTitle,
             frequency: hFrequency,
             periodValue: hPeriodValue,

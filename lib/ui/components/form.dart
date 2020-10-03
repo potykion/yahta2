@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:yahta2/logic/habit/models.dart';
 
 typedef OnTitleChange = void Function(String title);
 
@@ -20,7 +21,7 @@ class _HabitTitleInputState extends State<HabitTitleInput> {
   @override
   void initState() {
     super.initState();
-    habitTitleTEC.text = widget.initialTitle ?? "";
+    habitTitleTEC.text = widget.initialTitle;
     habitTitleTEC.addListener(() => widget.onTitleChange(habitTitleTEC.text));
   }
 
@@ -73,12 +74,22 @@ class _HabitFrequencyInputState extends State<HabitFrequencyInput> {
 }
 
 class HabitFrequencyAndPeriodLabel extends StatelessWidget {
+  final int frequency;
+  final int periodValue;
+  final PeriodType periodType;
+
   const HabitFrequencyAndPeriodLabel({
     Key key,
-    @required this.frequencyAndPeriodStr,
+    this.frequency,
+    this.periodValue,
+    this.periodType,
   }) : super(key: key);
 
-  final String frequencyAndPeriodStr;
+  String get frequencyAndPeriodStr => FrequencyAndPeriodStr(
+        frequency: this.frequency,
+        periodValue: this.periodValue,
+        periodType: this.periodType,
+      ).toString();
 
   @override
   Widget build(BuildContext context) => Column(
@@ -90,4 +101,126 @@ class HabitFrequencyAndPeriodLabel extends StatelessWidget {
           SizedBox(height: 16),
         ],
       );
+}
+
+typedef OnPeriodValueChange = void Function(int periodValue);
+typedef OnPeriodTypeChange = void Function(PeriodType periodType);
+
+class HabitPeriodInput extends StatefulWidget {
+  final int initialPeriodValue;
+  final PeriodType initialPeriodType;
+  final OnPeriodValueChange onPeriodValueChange;
+  final OnPeriodTypeChange onPeriodTypeChange;
+
+  const HabitPeriodInput(
+      {Key key,
+      this.initialPeriodValue,
+      this.initialPeriodType,
+      this.onPeriodValueChange,
+      this.onPeriodTypeChange})
+      : super(key: key);
+
+  @override
+  _HabitPeriodInputState createState() => _HabitPeriodInputState();
+}
+
+class _HabitPeriodInputState extends State<HabitPeriodInput> {
+  final TextEditingController habitPeriodValueTEC = TextEditingController();
+  PeriodType periodType;
+
+  get periodValue => int.parse(habitPeriodValueTEC.text);
+
+  @override
+  void initState() {
+    super.initState();
+    habitPeriodValueTEC.text = widget.initialPeriodValue.toString();
+    habitPeriodValueTEC.addListener(() {
+      if (habitPeriodValueTEC.text.isNotEmpty) {
+        widget.onPeriodValueChange(periodValue);
+      }
+    });
+
+    periodType = widget.initialPeriodType;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Flexible(
+          child: TextFormField(
+            decoration: InputDecoration(labelText: "Период"),
+            controller: habitPeriodValueTEC,
+            keyboardType: TextInputType.number,
+          ),
+        ),
+        Expanded(
+          flex: 4,
+          child: DropdownButton<PeriodType>(
+            isExpanded: true,
+            underline: Container(),
+            value: periodType,
+            items: PeriodType.values
+                .map(
+                  (p) => DropdownMenuItem<PeriodType>(
+                    child: Text(p.toVerboseStr(periodValue)),
+                    value: p,
+                  ),
+                )
+                .toList(),
+            onChanged: (periodType) {
+              setState(() => this.periodType = periodType);
+              widget.onPeriodTypeChange(this.periodType);
+            },
+          ),
+        )
+      ],
+    );
+  }
+}
+
+typedef OnWeekStartChange = void Function(Weekday weekStart);
+
+class HabitWeekStartInput extends StatefulWidget {
+  final Weekday initialWeekStart;
+  final OnWeekStartChange onWeekStartChange;
+
+  const HabitWeekStartInput(
+      {Key key, this.initialWeekStart, this.onWeekStartChange})
+      : super(key: key);
+
+  @override
+  _HabitWeekStartInputState createState() => _HabitWeekStartInputState();
+}
+
+class _HabitWeekStartInputState extends State<HabitWeekStartInput> {
+  Weekday weekStart;
+
+  @override
+  void initState() {
+    super.initState();
+    weekStart = widget.initialWeekStart;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<Weekday>(
+      decoration: InputDecoration(labelText: "Начало недели"),
+      isExpanded: true,
+      value: weekStart,
+      items: Weekday.values
+          .map(
+            (w) => DropdownMenuItem<Weekday>(
+              child: Text(w.toVerboseStr()),
+              value: w,
+            ),
+          )
+          .toList(),
+      onChanged: (w) {
+        setState(() => weekStart = w);
+        widget.onWeekStartChange(weekStart);
+      },
+    );
+  }
 }
