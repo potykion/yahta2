@@ -22,26 +22,22 @@ class HabitListTile extends StatelessWidget {
             elevation: 2,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(8))),
-            child: Container(
-              child: ListTile(
-                title: Text(vm.title, style: vm.textStyle),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(vm.motivationStr),
-                    SizedBox(height: 8),
-                    vm.showProgress
-                        ? HabitFrequencyProgress(vm: vm)
-                        : Container()
-                  ],
+            child: Stack(
+              alignment: AlignmentDirectional.centerEnd,
+              children: [
+                Positioned(
+                  child: HabitFrequencyProgress(vm: vm),
+                  bottom: 0,
+                  right: 0,
+                  left: 0,
+                  top: 0,
                 ),
-                trailing: HabitListTileActions(vm: vm),
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.white),
-                borderRadius: BorderRadius.all(Radius.circular(8)),
-              ),
+                ListTile(
+                  title: Text(vm.title, style: vm.textStyle),
+                  subtitle: Text(vm.motivationStr),
+                  trailing: HabitListTileActions(vm: vm),
+                ),
+              ],
             ),
           ),
         ),
@@ -107,6 +103,8 @@ class HabitFrequencyProgress extends StatelessWidget {
         angle: pi,
         child: LinearProgressIndicator(
           value: vm.habitMarks.length / vm.habit.frequency,
+          backgroundColor: Colors.white,
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.yellow[100]),
         ),
       );
 }
