@@ -115,7 +115,7 @@ class HabitState {
       .where((vm) => showDone || !vm.done)
       .toList();
 
-  copyWith({
+  HabitState copyWith({
     List<Habit> habits,
     List<HabitMark> habitMarks,
     bool showDone,

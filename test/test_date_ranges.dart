@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:yahta2/logic/habit/models.dart';
 import 'package:yahta2/logic/habit/utils.dart';
 
-main() {
+void main() {
   group("Тестим дейт ренжи", () {
     test("Тестим дейт ренж дня", () {
       var dateRange = DayDateRange(now: DateTime(2020, 8, 31));

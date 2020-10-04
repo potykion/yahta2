@@ -29,7 +29,7 @@ class HabitListTile extends StatelessWidget {
         child: child,
         direction: vm.swipeDirection,
         confirmDismiss: (DismissDirection dir) async {
-          var event;
+          HabitEvent event;
           if (dir == DismissDirection.endToStart) {
             event = HabitDone(vm.toHabit());
           } else if (dir == DismissDirection.startToEnd) {

@@ -28,7 +28,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    Habit habit = ModalRoute.of(context).settings.arguments;
+    Habit habit = ModalRoute.of(context).settings.arguments as Habit;
     setState(() {
       hId = habit?.id;
       hTitle = habit?.title ?? "";

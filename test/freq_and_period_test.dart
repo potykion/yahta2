@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yahta2/logic/habit/models.dart';
 
-main() {
+void main() {
   group('Тестим генерацию строки "Частота + период"', () {
     test("Тестим разы", () {
       expect(FrequencyAndPeriodStr(frequency: 1).toString(), "1 раз в день");

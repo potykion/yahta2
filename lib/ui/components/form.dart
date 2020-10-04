@@ -129,7 +129,7 @@ class _HabitPeriodInputState extends State<HabitPeriodInput> {
   final TextEditingController habitPeriodValueTEC = TextEditingController();
   PeriodType periodType;
 
-  get periodValue => int.parse(habitPeriodValueTEC.text);
+  int get periodValue => int.parse(habitPeriodValueTEC.text);
 
   @override
   void initState() {

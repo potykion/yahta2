@@ -6,7 +6,7 @@ abstract class DateRange {
   final DateTime now;
   final int value;
 
-  DateRange({now, value})
+  DateRange({DateTime now, int value})
       : this.now = now ?? DateTime.now(),
         this.value = value ?? 1;
 
@@ -14,11 +14,11 @@ abstract class DateRange {
 
   DateTime get to;
 
-  containsDate(DateTime date) => date.isAfter(from) && date.isBefore(to);
+  bool containsDate(DateTime date) => date.isAfter(from) && date.isBefore(to);
 }
 
 class DayDateRange extends DateRange {
-  DayDateRange({now, value}) : super(now: now, value: value);
+  DayDateRange({DateTime now, int value}) : super(now: now, value: value);
 
   DateTime get from => DateTime(now.year, now.month, now.day);
 
@@ -29,7 +29,7 @@ class DayDateRange extends DateRange {
 class WeekDateRange extends DateRange {
   Weekday weekStartDay;
 
-  WeekDateRange({now, value, this.weekStartDay = Weekday.monday})
+  WeekDateRange({DateTime now, int value, this.weekStartDay = Weekday.monday})
       : super(now: now, value: value);
 
   List<int> get weekDaysFromStart =>
@@ -48,7 +48,7 @@ class WeekDateRange extends DateRange {
 }
 
 class MonthDateRange extends DateRange {
-  MonthDateRange({now, value}) : super(now: now, value: value);
+  MonthDateRange({DateTime now, int value}) : super(now: now, value: value);
 
   DateTime get from => DateTime(now.year, now.month, 1);
 
@@ -57,9 +57,9 @@ class MonthDateRange extends DateRange {
       DateTime(now.year, now.month + 1 + value - 1, 0, 23, 59, 59);
 }
 
-simpleEquals(a, b) => a == b;
+bool simpleEquals(dynamic a, dynamic b) => a == b;
 
-idEquals(a, b) => a.id == b.id;
+bool idEquals(dynamic a, dynamic b) => a.id == b.id;
 
 class FixedDateTime {
   final DateTime value;

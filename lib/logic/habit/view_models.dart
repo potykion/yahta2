@@ -11,10 +11,10 @@ class HabitVM {
   factory HabitVM.build(Habit habit, List<HabitMark> habitMarks) =>
       HabitVM(habit: habit, habitMarks: habitMarks);
 
-  get title => "${DateFormat.Hm().format(habit.startTime)} - ${habit.title}";
+  String get title => "${DateFormat.Hm().format(habit.startTime)} - ${habit.title}";
 
   /// В зависимости от частоты определяет пора ли реализовывать привычку
-  get timeToPerformHabit {
+  bool get timeToPerformHabit {
     if (habit.periodType == PeriodType.days) {
       // 4 часа (* periodValue) осталось до конца дня
       return habit.dateRange.to.difference(DateTime.now()).inHours <
@@ -31,22 +31,22 @@ class HabitVM {
     return false;
   }
 
-  get done => habitMarks.length == habit.frequency;
+  bool get done => habitMarks.length == habit.frequency;
 
-  get partiallyDone =>
+  bool get partiallyDone =>
       habitMarks.length > 0 && habitMarks.length != habit.frequency;
 
-  get showProgress => !done && habit.frequency != 1;
+  bool get showProgress => !done && habit.frequency != 1;
 
-  get key => Key(habit.id.toString());
+  Key get key => Key(habit.id.toString());
 
-  get swipeDirection => done
+  DismissDirection get swipeDirection => done
       ? DismissDirection.startToEnd
       : partiallyDone
           ? DismissDirection.horizontal
           : DismissDirection.endToStart;
 
-  get textStyle => TextStyle(
+  TextStyle get textStyle => TextStyle(
         decoration: done ? TextDecoration.lineThrough : null,
         color: done ? Colors.grey : null,
         fontWeight: !done && timeToPerformHabit ? FontWeight.bold : null,
