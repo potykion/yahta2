@@ -16,29 +16,24 @@ class HabitListTile extends StatelessWidget {
   @override
   Widget build(context) => withHabitDoneDismiss(
         context,
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Material(
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8))),
-            child: Stack(
-              alignment: AlignmentDirectional.centerEnd,
-              children: [
-                Positioned(
-                  child: HabitFrequencyProgress(vm: vm),
-                  bottom: 0,
-                  right: 0,
-                  left: 0,
-                  top: 0,
-                ),
-                ListTile(
-                  title: Text(vm.title, style: vm.textStyle),
-                  subtitle: Text(vm.motivationStr),
-                  trailing: HabitListTileActions(vm: vm),
-                ),
-              ],
-            ),
+        Material(
+          elevation: 2,
+          child: Stack(
+            alignment: AlignmentDirectional.centerEnd,
+            children: [
+              Positioned(
+                child: HabitFrequencyProgress(vm: vm),
+                bottom: 0,
+                right: 0,
+                left: 0,
+                top: 0,
+              ),
+              ListTile(
+                title: Text(vm.title, style: vm.textStyle),
+                subtitle: Text(vm.motivationStr),
+                trailing: HabitListTileActions(vm: vm),
+              ),
+            ],
           ),
         ),
       );
