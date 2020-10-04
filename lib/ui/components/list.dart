@@ -20,11 +20,21 @@ class HabitListTile extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Material(
             elevation: 2,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8))),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8))),
             child: Container(
               child: ListTile(
                 title: Text(vm.title, style: vm.textStyle),
-                subtitle: vm.showProgress ? HabitFrequencyProgress(vm: vm) : null,
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(vm.motivationStr),
+                    SizedBox(height: 8),
+                    vm.showProgress
+                        ? HabitFrequencyProgress(vm: vm)
+                        : Container()
+                  ],
+                ),
                 trailing: HabitListTileActions(vm: vm),
               ),
               decoration: BoxDecoration(

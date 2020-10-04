@@ -11,7 +11,9 @@ class HabitVM {
   factory HabitVM.build(Habit habit, List<HabitMark> habitMarks) =>
       HabitVM(habit: habit, habitMarks: habitMarks);
 
-  String get title => "${DateFormat.Hm().format(habit.startTime)} - ${habit.title}";
+  String get title => habit.title;
+
+  String get motivationStr => "Когда: ${DateFormat.Hm().format(habit.startTime)}";
 
   /// В зависимости от частоты определяет пора ли реализовывать привычку
   bool get timeToPerformHabit {
