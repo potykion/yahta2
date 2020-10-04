@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:yahta2/logic/habit/models.dart';
 
 class HabitVM {
@@ -9,6 +10,8 @@ class HabitVM {
 
   factory HabitVM.build(Habit habit, List<HabitMark> habitMarks) =>
       HabitVM(habit: habit, habitMarks: habitMarks);
+
+  get title => "${DateFormat.Hm().format(habit.startTime)} - ${habit.title}";
 
   /// В зависимости от частоты определяет пора ли реализовывать привычку
   get timeToPerformHabit {

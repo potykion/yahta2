@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:yahta2/logic/habit/utils.dart';
@@ -9,7 +10,7 @@ abstract class Habit with _$Habit {
   factory Habit({
     int id,
     @required String title,
-    int order,
+    DateTime startTime,
     @Default(1) int frequency,
     @Default(1) int periodValue,
     @Default(PeriodType.days) PeriodType periodType,

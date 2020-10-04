@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:yahta2/logic/habit/models.dart';
+import 'package:yahta2/logic/habit/utils.dart';
 
 typedef OnTitleChange = void Function(String title);
 
@@ -225,10 +226,10 @@ class _HabitWeekStartInputState extends State<HabitWeekStartInput> {
   }
 }
 
-typedef OnStartTimeChange = void Function(TimeOfDay time);
+typedef OnStartTimeChange = void Function(DateTime time);
 
 class HabitStartTimeInput extends StatefulWidget {
-  final TimeOfDay initialStartTime;
+  final DateTime initialStartTime;
   final OnStartTimeChange onStartTimeChange;
 
   const HabitStartTimeInput(
@@ -243,27 +244,28 @@ class _HabitStartTimeInputState extends State<HabitStartTimeInput> {
   TextEditingController controller = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    controller.text = widget.initialStartTime.format(context);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    controller.text =
+        TimeOfDay.fromDateTime(widget.initialStartTime).format(context);
   }
 
   @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(labelText: "Когда делать привычку?"),
-      readOnly: true,
-      onTap: () async {
-        TimeOfDay selectedTime = await showTimePicker(
-          context: context,
-          initialTime: widget.initialStartTime,
-        );
-        if (selectedTime != null) {
-          controller.text = selectedTime.format(context);
-          widget.onStartTimeChange(selectedTime);
-        }
-      },
-    );
-  }
+  Widget build(BuildContext context) => TextFormField(
+        controller: controller,
+        decoration: InputDecoration(labelText: "Во сколько делать привычку?"),
+        readOnly: true,
+        onTap: () async {
+          TimeOfDay selectedTime = await showTimePicker(
+            context: context,
+            initialTime: TimeOfDay.fromDateTime(widget.initialStartTime),
+          );
+          if (selectedTime != null) {
+            controller.text = selectedTime.format(context);
+            widget.onStartTimeChange(
+              FixedDateTime.fromTimeOfDay(selectedTime).value,
+            );
+          }
+        },
+      );
 }

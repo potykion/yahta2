@@ -4,10 +4,9 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:meta/meta.dart';
 
 import 'package:yahta2/logic/habit/db.dart';
-import 'package:yahta2/logic/habit/utils.dart';
 import 'package:yahta2/logic/habit/view_models.dart';
 
 import 'models.dart';
@@ -23,25 +22,26 @@ class HabitUpdated extends HabitEvent {
   final int periodValue;
   final PeriodType periodType;
   final Weekday weekStart;
+  final DateTime startTime;
 
   HabitUpdated({
-    this.id,
-    this.title,
-    this.frequency,
-    this.periodValue,
-    this.periodType,
-    this.weekStart,
+    @required this.id,
+    @required this.title,
+    @required this.frequency,
+    @required this.periodValue,
+    @required this.periodType,
+    @required this.weekStart,
+    @required this.startTime,
   });
 
-  Habit updateHabit(Habit habit) {
-    return habit.copyWith(
-      title: title,
-      frequency: frequency,
-      periodValue: periodValue,
-      periodType: periodType,
-      weekStart: weekStart,
-    );
-  }
+  Habit updateHabit(Habit habit) => habit.copyWith(
+        title: title,
+        frequency: frequency,
+        periodValue: periodValue,
+        periodType: periodType,
+        weekStart: weekStart,
+        startTime: startTime,
+      );
 }
 
 class HabitDeleted extends HabitEvent {
@@ -64,29 +64,30 @@ class HabitUndone extends HabitEvent {
 
 class HabitCreated extends HabitEvent {
   final String title;
-  final int order;
   final int frequency;
   final int periodValue;
   final PeriodType periodType;
   final Weekday weekStart;
+  final DateTime startTime;
 
   HabitCreated({
-    this.title,
-    this.order,
-    this.frequency,
-    this.periodValue,
-    this.periodType,
-    this.weekStart,
+    @required this.title,
+    @required this.frequency,
+    @required this.periodValue,
+    @required this.periodType,
+    @required this.weekStart,
+    @required this.startTime,
   });
 
   Habit toHabit() {
     return Habit(
-        periodValue: this.periodValue,
-        periodType: this.periodType,
-        order: this.order,
-        title: this.title,
-        frequency: this.frequency,
-        weekStart: this.weekStart);
+      periodValue: this.periodValue,
+      periodType: this.periodType,
+      title: this.title,
+      frequency: this.frequency,
+      weekStart: this.weekStart,
+      startTime: this.startTime,
+    );
   }
 }
 
@@ -107,7 +108,7 @@ class HabitState {
       groupBy(habitMarks, (HabitMark hm) => hm.habitId);
 
   List<Habit> get orderedHabits =>
-      (habits.toList()..sort((h1, h2) => h1.order.compareTo(h2.order)));
+      (habits.toList()..sort((h1, h2) => h1.startTime.compareTo(h2.startTime)));
 
   List<HabitVM> get habitVMs => orderedHabits
       .map((h) => HabitVM.build(h, idHabitMarks[h.id] ?? []))

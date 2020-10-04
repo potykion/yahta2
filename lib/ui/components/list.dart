@@ -17,7 +17,7 @@ class HabitListTile extends StatelessWidget {
   Widget build(context) => withHabitDoneDismiss(
         context,
         ListTile(
-          title: Text(vm.habit.title, style: vm.textStyle),
+          title: Text(vm.title, style: vm.textStyle),
           subtitle: vm.showProgress ? HabitFrequencyProgress(vm: vm) : null,
           trailing: HabitListTileActions(vm: vm),
         ),

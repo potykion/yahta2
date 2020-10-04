@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:yahta2/logic/habit/blocs.dart';
 import 'package:yahta2/logic/habit/models.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:yahta2/logic/habit/utils.dart';
 import 'package:yahta2/ui/components/form.dart';
 
 class HabitFormPage extends StatefulWidget {
@@ -21,6 +22,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
   int hPeriodValue;
   PeriodType hPeriodType;
   Weekday hWeekStart;
+  DateTime hStartTime;
 
   @override
   void didChangeDependencies() {
@@ -34,6 +36,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
       hPeriodValue = habit?.periodValue ?? 1;
       hPeriodType = habit?.periodType ?? PeriodType.days;
       hWeekStart = habit?.weekStart ?? Weekday.monday;
+      hStartTime = habit?.startTime ?? FixedDateTime.now().value;
     });
   }
 
@@ -81,7 +84,10 @@ class _HabitFormPageState extends State<HabitFormPage> {
                       onWeekStartChange: (w) => setState(() => hWeekStart = w),
                     )
                   : Container(),
-              HabitStartTimeInput()
+              HabitStartTimeInput(
+                initialStartTime: hStartTime,
+                onStartTimeChange: (time) => setState(() => hStartTime = time),
+              )
             ],
           ),
         ),
@@ -96,6 +102,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
             periodValue: hPeriodValue,
             periodType: hPeriodType,
             weekStart: hWeekStart,
+            startTime: hStartTime,
           )
         : HabitCreated(
             title: hTitle,
@@ -103,6 +110,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
             periodValue: hPeriodValue,
             periodType: hPeriodType,
             weekStart: hWeekStart,
+            startTime: hStartTime,
           );
   }
 }

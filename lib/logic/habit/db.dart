@@ -11,12 +11,12 @@ import 'models.dart';
 
 part 'db.g.dart';
 
-class HabitDBs extends Table {
+class HabitDbs extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   TextColumn get title => text().withLength(min: 1)();
 
-  IntColumn get order => integer()();
+  DateTimeColumn get startTime => dateTime()();
 
   IntColumn get frequency => integer()();
 
@@ -43,17 +43,17 @@ LazyDatabase _openConnection() => LazyDatabase(
       },
     );
 
-@UseMoor(tables: [HabitDBs, HabitMarkDBs])
+@UseMoor(tables: [HabitDbs, HabitMarkDBs])
 class MyDatabase extends _$MyDatabase {
   MyDatabase() : super(_openConnection());
 
   @override
   int get schemaVersion => 1;
 
-  Future<int> insertHabit(HabitDBsCompanion habit) =>
-      into(habitDBs).insert(habit);
+  Future<int> insertHabit(HabitDbsCompanion habit) =>
+      into(habitDbs).insert(habit);
 
-  Future<List<HabitDB>> listHabits() => (select(habitDBs)).get();
+  Future<List<HabitDb>> listHabits() => (select(habitDbs)).get();
 
   Future<List<HabitMarkDB>> listHabitMarks() {
     return select(habitMarkDBs).get();
@@ -63,7 +63,7 @@ class MyDatabase extends _$MyDatabase {
       into(habitMarkDBs).insert(habitMark);
 
   Future deleteHabit(int id) =>
-      (delete(habitDBs)..where((tbl) => tbl.id.equals(id))).go();
+      (delete(habitDbs)..where((tbl) => tbl.id.equals(id))).go();
 
   Future deleteHabitMarksByHabitId(int habitId) =>
       (delete(habitMarkDBs)..where((tbl) => tbl.habitId.equals(habitId))).go();
@@ -71,23 +71,47 @@ class MyDatabase extends _$MyDatabase {
   Future deleteHabitMarksByIds(List<int> ids) =>
       (delete(habitMarkDBs)..where((tbl) => tbl.id.isIn(ids))).go();
 
-  Future updateHabit(HabitDB updatedHabit) =>
-      update(habitDBs).replace(updatedHabit);
+  Future updateHabit(HabitDb updatedHabit) =>
+      update(habitDbs).replace(updatedHabit);
 
   Future<int> getMaxOrder() async {
     var query = "select coalesce(max([order]), 0) as max_order "
-        "from ${$HabitDBsTable(null).actualTableName}";
+        "from ${$HabitDbsTable(null).actualTableName}";
     var row = await customSelect(query).getSingle();
     return row.data["max_order"] as int;
   }
 }
 
-class SettingsRepository {
-  Future setShowDone(bool showDone) async =>
-      (await SharedPreferences.getInstance()).setBool("showDone", showDone);
+class HabitDBConverter {
+  static HabitDb dbFromHabit(Habit habit) => HabitDb(
+        id: habit.id,
+        title: habit.title,
+        startTime: habit.startTime,
+        frequency: habit.frequency,
+        periodValue: habit.periodValue,
+        weekStart: habit.weekStart,
+        periodType: habit.periodType,
+      );
 
-  Future<bool> getShowDone() async =>
-      (await SharedPreferences.getInstance()).getBool("showDone");
+  static Habit dbToHabit(HabitDb habitDb) => Habit(
+        title: habitDb.title,
+        id: habitDb.id,
+        startTime: habitDb.startTime,
+        frequency: habitDb.frequency,
+        periodType: habitDb.periodType,
+        periodValue: habitDb.periodValue,
+        weekStart: habitDb.weekStart,
+      );
+
+  static HabitDbsCompanion dbInsertFromHabit(Habit habit) =>
+      HabitDbsCompanion.insert(
+        title: habit.title,
+        frequency: habit.frequency,
+        periodType: habit.periodType,
+        periodValue: habit.periodValue,
+        weekStart: habit.weekStart,
+        startTime: habit.startTime,
+      );
 }
 
 class HabitRepository {
@@ -96,31 +120,13 @@ class HabitRepository {
   HabitRepository(this.db);
 
   Future<Habit> insertHabit(Habit habit) async {
-    var newOrder = await db.getMaxOrder() + 1;
-    var habitId = await db.insertHabit(
-      HabitDBsCompanion.insert(
-          title: habit.title,
-          order: newOrder,
-          frequency: habit.frequency,
-          periodType: habit.periodType,
-          periodValue: habit.periodValue,
-          weekStart: habit.weekStart),
-    );
-    return habit.copyWith(id: habitId, order: newOrder);
+    var habitId =
+        await db.insertHabit(HabitDBConverter.dbInsertFromHabit(habit));
+    return habit.copyWith(id: habitId);
   }
 
   Future<List<Habit>> listHabits() async => (await db.listHabits())
-      .map(
-        (h) => Habit(
-          title: h.title,
-          id: h.id,
-          order: h.order,
-          frequency: h.frequency,
-          periodType: h.periodType,
-          periodValue: h.periodValue,
-          weekStart: h.weekStart,
-        ),
-      )
+      .map((h) => HabitDBConverter.dbToHabit(h))
       .toList();
 
   Future<List<HabitMark>> listHabitMarks() async => (await db.listHabitMarks())
@@ -166,17 +172,15 @@ class HabitRepository {
   }
 
   Future<Habit> updateHabit(Habit habitToUpdate) async {
-    await db.updateHabit(
-      HabitDB(
-        id: habitToUpdate.id,
-        title: habitToUpdate.title,
-        order: habitToUpdate.order,
-        frequency: habitToUpdate.frequency,
-        periodValue: habitToUpdate.periodValue,
-        weekStart: habitToUpdate.weekStart,
-        periodType: habitToUpdate.periodType,
-      ),
-    );
+    await db.updateHabit(HabitDBConverter.dbFromHabit(habitToUpdate));
     return habitToUpdate;
   }
+}
+
+class SettingsRepository {
+  Future setShowDone(bool showDone) async =>
+      (await SharedPreferences.getInstance()).setBool("showDone", showDone);
+
+  Future<bool> getShowDone() async =>
+      (await SharedPreferences.getInstance()).getBool("showDone");
 }

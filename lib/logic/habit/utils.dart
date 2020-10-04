@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'models.dart';
 
 abstract class DateRange {
@@ -59,34 +61,13 @@ simpleEquals(a, b) => a == b;
 
 idEquals(a, b) => a.id == b.id;
 
-List<T> shift<T>(
-  List<T> array,
-  oldIndex,
-  newIndex, {
-  equalFunc = simpleEquals,
-}) {
-  if (oldIndex == newIndex) {
-    return array;
-  }
+class FixedDateTime {
+  final DateTime value;
 
-  var shiftItem = array[oldIndex];
-  return newIndex < oldIndex
-      ? [
-          ...array.sublist(0, newIndex),
-          shiftItem,
-          ...(array.sublist(newIndex, array.length)
-            ..removeWhere((e) => equalFunc(e, shiftItem)))
-        ]
-      : [
-          ...(array.sublist(0, newIndex + 1)
-            ..removeWhere((e) => equalFunc(e, shiftItem))),
-          shiftItem,
-          ...array.sublist(newIndex + 1, array.length)
-        ];
+  FixedDateTime._(this.value);
+
+  factory FixedDateTime.fromTimeOfDay(TimeOfDay time) =>
+      FixedDateTime._(DateTime(2020, 1, 1, time.hour, time.minute));
+
+  factory FixedDateTime.now() => FixedDateTime.fromTimeOfDay(TimeOfDay.now());
 }
-
-List<Habit> reorderHabits(List<Habit> habits, oldIndex, newIndex) =>
-    Map.fromIterables(
-      shift(habits, oldIndex, newIndex, equalFunc: idEquals),
-      habits.map((h) => h.order).toList(),
-    ).entries.map((e) => e.key.copyWith(order: e.value)).toList();

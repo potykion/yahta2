@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yahta2/logic/habit/blocs.dart';
-import 'package:yahta2/ui/components/list_tile.dart';
+import 'package:yahta2/ui/components/list.dart';
 import 'package:yahta2/ui/pages/form.dart';
 
 class HabitListPage extends StatefulWidget {

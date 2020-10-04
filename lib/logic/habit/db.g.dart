@@ -7,39 +7,41 @@ part of 'db.dart';
 // **************************************************************************
 
 // ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
-class HabitDB extends DataClass implements Insertable<HabitDB> {
+class HabitDb extends DataClass implements Insertable<HabitDb> {
   final int id;
   final String title;
-  final int order;
+  final DateTime startTime;
   final int frequency;
   final int periodValue;
   final PeriodType periodType;
   final Weekday weekStart;
-  HabitDB(
+  HabitDb(
       {@required this.id,
       @required this.title,
-      @required this.order,
+      @required this.startTime,
       @required this.frequency,
       @required this.periodValue,
       @required this.periodType,
       @required this.weekStart});
-  factory HabitDB.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+  factory HabitDb.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
-    return HabitDB(
+    final dateTimeType = db.typeSystem.forDartType<DateTime>();
+    return HabitDb(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       title:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
-      order: intType.mapFromDatabaseResponse(data['${effectivePrefix}order']),
+      startTime: dateTimeType
+          .mapFromDatabaseResponse(data['${effectivePrefix}start_time']),
       frequency:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}frequency']),
       periodValue: intType
           .mapFromDatabaseResponse(data['${effectivePrefix}period_value']),
-      periodType: $HabitDBsTable.$converter0.mapToDart(intType
+      periodType: $HabitDbsTable.$converter0.mapToDart(intType
           .mapFromDatabaseResponse(data['${effectivePrefix}period_type'])),
-      weekStart: $HabitDBsTable.$converter1.mapToDart(intType
+      weekStart: $HabitDbsTable.$converter1.mapToDart(intType
           .mapFromDatabaseResponse(data['${effectivePrefix}week_start'])),
     );
   }
@@ -52,8 +54,8 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
     if (!nullToAbsent || title != null) {
       map['title'] = Variable<String>(title);
     }
-    if (!nullToAbsent || order != null) {
-      map['order'] = Variable<int>(order);
+    if (!nullToAbsent || startTime != null) {
+      map['start_time'] = Variable<DateTime>(startTime);
     }
     if (!nullToAbsent || frequency != null) {
       map['frequency'] = Variable<int>(frequency);
@@ -62,23 +64,24 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
       map['period_value'] = Variable<int>(periodValue);
     }
     if (!nullToAbsent || periodType != null) {
-      final converter = $HabitDBsTable.$converter0;
+      final converter = $HabitDbsTable.$converter0;
       map['period_type'] = Variable<int>(converter.mapToSql(periodType));
     }
     if (!nullToAbsent || weekStart != null) {
-      final converter = $HabitDBsTable.$converter1;
+      final converter = $HabitDbsTable.$converter1;
       map['week_start'] = Variable<int>(converter.mapToSql(weekStart));
     }
     return map;
   }
 
-  HabitDBsCompanion toCompanion(bool nullToAbsent) {
-    return HabitDBsCompanion(
+  HabitDbsCompanion toCompanion(bool nullToAbsent) {
+    return HabitDbsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       title:
           title == null && nullToAbsent ? const Value.absent() : Value(title),
-      order:
-          order == null && nullToAbsent ? const Value.absent() : Value(order),
+      startTime: startTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startTime),
       frequency: frequency == null && nullToAbsent
           ? const Value.absent()
           : Value(frequency),
@@ -94,13 +97,13 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
     );
   }
 
-  factory HabitDB.fromJson(Map<String, dynamic> json,
+  factory HabitDb.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
-    return HabitDB(
+    return HabitDb(
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
-      order: serializer.fromJson<int>(json['order']),
+      startTime: serializer.fromJson<DateTime>(json['startTime']),
       frequency: serializer.fromJson<int>(json['frequency']),
       periodValue: serializer.fromJson<int>(json['periodValue']),
       periodType: serializer.fromJson<PeriodType>(json['periodType']),
@@ -113,7 +116,7 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
-      'order': serializer.toJson<int>(order),
+      'startTime': serializer.toJson<DateTime>(startTime),
       'frequency': serializer.toJson<int>(frequency),
       'periodValue': serializer.toJson<int>(periodValue),
       'periodType': serializer.toJson<PeriodType>(periodType),
@@ -121,18 +124,18 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
     };
   }
 
-  HabitDB copyWith(
+  HabitDb copyWith(
           {int id,
           String title,
-          int order,
+          DateTime startTime,
           int frequency,
           int periodValue,
           PeriodType periodType,
           Weekday weekStart}) =>
-      HabitDB(
+      HabitDb(
         id: id ?? this.id,
         title: title ?? this.title,
-        order: order ?? this.order,
+        startTime: startTime ?? this.startTime,
         frequency: frequency ?? this.frequency,
         periodValue: periodValue ?? this.periodValue,
         periodType: periodType ?? this.periodType,
@@ -140,10 +143,10 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
       );
   @override
   String toString() {
-    return (StringBuffer('HabitDB(')
+    return (StringBuffer('HabitDb(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('order: $order, ')
+          ..write('startTime: $startTime, ')
           ..write('frequency: $frequency, ')
           ..write('periodValue: $periodValue, ')
           ..write('periodType: $periodType, ')
@@ -158,7 +161,7 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
       $mrjc(
           title.hashCode,
           $mrjc(
-              order.hashCode,
+              startTime.hashCode,
               $mrjc(
                   frequency.hashCode,
                   $mrjc(periodValue.hashCode,
@@ -166,51 +169,51 @@ class HabitDB extends DataClass implements Insertable<HabitDB> {
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
-      (other is HabitDB &&
+      (other is HabitDb &&
           other.id == this.id &&
           other.title == this.title &&
-          other.order == this.order &&
+          other.startTime == this.startTime &&
           other.frequency == this.frequency &&
           other.periodValue == this.periodValue &&
           other.periodType == this.periodType &&
           other.weekStart == this.weekStart);
 }
 
-class HabitDBsCompanion extends UpdateCompanion<HabitDB> {
+class HabitDbsCompanion extends UpdateCompanion<HabitDb> {
   final Value<int> id;
   final Value<String> title;
-  final Value<int> order;
+  final Value<DateTime> startTime;
   final Value<int> frequency;
   final Value<int> periodValue;
   final Value<PeriodType> periodType;
   final Value<Weekday> weekStart;
-  const HabitDBsCompanion({
+  const HabitDbsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
-    this.order = const Value.absent(),
+    this.startTime = const Value.absent(),
     this.frequency = const Value.absent(),
     this.periodValue = const Value.absent(),
     this.periodType = const Value.absent(),
     this.weekStart = const Value.absent(),
   });
-  HabitDBsCompanion.insert({
+  HabitDbsCompanion.insert({
     this.id = const Value.absent(),
     @required String title,
-    @required int order,
+    @required DateTime startTime,
     @required int frequency,
     @required int periodValue,
     @required PeriodType periodType,
     @required Weekday weekStart,
   })  : title = Value(title),
-        order = Value(order),
+        startTime = Value(startTime),
         frequency = Value(frequency),
         periodValue = Value(periodValue),
         periodType = Value(periodType),
         weekStart = Value(weekStart);
-  static Insertable<HabitDB> custom({
+  static Insertable<HabitDb> custom({
     Expression<int> id,
     Expression<String> title,
-    Expression<int> order,
+    Expression<DateTime> startTime,
     Expression<int> frequency,
     Expression<int> periodValue,
     Expression<int> periodType,
@@ -219,7 +222,7 @@ class HabitDBsCompanion extends UpdateCompanion<HabitDB> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
-      if (order != null) 'order': order,
+      if (startTime != null) 'start_time': startTime,
       if (frequency != null) 'frequency': frequency,
       if (periodValue != null) 'period_value': periodValue,
       if (periodType != null) 'period_type': periodType,
@@ -227,18 +230,18 @@ class HabitDBsCompanion extends UpdateCompanion<HabitDB> {
     });
   }
 
-  HabitDBsCompanion copyWith(
+  HabitDbsCompanion copyWith(
       {Value<int> id,
       Value<String> title,
-      Value<int> order,
+      Value<DateTime> startTime,
       Value<int> frequency,
       Value<int> periodValue,
       Value<PeriodType> periodType,
       Value<Weekday> weekStart}) {
-    return HabitDBsCompanion(
+    return HabitDbsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
-      order: order ?? this.order,
+      startTime: startTime ?? this.startTime,
       frequency: frequency ?? this.frequency,
       periodValue: periodValue ?? this.periodValue,
       periodType: periodType ?? this.periodType,
@@ -255,8 +258,8 @@ class HabitDBsCompanion extends UpdateCompanion<HabitDB> {
     if (title.present) {
       map['title'] = Variable<String>(title.value);
     }
-    if (order.present) {
-      map['order'] = Variable<int>(order.value);
+    if (startTime.present) {
+      map['start_time'] = Variable<DateTime>(startTime.value);
     }
     if (frequency.present) {
       map['frequency'] = Variable<int>(frequency.value);
@@ -265,21 +268,21 @@ class HabitDBsCompanion extends UpdateCompanion<HabitDB> {
       map['period_value'] = Variable<int>(periodValue.value);
     }
     if (periodType.present) {
-      final converter = $HabitDBsTable.$converter0;
+      final converter = $HabitDbsTable.$converter0;
       map['period_type'] = Variable<int>(converter.mapToSql(periodType.value));
     }
     if (weekStart.present) {
-      final converter = $HabitDBsTable.$converter1;
+      final converter = $HabitDbsTable.$converter1;
       map['week_start'] = Variable<int>(converter.mapToSql(weekStart.value));
     }
     return map;
   }
 }
 
-class $HabitDBsTable extends HabitDBs with TableInfo<$HabitDBsTable, HabitDB> {
+class $HabitDbsTable extends HabitDbs with TableInfo<$HabitDbsTable, HabitDb> {
   final GeneratedDatabase _db;
   final String _alias;
-  $HabitDBsTable(this._db, [this._alias]);
+  $HabitDbsTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   GeneratedIntColumn _id;
   @override
@@ -297,13 +300,13 @@ class $HabitDBsTable extends HabitDBs with TableInfo<$HabitDBsTable, HabitDB> {
     return GeneratedTextColumn('title', $tableName, false, minTextLength: 1);
   }
 
-  final VerificationMeta _orderMeta = const VerificationMeta('order');
-  GeneratedIntColumn _order;
+  final VerificationMeta _startTimeMeta = const VerificationMeta('startTime');
+  GeneratedDateTimeColumn _startTime;
   @override
-  GeneratedIntColumn get order => _order ??= _constructOrder();
-  GeneratedIntColumn _constructOrder() {
-    return GeneratedIntColumn(
-      'order',
+  GeneratedDateTimeColumn get startTime => _startTime ??= _constructStartTime();
+  GeneratedDateTimeColumn _constructStartTime() {
+    return GeneratedDateTimeColumn(
+      'start_time',
       $tableName,
       false,
     );
@@ -361,15 +364,15 @@ class $HabitDBsTable extends HabitDBs with TableInfo<$HabitDBsTable, HabitDB> {
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, title, order, frequency, periodValue, periodType, weekStart];
+      [id, title, startTime, frequency, periodValue, periodType, weekStart];
   @override
-  $HabitDBsTable get asDslTable => this;
+  $HabitDbsTable get asDslTable => this;
   @override
-  String get $tableName => _alias ?? 'habit_d_bs';
+  String get $tableName => _alias ?? 'habit_dbs';
   @override
-  final String actualTableName = 'habit_d_bs';
+  final String actualTableName = 'habit_dbs';
   @override
-  VerificationContext validateIntegrity(Insertable<HabitDB> instance,
+  VerificationContext validateIntegrity(Insertable<HabitDb> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -382,11 +385,11 @@ class $HabitDBsTable extends HabitDBs with TableInfo<$HabitDBsTable, HabitDB> {
     } else if (isInserting) {
       context.missing(_titleMeta);
     }
-    if (data.containsKey('order')) {
-      context.handle(
-          _orderMeta, order.isAcceptableOrUnknown(data['order'], _orderMeta));
+    if (data.containsKey('start_time')) {
+      context.handle(_startTimeMeta,
+          startTime.isAcceptableOrUnknown(data['start_time'], _startTimeMeta));
     } else if (isInserting) {
-      context.missing(_orderMeta);
+      context.missing(_startTimeMeta);
     }
     if (data.containsKey('frequency')) {
       context.handle(_frequencyMeta,
@@ -410,14 +413,14 @@ class $HabitDBsTable extends HabitDBs with TableInfo<$HabitDBsTable, HabitDB> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  HabitDB map(Map<String, dynamic> data, {String tablePrefix}) {
+  HabitDb map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return HabitDB.fromData(data, _db, prefix: effectivePrefix);
+    return HabitDb.fromData(data, _db, prefix: effectivePrefix);
   }
 
   @override
-  $HabitDBsTable createAlias(String alias) {
-    return $HabitDBsTable(_db, alias);
+  $HabitDbsTable createAlias(String alias) {
+    return $HabitDbsTable(_db, alias);
   }
 
   static TypeConverter<PeriodType, int> $converter0 =
@@ -649,13 +652,13 @@ class $HabitMarkDBsTable extends HabitMarkDBs
 
 abstract class _$MyDatabase extends GeneratedDatabase {
   _$MyDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
-  $HabitDBsTable _habitDBs;
-  $HabitDBsTable get habitDBs => _habitDBs ??= $HabitDBsTable(this);
+  $HabitDbsTable _habitDbs;
+  $HabitDbsTable get habitDbs => _habitDbs ??= $HabitDbsTable(this);
   $HabitMarkDBsTable _habitMarkDBs;
   $HabitMarkDBsTable get habitMarkDBs =>
       _habitMarkDBs ??= $HabitMarkDBsTable(this);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [habitDBs, habitMarkDBs];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [habitDbs, habitMarkDBs];
 }
