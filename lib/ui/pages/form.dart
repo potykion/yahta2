@@ -68,11 +68,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
                   initialTitle: hTitle,
                   onTitleChange: (title) => setState(() => hTitle = title),
                 ),
-                HabitFrequencyAndPeriodLabel(
-                  frequency: hFrequency,
-                  periodValue: hPeriodValue,
-                  periodType: hPeriodType,
-                ),
+
                 HabitFrequencyInput(
                   initialFreq: hFrequency,
                   onFreqChange: (freq) => setState(() => hFrequency = freq),
@@ -82,6 +78,11 @@ class _HabitFormPageState extends State<HabitFormPage> {
                   initialPeriodType: hPeriodType,
                   onPeriodValueChange: (v) => setState(() => hPeriodValue = v),
                   onPeriodTypeChange: (t) => setState(() => hPeriodType = t),
+                ),
+                HabitFrequencyAndPeriodLabel(
+                  frequency: hFrequency,
+                  periodValue: hPeriodValue,
+                  periodType: hPeriodType,
                 ),
                 hPeriodType == PeriodType.weeks
                     ? HabitWeekStartInput(

@@ -62,6 +62,15 @@ class MyApp extends StatelessWidget {
             ),
             backgroundColor: Colors.white,
             accentColor: Colors.yellow[100],
+            cursorColor: Color(0xFF191923),
+            textSelectionHandleColor: Color(0xFF191923),
+            textSelectionColor: Colors.yellow[100],
+            timePickerTheme: TimePickerThemeData(
+              hourMinuteTextColor: Color(0xFF191923),
+              dialHandColor: Color(0xFF191923),
+            ),
+            colorScheme: Theme.of(context).colorScheme.copyWith(primary: Colors.yellow),
+            buttonTheme: ButtonThemeData(colorScheme: Theme.of(context).colorScheme.copyWith(primary: Color(0xFF191923))),
           ),
           routes: {
             HabitListPage.routeName: (_) => HabitListPage(),
@@ -70,4 +79,3 @@ class MyApp extends StatelessWidget {
         ),
       );
 }
-
