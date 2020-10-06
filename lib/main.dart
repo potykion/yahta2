@@ -56,15 +56,13 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           home: HabitListPage(),
           theme: ThemeData(
-              primarySwatch: Colors.yellow,
-              inputDecorationTheme: InputDecorationTheme(
-                border: InputBorder.none,
-              ),
-              chipTheme: Theme.of(context).chipTheme.copyWith(
-                    secondaryLabelStyle: TextStyle(color: Colors.black),
-                    secondarySelectedColor: Colors.yellow,
-                  ),
-              backgroundColor: Colors.yellow[100]),
+            primaryColor: Color(0xFF191923),
+            inputDecorationTheme: InputDecorationTheme(
+              border: InputBorder.none,
+            ),
+            backgroundColor: Colors.white,
+            accentColor: Colors.yellow[100],
+          ),
           routes: {
             HabitListPage.routeName: (_) => HabitListPage(),
             HabitFormPage.routeName: (_) => HabitFormPage(),
@@ -73,16 +71,3 @@ class MyApp extends StatelessWidget {
       );
 }
 
-// class HomePage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text('DraggableScrollableSheet'),
-//       ),
-//       body: SizedBox.expand(
-//         child:,
-//       ),
-//     );
-//   }
-// }

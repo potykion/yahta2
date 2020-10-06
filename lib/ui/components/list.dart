@@ -98,8 +98,6 @@ class HabitFrequencyProgress extends StatelessWidget {
         angle: pi,
         child: LinearProgressIndicator(
           value: vm.habitMarks.length / vm.habit.frequency,
-          backgroundColor: Colors.white,
-          valueColor: AlwaysStoppedAnimation<Color>(Colors.yellow[100]),
         ),
       );
 }
