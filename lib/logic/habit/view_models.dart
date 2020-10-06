@@ -13,7 +13,19 @@ class HabitVM {
 
   String get title => habit.title;
 
-  String get motivationStr => "Когда: ${DateFormat.Hm().format(habit.startTime)}";
+  String get motivationStr {
+    List<String> parts = [];
+
+    if (habit.startTime != null) {
+      parts.add("Когда: ${DateFormat.Hm().format(habit.startTime)}");
+    }
+
+    if (habit.place != null && habit.place.length > 0) {
+      parts.add("Где: ${habit.place}");
+    }
+
+    return parts.join(" • ");
+  }
 
   /// В зависимости от частоты определяет пора ли реализовывать привычку
   bool get timeToPerformHabit {

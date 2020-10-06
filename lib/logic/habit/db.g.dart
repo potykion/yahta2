@@ -11,6 +11,7 @@ class HabitDb extends DataClass implements Insertable<HabitDb> {
   final int id;
   final String title;
   final DateTime startTime;
+  final String place;
   final int frequency;
   final int periodValue;
   final PeriodType periodType;
@@ -19,6 +20,7 @@ class HabitDb extends DataClass implements Insertable<HabitDb> {
       {@required this.id,
       @required this.title,
       @required this.startTime,
+      @required this.place,
       @required this.frequency,
       @required this.periodValue,
       @required this.periodType,
@@ -35,6 +37,8 @@ class HabitDb extends DataClass implements Insertable<HabitDb> {
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
       startTime: dateTimeType
           .mapFromDatabaseResponse(data['${effectivePrefix}start_time']),
+      place:
+          stringType.mapFromDatabaseResponse(data['${effectivePrefix}place']),
       frequency:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}frequency']),
       periodValue: intType
@@ -56,6 +60,9 @@ class HabitDb extends DataClass implements Insertable<HabitDb> {
     }
     if (!nullToAbsent || startTime != null) {
       map['start_time'] = Variable<DateTime>(startTime);
+    }
+    if (!nullToAbsent || place != null) {
+      map['place'] = Variable<String>(place);
     }
     if (!nullToAbsent || frequency != null) {
       map['frequency'] = Variable<int>(frequency);
@@ -82,6 +89,8 @@ class HabitDb extends DataClass implements Insertable<HabitDb> {
       startTime: startTime == null && nullToAbsent
           ? const Value.absent()
           : Value(startTime),
+      place:
+          place == null && nullToAbsent ? const Value.absent() : Value(place),
       frequency: frequency == null && nullToAbsent
           ? const Value.absent()
           : Value(frequency),
@@ -104,6 +113,7 @@ class HabitDb extends DataClass implements Insertable<HabitDb> {
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       startTime: serializer.fromJson<DateTime>(json['startTime']),
+      place: serializer.fromJson<String>(json['place']),
       frequency: serializer.fromJson<int>(json['frequency']),
       periodValue: serializer.fromJson<int>(json['periodValue']),
       periodType: serializer.fromJson<PeriodType>(json['periodType']),
@@ -117,6 +127,7 @@ class HabitDb extends DataClass implements Insertable<HabitDb> {
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
       'startTime': serializer.toJson<DateTime>(startTime),
+      'place': serializer.toJson<String>(place),
       'frequency': serializer.toJson<int>(frequency),
       'periodValue': serializer.toJson<int>(periodValue),
       'periodType': serializer.toJson<PeriodType>(periodType),
@@ -128,6 +139,7 @@ class HabitDb extends DataClass implements Insertable<HabitDb> {
           {int id,
           String title,
           DateTime startTime,
+          String place,
           int frequency,
           int periodValue,
           PeriodType periodType,
@@ -136,6 +148,7 @@ class HabitDb extends DataClass implements Insertable<HabitDb> {
         id: id ?? this.id,
         title: title ?? this.title,
         startTime: startTime ?? this.startTime,
+        place: place ?? this.place,
         frequency: frequency ?? this.frequency,
         periodValue: periodValue ?? this.periodValue,
         periodType: periodType ?? this.periodType,
@@ -147,6 +160,7 @@ class HabitDb extends DataClass implements Insertable<HabitDb> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('startTime: $startTime, ')
+          ..write('place: $place, ')
           ..write('frequency: $frequency, ')
           ..write('periodValue: $periodValue, ')
           ..write('periodType: $periodType, ')
@@ -163,9 +177,11 @@ class HabitDb extends DataClass implements Insertable<HabitDb> {
           $mrjc(
               startTime.hashCode,
               $mrjc(
-                  frequency.hashCode,
-                  $mrjc(periodValue.hashCode,
-                      $mrjc(periodType.hashCode, weekStart.hashCode)))))));
+                  place.hashCode,
+                  $mrjc(
+                      frequency.hashCode,
+                      $mrjc(periodValue.hashCode,
+                          $mrjc(periodType.hashCode, weekStart.hashCode))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -173,6 +189,7 @@ class HabitDb extends DataClass implements Insertable<HabitDb> {
           other.id == this.id &&
           other.title == this.title &&
           other.startTime == this.startTime &&
+          other.place == this.place &&
           other.frequency == this.frequency &&
           other.periodValue == this.periodValue &&
           other.periodType == this.periodType &&
@@ -183,6 +200,7 @@ class HabitDbsCompanion extends UpdateCompanion<HabitDb> {
   final Value<int> id;
   final Value<String> title;
   final Value<DateTime> startTime;
+  final Value<String> place;
   final Value<int> frequency;
   final Value<int> periodValue;
   final Value<PeriodType> periodType;
@@ -191,6 +209,7 @@ class HabitDbsCompanion extends UpdateCompanion<HabitDb> {
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.startTime = const Value.absent(),
+    this.place = const Value.absent(),
     this.frequency = const Value.absent(),
     this.periodValue = const Value.absent(),
     this.periodType = const Value.absent(),
@@ -200,12 +219,14 @@ class HabitDbsCompanion extends UpdateCompanion<HabitDb> {
     this.id = const Value.absent(),
     @required String title,
     @required DateTime startTime,
+    @required String place,
     @required int frequency,
     @required int periodValue,
     @required PeriodType periodType,
     @required Weekday weekStart,
   })  : title = Value(title),
         startTime = Value(startTime),
+        place = Value(place),
         frequency = Value(frequency),
         periodValue = Value(periodValue),
         periodType = Value(periodType),
@@ -214,6 +235,7 @@ class HabitDbsCompanion extends UpdateCompanion<HabitDb> {
     Expression<int> id,
     Expression<String> title,
     Expression<DateTime> startTime,
+    Expression<String> place,
     Expression<int> frequency,
     Expression<int> periodValue,
     Expression<int> periodType,
@@ -223,6 +245,7 @@ class HabitDbsCompanion extends UpdateCompanion<HabitDb> {
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (startTime != null) 'start_time': startTime,
+      if (place != null) 'place': place,
       if (frequency != null) 'frequency': frequency,
       if (periodValue != null) 'period_value': periodValue,
       if (periodType != null) 'period_type': periodType,
@@ -234,6 +257,7 @@ class HabitDbsCompanion extends UpdateCompanion<HabitDb> {
       {Value<int> id,
       Value<String> title,
       Value<DateTime> startTime,
+      Value<String> place,
       Value<int> frequency,
       Value<int> periodValue,
       Value<PeriodType> periodType,
@@ -242,6 +266,7 @@ class HabitDbsCompanion extends UpdateCompanion<HabitDb> {
       id: id ?? this.id,
       title: title ?? this.title,
       startTime: startTime ?? this.startTime,
+      place: place ?? this.place,
       frequency: frequency ?? this.frequency,
       periodValue: periodValue ?? this.periodValue,
       periodType: periodType ?? this.periodType,
@@ -260,6 +285,9 @@ class HabitDbsCompanion extends UpdateCompanion<HabitDb> {
     }
     if (startTime.present) {
       map['start_time'] = Variable<DateTime>(startTime.value);
+    }
+    if (place.present) {
+      map['place'] = Variable<String>(place.value);
     }
     if (frequency.present) {
       map['frequency'] = Variable<int>(frequency.value);
@@ -307,6 +335,18 @@ class $HabitDbsTable extends HabitDbs with TableInfo<$HabitDbsTable, HabitDb> {
   GeneratedDateTimeColumn _constructStartTime() {
     return GeneratedDateTimeColumn(
       'start_time',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _placeMeta = const VerificationMeta('place');
+  GeneratedTextColumn _place;
+  @override
+  GeneratedTextColumn get place => _place ??= _constructPlace();
+  GeneratedTextColumn _constructPlace() {
+    return GeneratedTextColumn(
+      'place',
       $tableName,
       false,
     );
@@ -363,8 +403,16 @@ class $HabitDbsTable extends HabitDbs with TableInfo<$HabitDbsTable, HabitDb> {
   }
 
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, title, startTime, frequency, periodValue, periodType, weekStart];
+  List<GeneratedColumn> get $columns => [
+        id,
+        title,
+        startTime,
+        place,
+        frequency,
+        periodValue,
+        periodType,
+        weekStart
+      ];
   @override
   $HabitDbsTable get asDslTable => this;
   @override
@@ -390,6 +438,12 @@ class $HabitDbsTable extends HabitDbs with TableInfo<$HabitDbsTable, HabitDb> {
           startTime.isAcceptableOrUnknown(data['start_time'], _startTimeMeta));
     } else if (isInserting) {
       context.missing(_startTimeMeta);
+    }
+    if (data.containsKey('place')) {
+      context.handle(
+          _placeMeta, place.isAcceptableOrUnknown(data['place'], _placeMeta));
+    } else if (isInserting) {
+      context.missing(_placeMeta);
     }
     if (data.containsKey('frequency')) {
       context.handle(_frequencyMeta,

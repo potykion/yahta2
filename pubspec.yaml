@@ -58,6 +58,8 @@ dependencies:
   # форматирование дат
   intl: ^0.16.1
 
+  # автокомплит
+  flutter_typeahead: ^1.8.8
 
 dev_dependencies:
   flutter_test:

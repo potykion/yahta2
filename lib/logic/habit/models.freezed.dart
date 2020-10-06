@@ -16,6 +16,7 @@ class _$HabitTearOff {
       {int id,
       @required String title,
       DateTime startTime,
+      String place,
       int frequency = 1,
       int periodValue = 1,
       PeriodType periodType = PeriodType.days,
@@ -24,6 +25,7 @@ class _$HabitTearOff {
       id: id,
       title: title,
       startTime: startTime,
+      place: place,
       frequency: frequency,
       periodValue: periodValue,
       periodType: periodType,
@@ -39,6 +41,7 @@ mixin _$Habit {
   int get id;
   String get title;
   DateTime get startTime;
+  String get place;
   int get frequency;
   int get periodValue;
   PeriodType get periodType;
@@ -54,6 +57,7 @@ abstract class $HabitCopyWith<$Res> {
       {int id,
       String title,
       DateTime startTime,
+      String place,
       int frequency,
       int periodValue,
       PeriodType periodType,
@@ -72,6 +76,7 @@ class _$HabitCopyWithImpl<$Res> implements $HabitCopyWith<$Res> {
     Object id = freezed,
     Object title = freezed,
     Object startTime = freezed,
+    Object place = freezed,
     Object frequency = freezed,
     Object periodValue = freezed,
     Object periodType = freezed,
@@ -82,6 +87,7 @@ class _$HabitCopyWithImpl<$Res> implements $HabitCopyWith<$Res> {
       title: title == freezed ? _value.title : title as String,
       startTime:
           startTime == freezed ? _value.startTime : startTime as DateTime,
+      place: place == freezed ? _value.place : place as String,
       frequency: frequency == freezed ? _value.frequency : frequency as int,
       periodValue:
           periodValue == freezed ? _value.periodValue : periodValue as int,
@@ -100,6 +106,7 @@ abstract class _$HabitCopyWith<$Res> implements $HabitCopyWith<$Res> {
       {int id,
       String title,
       DateTime startTime,
+      String place,
       int frequency,
       int periodValue,
       PeriodType periodType,
@@ -119,6 +126,7 @@ class __$HabitCopyWithImpl<$Res> extends _$HabitCopyWithImpl<$Res>
     Object id = freezed,
     Object title = freezed,
     Object startTime = freezed,
+    Object place = freezed,
     Object frequency = freezed,
     Object periodValue = freezed,
     Object periodType = freezed,
@@ -129,6 +137,7 @@ class __$HabitCopyWithImpl<$Res> extends _$HabitCopyWithImpl<$Res>
       title: title == freezed ? _value.title : title as String,
       startTime:
           startTime == freezed ? _value.startTime : startTime as DateTime,
+      place: place == freezed ? _value.place : place as String,
       frequency: frequency == freezed ? _value.frequency : frequency as int,
       periodValue:
           periodValue == freezed ? _value.periodValue : periodValue as int,
@@ -144,6 +153,7 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
       {this.id,
       @required this.title,
       this.startTime,
+      this.place,
       this.frequency = 1,
       this.periodValue = 1,
       this.periodType = PeriodType.days,
@@ -160,6 +170,8 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
   final String title;
   @override
   final DateTime startTime;
+  @override
+  final String place;
   @JsonKey(defaultValue: 1)
   @override
   final int frequency;
@@ -192,7 +204,7 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'Habit(id: $id, title: $title, startTime: $startTime, frequency: $frequency, periodValue: $periodValue, periodType: $periodType, weekStart: $weekStart, dateRange: $dateRange)';
+    return 'Habit(id: $id, title: $title, startTime: $startTime, place: $place, frequency: $frequency, periodValue: $periodValue, periodType: $periodType, weekStart: $weekStart, dateRange: $dateRange)';
   }
 
   @override
@@ -203,6 +215,7 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
       ..add(DiagnosticsProperty('id', id))
       ..add(DiagnosticsProperty('title', title))
       ..add(DiagnosticsProperty('startTime', startTime))
+      ..add(DiagnosticsProperty('place', place))
       ..add(DiagnosticsProperty('frequency', frequency))
       ..add(DiagnosticsProperty('periodValue', periodValue))
       ..add(DiagnosticsProperty('periodType', periodType))
@@ -221,6 +234,8 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
             (identical(other.startTime, startTime) ||
                 const DeepCollectionEquality()
                     .equals(other.startTime, startTime)) &&
+            (identical(other.place, place) ||
+                const DeepCollectionEquality().equals(other.place, place)) &&
             (identical(other.frequency, frequency) ||
                 const DeepCollectionEquality()
                     .equals(other.frequency, frequency)) &&
@@ -241,6 +256,7 @@ class _$_Habit with DiagnosticableTreeMixin implements _Habit {
       const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(title) ^
       const DeepCollectionEquality().hash(startTime) ^
+      const DeepCollectionEquality().hash(place) ^
       const DeepCollectionEquality().hash(frequency) ^
       const DeepCollectionEquality().hash(periodValue) ^
       const DeepCollectionEquality().hash(periodType) ^
@@ -256,6 +272,7 @@ abstract class _Habit implements Habit {
       {int id,
       @required String title,
       DateTime startTime,
+      String place,
       int frequency,
       int periodValue,
       PeriodType periodType,
@@ -267,6 +284,8 @@ abstract class _Habit implements Habit {
   String get title;
   @override
   DateTime get startTime;
+  @override
+  String get place;
   @override
   int get frequency;
   @override

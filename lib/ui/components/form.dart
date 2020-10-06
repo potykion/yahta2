@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:yahta2/logic/habit/models.dart';
 import 'package:yahta2/logic/habit/utils.dart';
 
@@ -268,4 +269,56 @@ class _HabitStartTimeInputState extends State<HabitStartTimeInput> {
           }
         },
       );
+}
+
+typedef OnPlacePatternChange = Future<List<String>> Function(
+    String placePattern);
+typedef OnPlaceChange = void Function(String place);
+
+class HabitPlaceInput extends StatefulWidget {
+  final OnPlacePatternChange onPlacePatternChange;
+  final OnPlaceChange onPlaceChange;
+  final String initialPlace;
+
+  const HabitPlaceInput({
+    Key key,
+    this.onPlacePatternChange,
+    this.onPlaceChange,
+    this.initialPlace,
+  }) : super(key: key);
+
+  @override
+  _HabitPlaceInputState createState() => _HabitPlaceInputState();
+}
+
+class _HabitPlaceInputState extends State<HabitPlaceInput> {
+  TextEditingController controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    controller.text = widget.initialPlace;
+    controller.addListener(() => widget.onPlaceChange(controller.text));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TypeAheadFormField(
+      textFieldConfiguration: TextFieldConfiguration<String>(
+        controller: this.controller,
+        decoration: InputDecoration(labelText: "Где делать привычку?"),
+      ),
+      // initialValue: this.controller.text,
+      hideOnEmpty: true,
+      hideOnLoading: true,
+        hideSuggestionsOnKeyboardHide: false,
+      onSuggestionSelected: (String suggestion) =>
+          this.controller.text = suggestion,
+      suggestionsCallback: (String pattern) =>
+          widget.onPlacePatternChange(pattern),
+      itemBuilder: (BuildContext context, String suggestion) => ListTile(
+        title: Text(suggestion),
+      ),
+    );
+  }
 }

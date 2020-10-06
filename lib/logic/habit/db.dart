@@ -18,6 +18,8 @@ class HabitDbs extends Table {
 
   DateTimeColumn get startTime => dateTime()();
 
+  TextColumn get place => text().withLength()();
+
   IntColumn get frequency => integer()();
 
   IntColumn get periodValue => integer()();
@@ -80,6 +82,13 @@ class MyDatabase extends _$MyDatabase {
     var row = await customSelect(query).getSingle();
     return row.data["max_order"] as int;
   }
+
+  Future<List<String>> findHabitPlacesByPattern(String pattern) async =>
+      await (selectOnly(habitDbs)
+            ..addColumns([habitDbs.place])
+            ..where(habitDbs.place.lower().contains(pattern)))
+          .map((e) => e.read(habitDbs.place))
+          .get();
 }
 
 class HabitDBConverter {
@@ -87,6 +96,7 @@ class HabitDBConverter {
         id: habit.id,
         title: habit.title,
         startTime: habit.startTime,
+        place: habit.place,
         frequency: habit.frequency,
         periodValue: habit.periodValue,
         weekStart: habit.weekStart,
@@ -97,6 +107,7 @@ class HabitDBConverter {
         title: habitDb.title,
         id: habitDb.id,
         startTime: habitDb.startTime,
+        place: habitDb.place,
         frequency: habitDb.frequency,
         periodType: habitDb.periodType,
         periodValue: habitDb.periodValue,
@@ -111,6 +122,7 @@ class HabitDBConverter {
         periodValue: habit.periodValue,
         weekStart: habit.weekStart,
         startTime: habit.startTime,
+        place: habit.place,
       );
 }
 
@@ -174,6 +186,10 @@ class HabitRepository {
   Future<Habit> updateHabit(Habit habitToUpdate) async {
     await db.updateHabit(HabitDBConverter.dbFromHabit(habitToUpdate));
     return habitToUpdate;
+  }
+
+  Future<List<String>> findHabitPlacesByPattern(String pattern) async {
+    return await db.findHabitPlacesByPattern(pattern);
   }
 }
 

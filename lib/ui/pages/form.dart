@@ -1,5 +1,7 @@
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:yahta2/logic/habit/blocs.dart';
+import 'package:yahta2/logic/habit/db.dart';
 import 'package:yahta2/logic/habit/models.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yahta2/logic/habit/utils.dart';
@@ -23,6 +25,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
   PeriodType hPeriodType;
   Weekday hWeekStart;
   DateTime hStartTime;
+  String hPlace;
 
   @override
   void didChangeDependencies() {
@@ -37,6 +40,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
       hPeriodType = habit?.periodType ?? PeriodType.days;
       hWeekStart = habit?.weekStart ?? Weekday.monday;
       hStartTime = habit?.startTime ?? FixedDateTime.now().value;
+      hPlace = habit?.place ?? "";
     });
   }
 
@@ -54,41 +58,50 @@ class _HabitFormPageState extends State<HabitFormPage> {
             )
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              HabitTitleInput(
-                initialTitle: hTitle,
-                onTitleChange: (title) => setState(() => hTitle = title),
-              ),
-              HabitFrequencyInput(
-                initialFreq: hFrequency,
-                onFreqChange: (freq) => setState(() => hFrequency = freq),
-              ),
-              HabitPeriodInput(
-                initialPeriodValue: hPeriodValue,
-                initialPeriodType: hPeriodType,
-                onPeriodValueChange: (v) => setState(() => hPeriodValue = v),
-                onPeriodTypeChange: (t) => setState(() => hPeriodType = t),
-              ),
-              HabitFrequencyAndPeriodLabel(
-                frequency: hFrequency,
-                periodValue: hPeriodValue,
-                periodType: hPeriodType,
-              ),
-              hPeriodType == PeriodType.weeks
-                  ? HabitWeekStartInput(
-                      initialWeekStart: hWeekStart,
-                      onWeekStartChange: (w) => setState(() => hWeekStart = w),
-                    )
-                  : Container(),
-              HabitStartTimeInput(
-                initialStartTime: hStartTime,
-                onStartTimeChange: (time) => setState(() => hStartTime = time),
-              )
-            ],
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                HabitTitleInput(
+                  initialTitle: hTitle,
+                  onTitleChange: (title) => setState(() => hTitle = title),
+                ),
+                HabitFrequencyAndPeriodLabel(
+                  frequency: hFrequency,
+                  periodValue: hPeriodValue,
+                  periodType: hPeriodType,
+                ),
+                HabitFrequencyInput(
+                  initialFreq: hFrequency,
+                  onFreqChange: (freq) => setState(() => hFrequency = freq),
+                ),
+                HabitPeriodInput(
+                  initialPeriodValue: hPeriodValue,
+                  initialPeriodType: hPeriodType,
+                  onPeriodValueChange: (v) => setState(() => hPeriodValue = v),
+                  onPeriodTypeChange: (t) => setState(() => hPeriodType = t),
+                ),
+                hPeriodType == PeriodType.weeks
+                    ? HabitWeekStartInput(
+                        initialWeekStart: hWeekStart,
+                        onWeekStartChange: (w) => setState(() => hWeekStart = w),
+                      )
+                    : Container(),
+                HabitStartTimeInput(
+                  initialStartTime: hStartTime,
+                  onStartTimeChange: (time) => setState(() => hStartTime = time),
+                ),
+                HabitPlaceInput(
+                  onPlacePatternChange: (pattern) => context
+                      .read<HabitRepository>()
+                      .findHabitPlacesByPattern(pattern),
+                  onPlaceChange: (place) => setState(() => hPlace = place),
+                  initialPlace: hPlace,
+                )
+              ],
+            ),
           ),
         ),
       );
@@ -103,6 +116,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
             periodType: hPeriodType,
             weekStart: hWeekStart,
             startTime: hStartTime,
+            place: hPlace,
           )
         : HabitCreated(
             title: hTitle,
@@ -111,6 +125,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
             periodType: hPeriodType,
             weekStart: hWeekStart,
             startTime: hStartTime,
+            place: hPlace,
           );
   }
 }

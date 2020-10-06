@@ -23,6 +23,7 @@ class HabitUpdated extends HabitEvent {
   final PeriodType periodType;
   final Weekday weekStart;
   final DateTime startTime;
+  final String place;
 
   HabitUpdated({
     @required this.id,
@@ -32,6 +33,7 @@ class HabitUpdated extends HabitEvent {
     @required this.periodType,
     @required this.weekStart,
     @required this.startTime,
+    @required this.place,
   });
 
   Habit updateHabit(Habit habit) => habit.copyWith(
@@ -41,6 +43,7 @@ class HabitUpdated extends HabitEvent {
         periodType: periodType,
         weekStart: weekStart,
         startTime: startTime,
+        place: place,
       );
 }
 
@@ -69,6 +72,7 @@ class HabitCreated extends HabitEvent {
   final PeriodType periodType;
   final Weekday weekStart;
   final DateTime startTime;
+  final String place;
 
   HabitCreated({
     @required this.title,
@@ -77,6 +81,7 @@ class HabitCreated extends HabitEvent {
     @required this.periodType,
     @required this.weekStart,
     @required this.startTime,
+    @required this.place,
   });
 
   Habit toHabit() {
@@ -87,6 +92,7 @@ class HabitCreated extends HabitEvent {
       frequency: this.frequency,
       weekStart: this.weekStart,
       startTime: this.startTime,
+      place: this.place,
     );
   }
 }

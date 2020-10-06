@@ -10,7 +10,8 @@ abstract class Habit with _$Habit {
   factory Habit({
     int id,
     @required String title,
-    DateTime startTime,
+    @required DateTime startTime,
+    @required String place,
     @Default(1) int frequency,
     @Default(1) int periodValue,
     @Default(PeriodType.days) PeriodType periodType,
