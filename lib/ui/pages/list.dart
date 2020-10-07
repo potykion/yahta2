@@ -24,7 +24,7 @@ class _HabitListPageState extends State<HabitListPage> {
           appBar: buildAppBar(context, state),
           body: ListView(
             children:
-                state.habitVMs.map((vm) => HabitListTile(vm: vm)).toList(),
+                state.habitVMsToShow.map((vm) => HabitListTile(vm: vm)).toList(),
           ),
           bottomNavigationBar: PeriodBottomNavBar(),
         ),

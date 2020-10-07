@@ -121,12 +121,21 @@ class HabitState {
   Map<int, List<HabitMark>> get idHabitMarks =>
       groupBy(habitMarks, (HabitMark hm) => hm.habitId);
 
-  List<HabitVM> get habitVMs =>
-      (habits.toList()..sort((h1, h2) => h1.startTime.compareTo(h2.startTime)))
-          .where((h) => h.periodType == filterPeriodType)
-          .map((h) => HabitVM.build(h, idHabitMarks[h.id] ?? []))
-          .where((vm) => showDone || !vm.done)
-          .toList();
+  List<Habit> get sortedHabits =>
+      (habits.toList()..sort((h1, h2) => h1.startTime.compareTo(h2.startTime)));
+
+  List<HabitVM> get habitVMs => sortedHabits
+      .map((h) => HabitVM.build(h, idHabitMarks[h.id] ?? []))
+      .toList();
+
+  List<HabitVM> get habitVMsToShow => habitVMs
+      .where((HabitVM vm) => vm.habit.periodType == filterPeriodType)
+      .where((vm) => showDone || !vm.done)
+      .toList();
+
+  int countUndoneWithPeriodType(PeriodType periodType) => habitVMs
+      .where((vm) => !vm.done && vm.habit.periodType == periodType)
+      .length;
 
   HabitState copyWith({
     List<Habit> habits,

@@ -83,9 +83,20 @@ class MyApp extends StatelessWidget {
                 Theme.of(context).colorScheme.copyWith(primary: Colors.yellow),
             // Цвет кнопок в таймпикере
             buttonTheme: ButtonThemeData(
-                colorScheme: Theme.of(context)
-                    .colorScheme
-                    .copyWith(primary: Color(0xFF191923))),
+              colorScheme: Theme.of(context)
+                  .colorScheme
+                  .copyWith(primary: Color(0xFF191923)),
+            ),
+            // Бекграунд циркл-аватара
+            primaryColorLight: Colors.yellow[100],
+            primaryTextTheme: TextTheme(
+              subtitle1: TextStyle(
+                // Цвет текста (форграунд) циркл-аватара
+                color: Color(0xFF191923),
+                // Размер текста в циркл-аватаре
+                fontSize: 10,
+              ),
+            ),
           ),
           routes: {
             HabitListPage.routeName: (_) => HabitListPage(),

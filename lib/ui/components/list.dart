@@ -116,27 +116,58 @@ class _PeriodBottomNavBarState extends State<PeriodBottomNavBar> {
   int currentIndex = 0;
 
   @override
-  Widget build(BuildContext context) => BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.view_day),
-            title: Text("День"),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.view_week),
-            title: Text("Неделя"),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.today),
-            title: Text("Месяц"),
-          ),
-        ],
-        currentIndex: currentIndex,
-        onTap: (index) {
-          setState(() => currentIndex = index);
-          context
-              .bloc<HabitBloc>()
-              .add(FilterPeriodTypeEvent(PeriodType.values[currentIndex]));
-        },
+  Widget build(BuildContext context) => BlocBuilder<HabitBloc, HabitState>(
+        builder: (BuildContext context, state) => BottomNavigationBar(
+          items: [
+            buildBottomNavigationBarItem(state, PeriodType.days),
+            buildBottomNavigationBarItem(state, PeriodType.weeks),
+            buildBottomNavigationBarItem(state, PeriodType.months),
+          ],
+          currentIndex: currentIndex,
+          onTap: (index) {
+            setState(() => currentIndex = index);
+            context
+                .bloc<HabitBloc>()
+                .add(FilterPeriodTypeEvent(PeriodType.values[currentIndex]));
+          },
+        ),
       );
+
+  BottomNavigationBarItem buildBottomNavigationBarItem(
+      HabitState state, PeriodType periodType) {
+    Icon icon;
+    Text title;
+
+    if (periodType == PeriodType.days) {
+      icon = Icon(Icons.view_day);
+      title = Text("День");
+    }
+    if (periodType == PeriodType.weeks) {
+      icon = Icon(Icons.view_week);
+      title = Text("Неделя");
+    }
+    if (periodType == PeriodType.months) {
+      icon = Icon(Icons.calendar_today);
+      title = Text("Месяц");
+    }
+
+    var undoneHabitCounter = Positioned(
+      child: CircleAvatar(
+        child: Text(
+          state.countUndoneWithPeriodType(periodType).toString(),
+        ),
+        radius: 8,
+      ),
+      right: -8,
+      top: -8,
+    );
+
+    return BottomNavigationBarItem(
+      icon: Stack(
+        children: [icon, undoneHabitCounter],
+        overflow: Overflow.visible,
+      ),
+      title: title,
+    );
+  }
 }
