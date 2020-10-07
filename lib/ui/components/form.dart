@@ -254,11 +254,14 @@ class _HabitStartTimeInputState extends State<HabitStartTimeInput> {
   @override
   Widget build(BuildContext context) => TextFormField(
         controller: controller,
-        decoration: InputDecoration(labelText: "Во сколько делать привычку?"),
+        decoration: InputDecoration(labelText: "Время"),
         readOnly: true,
         onTap: () async {
           TimeOfDay selectedTime = await showTimePicker(
             context: context,
+            helpText: "В какое время делать привычку?",
+            cancelText: "Отмена",
+            confirmText: "Ок",
             initialTime: TimeOfDay.fromDateTime(widget.initialStartTime),
           );
           if (selectedTime != null) {
@@ -306,12 +309,15 @@ class _HabitPlaceInputState extends State<HabitPlaceInput> {
     return TypeAheadFormField(
       textFieldConfiguration: TextFieldConfiguration<String>(
         controller: this.controller,
-        decoration: InputDecoration(labelText: "Где делать привычку?"),
+        decoration: InputDecoration(
+          labelText: "Место",
+          hintText: "В каком месте делать привычку?",
+        ),
       ),
       // initialValue: this.controller.text,
       hideOnEmpty: true,
       hideOnLoading: true,
-        hideSuggestionsOnKeyboardHide: false,
+      hideSuggestionsOnKeyboardHide: false,
       onSuggestionSelected: (String suggestion) =>
           this.controller.text = suggestion,
       suggestionsCallback: (String pattern) =>

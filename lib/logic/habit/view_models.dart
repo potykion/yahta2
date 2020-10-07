@@ -17,11 +17,11 @@ class HabitVM {
     List<String> parts = [];
 
     if (habit.startTime != null) {
-      parts.add("Когда: ${DateFormat.Hm().format(habit.startTime)}");
+      parts.add("Время: ${DateFormat.Hm().format(habit.startTime)}");
     }
 
     if (habit.place != null && habit.place.length > 0) {
-      parts.add("Где: ${habit.place}");
+      parts.add("Место: ${habit.place}");
     }
 
     return parts.join(" • ");
