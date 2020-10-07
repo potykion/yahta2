@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yahta2/logic/habit/blocs.dart';
+import 'package:yahta2/logic/habit/models.dart';
 import 'package:yahta2/logic/habit/view_models.dart';
 import 'package:yahta2/ui/pages/form.dart';
 
@@ -99,5 +100,43 @@ class HabitFrequencyProgress extends StatelessWidget {
         child: LinearProgressIndicator(
           value: vm.habitMarks.length / vm.habit.frequency,
         ),
+      );
+}
+
+class PeriodBottomNavBar extends StatefulWidget {
+  const PeriodBottomNavBar({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _PeriodBottomNavBarState createState() => _PeriodBottomNavBarState();
+}
+
+class _PeriodBottomNavBarState extends State<PeriodBottomNavBar> {
+  int currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) => BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.view_day),
+            title: Text("День"),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.view_week),
+            title: Text("Неделя"),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.today),
+            title: Text("Месяц"),
+          ),
+        ],
+        currentIndex: currentIndex,
+        onTap: (index) {
+          setState(() => currentIndex = index);
+          context
+              .bloc<HabitBloc>()
+              .add(FilterPeriodTypeEvent(PeriodType.values[currentIndex]));
+        },
       );
 }

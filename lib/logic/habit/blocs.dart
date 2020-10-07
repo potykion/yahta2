@@ -13,6 +13,12 @@ import 'models.dart';
 
 class HabitEvent {}
 
+class FilterPeriodTypeEvent extends HabitEvent {
+  final PeriodType periodType;
+
+  FilterPeriodTypeEvent(this.periodType);
+}
+
 class ToggleShowDoneEvent extends HabitEvent {}
 
 class HabitUpdated extends HabitEvent {
@@ -103,33 +109,36 @@ class HabitState {
   final List<Habit> habits;
   final List<HabitMark> habitMarks;
   final bool showDone;
+  final PeriodType filterPeriodType;
 
   HabitState({
     this.habits = const [],
     this.habitMarks = const [],
     this.showDone = true,
+    this.filterPeriodType = PeriodType.days,
   });
 
   Map<int, List<HabitMark>> get idHabitMarks =>
       groupBy(habitMarks, (HabitMark hm) => hm.habitId);
 
-  List<Habit> get orderedHabits =>
-      (habits.toList()..sort((h1, h2) => h1.startTime.compareTo(h2.startTime)));
-
-  List<HabitVM> get habitVMs => orderedHabits
-      .map((h) => HabitVM.build(h, idHabitMarks[h.id] ?? []))
-      .where((vm) => showDone || !vm.done)
-      .toList();
+  List<HabitVM> get habitVMs =>
+      (habits.toList()..sort((h1, h2) => h1.startTime.compareTo(h2.startTime)))
+          .where((h) => h.periodType == filterPeriodType)
+          .map((h) => HabitVM.build(h, idHabitMarks[h.id] ?? []))
+          .where((vm) => showDone || !vm.done)
+          .toList();
 
   HabitState copyWith({
     List<Habit> habits,
     List<HabitMark> habitMarks,
     bool showDone,
+    PeriodType filterPeriodType,
   }) =>
       HabitState(
         habits: habits ?? this.habits,
         habitMarks: habitMarks ?? this.habitMarks,
         showDone: showDone ?? this.showDone,
+        filterPeriodType: filterPeriodType ?? this.filterPeriodType,
       );
 }
 
@@ -215,6 +224,8 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
           ),
         ],
       );
+    } else if (event is FilterPeriodTypeEvent) {
+      yield state.copyWith(filterPeriodType: event.periodType);
     } else {
       throw "UNHANDLED EVENT: $event";
     }

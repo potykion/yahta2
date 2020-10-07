@@ -26,6 +26,7 @@ class _HabitListPageState extends State<HabitListPage> {
             children:
                 state.habitVMs.map((vm) => HabitListTile(vm: vm)).toList(),
           ),
+          bottomNavigationBar: PeriodBottomNavBar(),
         ),
       );
 
@@ -47,3 +48,4 @@ class _HabitListPageState extends State<HabitListPage> {
         ],
       );
 }
+
