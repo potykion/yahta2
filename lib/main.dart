@@ -62,10 +62,10 @@ class MyApp extends StatelessWidget {
               // Удаление обводки у инпутов
               border: InputBorder.none,
             ),
-            // Незаполненная часть прогресс-индикатора
-            backgroundColor: Colors.white,
-            // Заполненная часть прогресс-индикатора
-            accentColor: Colors.yellow[100],
+            // Незаполненная часть прогресс-индикатора (прозрачность делаем для ripple-эффекта)
+            backgroundColor: Colors.transparent,
+            // Заполненная часть прогресс-индикатора (прозрачность делаем для ripple-эффекта)
+            accentColor: Colors.yellow.withAlpha(63),
             // Курсор без стрелочки
             cursorColor: Color(0xFF191923),
             // Стрелочка-курсор

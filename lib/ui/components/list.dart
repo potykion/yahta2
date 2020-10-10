@@ -19,22 +19,29 @@ class HabitListTile extends StatelessWidget {
         context,
         Material(
           elevation: 2,
-          child: Stack(
-            alignment: AlignmentDirectional.centerEnd,
-            children: [
-              Positioned(
-                child: HabitFrequencyProgress(vm: vm),
-                bottom: 0,
-                right: 0,
-                left: 0,
-                top: 0,
-              ),
-              ListTile(
-                title: Text(vm.title, style: vm.textStyle),
-                subtitle: Text(vm.motivationStr),
-                trailing: HabitListTileActions(vm: vm),
-              ),
-            ],
+          type: MaterialType.card,
+          child: InkWell(
+            onTap: () => Navigator.pushNamed(
+              context,
+              HabitFormPage.routeName,
+              arguments: vm.toHabit(),
+            ),
+            child: Stack(
+              alignment: AlignmentDirectional.centerEnd,
+              children: [
+                Positioned(
+                  child: HabitFrequencyProgress(vm: vm),
+                  bottom: 0,
+                  right: 0,
+                  left: 0,
+                  top: 0,
+                ),
+                ListTile(
+                  title: Text(vm.title, style: vm.textStyle),
+                  subtitle: Text(vm.motivationStr),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -55,34 +62,6 @@ class HabitListTile extends StatelessWidget {
 
           return false;
         },
-      );
-}
-
-class HabitListTileActions extends StatelessWidget {
-  const HabitListTileActions({
-    Key key,
-    @required this.vm,
-  }) : super(key: key);
-
-  final HabitVM vm;
-
-  @override
-  Widget build(BuildContext context) => PopupMenuButton<HabitAction>(
-        onSelected: (action) {
-          if (action == HabitAction.delete) {
-            context.bloc<HabitBloc>().add(HabitDeleted(vm.habit.id));
-          } else if (action == HabitAction.edit) {
-            Navigator.pushNamed(
-              context,
-              HabitFormPage.routeName,
-              arguments: vm.toHabit(),
-            );
-          }
-        },
-        itemBuilder: (BuildContext context) => <PopupMenuEntry<HabitAction>>[
-          PopupMenuItem(value: HabitAction.edit, child: Text('Изменить')),
-          PopupMenuItem(value: HabitAction.delete, child: Text('Удалить')),
-        ],
       );
 }
 

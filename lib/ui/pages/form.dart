@@ -45,67 +45,99 @@ class _HabitFormPageState extends State<HabitFormPage> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Text("Создание привычки"),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.check),
-              onPressed: () {
-                context.bloc<HabitBloc>().add(buildHabitEvent());
-                Navigator.pop(context);
-              },
-            )
-          ],
-        ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                HabitTitleInput(
-                  initialTitle: hTitle,
-                  onTitleChange: (title) => setState(() => hTitle = title),
-                ),
+  Widget build(BuildContext context) {
+    List<Widget> actions = [];
 
-                HabitFrequencyInput(
-                  initialFreq: hFrequency,
-                  onFreqChange: (freq) => setState(() => hFrequency = freq),
-                ),
-                HabitPeriodInput(
-                  initialPeriodValue: hPeriodValue,
-                  initialPeriodType: hPeriodType,
-                  onPeriodValueChange: (v) => setState(() => hPeriodValue = v),
-                  onPeriodTypeChange: (t) => setState(() => hPeriodType = t),
-                ),
-                HabitFrequencyAndPeriodLabel(
-                  frequency: hFrequency,
-                  periodValue: hPeriodValue,
-                  periodType: hPeriodType,
-                ),
-                hPeriodType == PeriodType.weeks
-                    ? HabitWeekStartInput(
-                        initialWeekStart: hWeekStart,
-                        onWeekStartChange: (w) => setState(() => hWeekStart = w),
-                      )
-                    : Container(),
-                HabitStartTimeInput(
-                  initialStartTime: hStartTime,
-                  onStartTimeChange: (time) => setState(() => hStartTime = time),
-                ),
-                HabitPlaceInput(
-                  onPlacePatternChange: (pattern) => context
-                      .read<HabitRepository>()
-                      .findHabitPlacesByPattern(pattern),
-                  onPlaceChange: (place) => setState(() => hPlace = place),
-                  initialPlace: hPlace,
-                )
-              ],
-            ),
+    if (hId != null) {
+      actions.add(IconButton(
+        icon: Icon(Icons.delete),
+        onPressed: () => showDialog<void>(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text("Удаление привычки"),
+                  content: Text("Вы хотите удалить привычку?"),
+                  actions: [
+                    FlatButton(
+                      child: Text("Нет"),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    FlatButton(
+                      child: Text("Да"),
+                      onPressed: () {
+                        context.bloc<HabitBloc>().add(HabitDeleted(hId));
+                        // Закрываем диалог + закрываем форму
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                    )
+                  ],
+                )),
+      ));
+    }
+
+    actions.add(IconButton(
+      icon: Icon(Icons.check),
+      onPressed: () {
+        context.bloc<HabitBloc>().add(buildHabitEvent());
+        Navigator.pop(context);
+      },
+    ));
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          hId != null ? "Изменить привычку" : "Создать привычку",
+        ),
+        actions: actions,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              HabitTitleInput(
+                initialTitle: hTitle,
+                onTitleChange: (title) => setState(() => hTitle = title),
+              ),
+              HabitFrequencyInput(
+                initialFreq: hFrequency,
+                onFreqChange: (freq) => setState(() => hFrequency = freq),
+              ),
+              HabitPeriodInput(
+                initialPeriodValue: hPeriodValue,
+                initialPeriodType: hPeriodType,
+                onPeriodValueChange: (v) => setState(() => hPeriodValue = v),
+                onPeriodTypeChange: (t) => setState(() => hPeriodType = t),
+              ),
+              HabitFrequencyAndPeriodLabel(
+                frequency: hFrequency,
+                periodValue: hPeriodValue,
+                periodType: hPeriodType,
+              ),
+              hPeriodType == PeriodType.weeks
+                  ? HabitWeekStartInput(
+                      initialWeekStart: hWeekStart,
+                      onWeekStartChange: (w) => setState(() => hWeekStart = w),
+                    )
+                  : Container(),
+              HabitStartTimeInput(
+                initialStartTime: hStartTime,
+                onStartTimeChange: (time) => setState(() => hStartTime = time),
+              ),
+              HabitPlaceInput(
+                onPlacePatternChange: (pattern) => context
+                    .read<HabitRepository>()
+                    .findHabitPlacesByPattern(pattern),
+                onPlaceChange: (place) => setState(() => hPlace = place),
+                initialPlace: hPlace,
+              )
+            ],
           ),
         ),
-      );
+      ),
+    );
+  }
 
   HabitEvent buildHabitEvent() {
     return hId != null
