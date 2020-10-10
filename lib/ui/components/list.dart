@@ -24,7 +24,7 @@ class HabitListTile extends StatelessWidget {
             onTap: () => Navigator.pushNamed(
               context,
               HabitFormPage.routeName,
-              arguments: vm.toHabit(),
+              arguments: [vm.toHabit(), null],
             ),
             child: Stack(
               alignment: AlignmentDirectional.centerEnd,

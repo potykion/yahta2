@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yahta2/logic/habit/blocs.dart';
+import 'package:yahta2/logic/habit/models.dart';
 import 'package:yahta2/ui/components/list.dart';
 import 'package:yahta2/ui/pages/form.dart';
 
@@ -23,29 +24,44 @@ class _HabitListPageState extends State<HabitListPage> {
         builder: (_, state) => Scaffold(
           appBar: buildAppBar(context, state),
           body: ListView(
-            children:
-                state.habitVMsToShow.map((vm) => HabitListTile(vm: vm)).toList(),
+            children: state.habitVMsToShow
+                .map((vm) => HabitListTile(vm: vm))
+                .toList(),
           ),
           bottomNavigationBar: PeriodBottomNavBar(),
         ),
       );
 
-  AppBar buildAppBar(BuildContext context, HabitState state) => AppBar(
-        title: Text("План на сегодня"),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () =>
-                context.bloc<HabitBloc>().add(ToggleShowDoneEvent()),
-            icon: state.showDone
-                ? Icon(Icons.visibility_off)
-                : Icon(Icons.visibility),
-          ),
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () =>
-                Navigator.pushNamed(context, HabitFormPage.routeName),
-          )
-        ],
-      );
-}
+  AppBar buildAppBar(BuildContext context, HabitState state) {
+    String title;
+    if (state.filterPeriodType == PeriodType.days) {
+      title = "Ежедневные привычки";
+    }
+    if (state.filterPeriodType == PeriodType.weeks) {
+      title = "Еженедельные привычки";
+    }
+    if (state.filterPeriodType == PeriodType.months) {
+      title = "Ежемесячные привычки";
+    }
 
+    return AppBar(
+      title: Text(title),
+      actions: <Widget>[
+        IconButton(
+          onPressed: () => context.bloc<HabitBloc>().add(ToggleShowDoneEvent()),
+          icon: state.showDone
+              ? Icon(Icons.visibility_off)
+              : Icon(Icons.visibility),
+        ),
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () => Navigator.pushNamed(
+            context,
+            HabitFormPage.routeName,
+            arguments: [null, state.filterPeriodType],
+          ),
+        )
+      ],
+    );
+  }
+}

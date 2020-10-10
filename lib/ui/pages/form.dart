@@ -31,13 +31,15 @@ class _HabitFormPageState extends State<HabitFormPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    Habit habit = ModalRoute.of(context).settings.arguments as Habit;
+    List habitAndPeriodType = ModalRoute.of(context).settings.arguments as List;
+    var habit = habitAndPeriodType[0] as Habit;
+    var periodType = habitAndPeriodType[1] as PeriodType;
     setState(() {
       hId = habit?.id;
       hTitle = habit?.title ?? "";
       hFrequency = habit?.frequency ?? 1;
       hPeriodValue = habit?.periodValue ?? 1;
-      hPeriodType = habit?.periodType ?? PeriodType.days;
+      hPeriodType = habit?.periodType ?? periodType ?? PeriodType.days;
       hWeekStart = habit?.weekStart ?? Weekday.monday;
       hStartTime = habit?.startTime ?? FixedDateTime.now().value;
       hPlace = habit?.place ?? "";
