@@ -2,7 +2,7 @@
 
 Yet Another Habit TrAcker (second attempt)
 
-![](assets/Screenshot_20200609-193417.jpg)
+![](assets/Screenshot_20201010-155248.jpg)
 
 ## Tech
 

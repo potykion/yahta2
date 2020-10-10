@@ -56,48 +56,52 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           home: HabitListPage(),
           theme: ThemeData(
-            // Цвет апп-бара
-            primaryColor: Color(0xFF191923),
-            inputDecorationTheme: InputDecorationTheme(
-              // Удаление обводки у инпутов
-              border: InputBorder.none,
-            ),
-            // Незаполненная часть прогресс-индикатора (прозрачность делаем для ripple-эффекта)
-            backgroundColor: Colors.transparent,
-            // Заполненная часть прогресс-индикатора (прозрачность делаем для ripple-эффекта)
-            accentColor: Colors.yellow.withAlpha(63),
-            // Курсор без стрелочки
-            cursorColor: Color(0xFF191923),
-            // Стрелочка-курсор
-            textSelectionHandleColor: Color(0xFF191923),
-            // Цвет выделения текста
-            textSelectionColor: Colors.yellow[100],
-            timePickerTheme: TimePickerThemeData(
-              // Цвет текста в таймпикере
-              hourMinuteTextColor: Color(0xFF191923),
-              // Цвет стрелок в таймпикере
-              dialHandColor: Color(0xFF191923),
-            ),
-            // Хайлайт выбора часа/минут в таймпикере
-            colorScheme:
-                Theme.of(context).colorScheme.copyWith(primary: Colors.yellow),
-            // Цвет кнопок в таймпикере
-            buttonTheme: ButtonThemeData(
+              // Цвет апп-бара
+              primaryColor: Color(0xFF191923),
+              inputDecorationTheme: InputDecorationTheme(
+                // Удаление обводки у инпутов
+                border: InputBorder.none,
+              ),
+              // Незаполненная часть прогресс-индикатора (прозрачность делаем для ripple-эффекта)
+              backgroundColor: Colors.transparent,
+              // Заполненная часть прогресс-индикатора (прозрачность делаем для ripple-эффекта)
+              accentColor: Colors.yellow.withAlpha(63),
+              // Курсор без стрелочки
+              cursorColor: Color(0xFF191923),
+              // Стрелочка-курсор
+              textSelectionHandleColor: Color(0xFF191923),
+              // Цвет выделения текста
+              textSelectionColor: Colors.yellow[100],
+              timePickerTheme: TimePickerThemeData(
+                // Цвет текста в таймпикере
+                hourMinuteTextColor: Color(0xFF191923),
+                // Цвет стрелок в таймпикере
+                dialHandColor: Color(0xFF191923),
+              ),
+              // Хайлайт выбора часа/минут в таймпикере
               colorScheme: Theme.of(context)
                   .colorScheme
-                  .copyWith(primary: Color(0xFF191923)),
-            ),
-            // Бекграунд циркл-аватара
-            primaryColorLight: Colors.yellow[100],
-            primaryTextTheme: TextTheme(
-              subtitle1: TextStyle(
-                // Цвет текста (форграунд) циркл-аватара
-                color: Color(0xFF191923),
-                // Размер текста в циркл-аватаре
-                fontSize: 10,
+                  .copyWith(primary: Colors.yellow),
+              // Цвет кнопок в таймпикере
+              buttonTheme: ButtonThemeData(
+                colorScheme: Theme.of(context)
+                    .colorScheme
+                    .copyWith(primary: Color(0xFF191923)),
               ),
-            ),
-          ),
+              // Бекграунд циркл-аватара
+              primaryColorLight: Colors.yellow[100],
+              primaryTextTheme: TextTheme(
+                subtitle1: TextStyle(
+                  // Цвет текста (форграунд) циркл-аватара
+                  color: Color(0xFF191923),
+                  // Размер текста в циркл-аватаре
+                  fontSize: 10,
+                ),
+              ),
+              bottomNavigationBarTheme: BottomNavigationBarThemeData(
+                // Бекграунд боттом нав бара
+                backgroundColor: Colors.white,
+              )),
           routes: {
             HabitListPage.routeName: (_) => HabitListPage(),
             HabitFormPage.routeName: (_) => HabitFormPage(),
