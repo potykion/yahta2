@@ -113,7 +113,9 @@ class _PeriodBottomNavBarState extends State<PeriodBottomNavBar> {
       );
 
   BottomNavigationBarItem buildBottomNavigationBarItem(
-      HabitState state, PeriodType periodType) {
+    HabitState state,
+    PeriodType periodType,
+  ) {
     Icon icon;
     Text title;
 
@@ -130,20 +132,24 @@ class _PeriodBottomNavBarState extends State<PeriodBottomNavBar> {
       title = Text("Месяц");
     }
 
-    var undoneHabitCounter = Positioned(
-      child: CircleAvatar(
-        child: Text(
-          state.countUndoneWithPeriodType(periodType).toString(),
+    List<Widget> stackChildren = [icon];
+
+    var undoneHabitCount = state.countUndoneWithPeriodType(periodType);
+    if (undoneHabitCount > 0) {
+      var undoneHabitCounter = Positioned(
+        child: CircleAvatar(
+          child: Text(undoneHabitCount.toString()),
+          radius: 8,
         ),
-        radius: 8,
-      ),
-      right: -8,
-      top: -8,
-    );
+        right: -8,
+        top: -8,
+      );
+      stackChildren.add(undoneHabitCounter);
+    }
 
     return BottomNavigationBarItem(
       icon: Stack(
-        children: [icon, undoneHabitCounter],
+        children: stackChildren,
         overflow: Overflow.visible,
       ),
       title: title,
