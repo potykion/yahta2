@@ -11,6 +11,7 @@ import 'models.dart';
 
 part 'db.g.dart';
 
+/// Табличка с привычками
 class HabitDbs extends Table {
   IntColumn get id => integer().autoIncrement()();
 
@@ -29,6 +30,7 @@ class HabitDbs extends Table {
   IntColumn get weekStart => intEnum<Weekday>()();
 }
 
+/// Табличка с отметками привычек
 class HabitMarkDBs extends Table {
   IntColumn get id => integer().autoIncrement()();
 
@@ -37,6 +39,7 @@ class HabitMarkDBs extends Table {
   DateTimeColumn get created => dateTime().withDefault(currentDateAndTime)();
 }
 
+/// Создание соединения к бд-файлу
 LazyDatabase _openConnection() => LazyDatabase(
       () async {
         final dbFolder = await getApplicationDocumentsDirectory();
@@ -45,6 +48,7 @@ LazyDatabase _openConnection() => LazyDatabase(
       },
     );
 
+/// Бдшечка
 @UseMoor(tables: [HabitDbs, HabitMarkDBs])
 class MyDatabase extends _$MyDatabase {
   MyDatabase() : super(_openConnection());
@@ -52,37 +56,39 @@ class MyDatabase extends _$MyDatabase {
   @override
   int get schemaVersion => 1;
 
+  /// Вставляет привычку в бд, возвращая айди
   Future<int> insertHabit(HabitDbsCompanion habit) =>
       into(habitDbs).insert(habit);
 
+  /// Возвращает список привычек из бд
   Future<List<HabitDb>> listHabits() => (select(habitDbs)).get();
 
+  /// Возвращает список отметок привычек из бд
   Future<List<HabitMarkDB>> listHabitMarks() {
     return select(habitMarkDBs).get();
   }
 
+  /// Вставляет отметку привычки в бд, возвращая айди
   Future<int> insertHabitMark(HabitMarkDBsCompanion habitMark) =>
       into(habitMarkDBs).insert(habitMark);
 
+  /// Удаляет привычку из бд по айди отметки
   Future deleteHabit(int id) =>
       (delete(habitDbs)..where((tbl) => tbl.id.equals(id))).go();
 
+  /// Удаляет отметки привычек из бд по айди привычки
   Future deleteHabitMarksByHabitId(int habitId) =>
       (delete(habitMarkDBs)..where((tbl) => tbl.habitId.equals(habitId))).go();
 
+  /// Удаляет отметки привычек из бд по айдишникам отметки
   Future deleteHabitMarksByIds(List<int> ids) =>
       (delete(habitMarkDBs)..where((tbl) => tbl.id.isIn(ids))).go();
 
+  /// Обновляет привычку в бд
   Future updateHabit(HabitDb updatedHabit) =>
       update(habitDbs).replace(updatedHabit);
 
-  Future<int> getMaxOrder() async {
-    var query = "select coalesce(max([order]), 0) as max_order "
-        "from ${$HabitDbsTable(null).actualTableName}";
-    var row = await customSelect(query).getSingle();
-    return row.data["max_order"] as int;
-  }
-
+  /// Получает место привычки, которое содержит {pattern}
   Future<List<String>> findHabitPlacesByPattern(String pattern) async =>
       await (selectOnly(habitDbs)
             ..addColumns([habitDbs.place])
@@ -91,7 +97,9 @@ class MyDatabase extends _$MyDatabase {
           .get();
 }
 
+/// Конвертер привычек в бд формат и обратно
 class HabitDBConverter {
+  /// Создает бд-привычку из привычки
   static HabitDb dbFromHabit(Habit habit) => HabitDb(
         id: habit.id,
         title: habit.title,
@@ -103,6 +111,7 @@ class HabitDBConverter {
         periodType: habit.periodType,
       );
 
+  /// Создает привычеку из бд-привычки
   static Habit dbToHabit(HabitDb habitDb) => Habit(
         title: habitDb.title,
         id: habitDb.id,
@@ -114,6 +123,7 @@ class HabitDBConverter {
         weekStart: habitDb.weekStart,
       );
 
+  /// Создает бд-компаньона привычки, необходимого для вставки привычки в бд
   static HabitDbsCompanion dbInsertFromHabit(Habit habit) =>
       HabitDbsCompanion.insert(
         title: habit.title,
@@ -126,21 +136,25 @@ class HabitDBConverter {
       );
 }
 
+/// Персистенс для привычек и отметок
 class HabitRepository {
   final MyDatabase db;
 
   HabitRepository(this.db);
 
+  /// Вставляет привычку в бд, получая айди, возвращает привычку с айди
   Future<Habit> insertHabit(Habit habit) async {
     var habitId =
         await db.insertHabit(HabitDBConverter.dbInsertFromHabit(habit));
     return habit.copyWith(id: habitId);
   }
 
+  /// Выводит список привычек из бд
   Future<List<Habit>> listHabits() async => (await db.listHabits())
       .map((h) => HabitDBConverter.dbToHabit(h))
       .toList();
 
+  /// Выводит список отметок привычек из бд
   Future<List<HabitMark>> listHabitMarks() async => (await db.listHabitMarks())
       .map(
         (hm) => HabitMark(
@@ -151,19 +165,23 @@ class HabitRepository {
       )
       .toList();
 
+  /// Берет все привычки и отмнетки привычек,
+  /// фильтрует отметки в зависимости от того,
+  /// содержит ли дейт-ренж привычки отметку
   Future<List<HabitMark>> listHabitMarksDependingOnFreq() async {
     List<Habit> habits = await this.listHabits();
-    Map<int, DateRange> habitIdToFreq = Map.fromIterables(
-        habits.map((h) => h.id), habits.map((h) => h.dateRange));
-
     var habitMarks = await this.listHabitMarks();
 
+    Map<int, DateRange> habitIdToFreq = Map.fromIterables(
+        habits.map((h) => h.id), habits.map((h) => h.dateRange));
     var habitMarksInDateRange = habitMarks
         .where((hm) => habitIdToFreq[hm.habitId].containsDate(hm.created))
         .toList();
+
     return habitMarksInDateRange;
   }
 
+  /// Вставляет отметку привычки в бд, получая айди, возвращает отметку привычки с айди
   Future<HabitMark> insertHabitMark(HabitMark habitMark) async =>
       habitMark.copyWith(
         id: await db.insertHabitMark(
@@ -174,29 +192,36 @@ class HabitRepository {
         ),
       );
 
+  /// Удаляет привычку с айди и все ее отметки из бд
   Future deleteHabitAndMarks(int habitId) async {
     await db.deleteHabit(habitId);
     await db.deleteHabitMarksByHabitId(habitId);
   }
 
+  /// Удаляет отметки привычек по айдишникам
   Future deleteHabitMarks(List<int> habitMarkIds) async {
     await db.deleteHabitMarksByIds(habitMarkIds);
   }
 
+  /// Обновляет привычку в бд
   Future<Habit> updateHabit(Habit habitToUpdate) async {
     await db.updateHabit(HabitDBConverter.dbFromHabit(habitToUpdate));
     return habitToUpdate;
   }
 
+  /// Ищет место привычки по шаблону
   Future<List<String>> findHabitPlacesByPattern(String pattern) async {
     return await db.findHabitPlacesByPattern(pattern);
   }
 }
 
+/// Персистенс для настроек
 class SettingsRepository {
+  /// Сохраняет флаг показа выполненных привычек
   Future setShowDone(bool showDone) async =>
       (await SharedPreferences.getInstance()).setBool("showDone", showDone);
 
+  /// Загружает флаг показа выполненных привычек
   Future<bool> getShowDone() async =>
       (await SharedPreferences.getInstance()).getBool("showDone");
 }

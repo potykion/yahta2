@@ -119,10 +119,13 @@ class HabitsLoadStarted extends HabitEvent {}
 class HabitState {
   /// Привычки
   final List<Habit> habits;
+
   /// Отметки привычек
   final List<HabitMark> habitMarks;
+
   /// Показывать завершенные привычки
   final bool showDone;
+
   /// Фильтр привычек по периоду
   final PeriodType filterPeriodType;
 
