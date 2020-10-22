@@ -5,19 +5,38 @@ import 'package:yahta2/logic/habit/utils.dart';
 
 part 'models.freezed.dart';
 
+/// Привычка
 @freezed
 abstract class Habit with _$Habit {
   factory Habit({
+    /// Айди
     int id,
+
+    /// Название
     @required String title,
+
+    /// В какое время делать привычку
     @required DateTime startTime,
+
+    /// В каком месте делать привычку
     @required String place,
+
+    /// Как часто делать привычку (1 раз в день, 2 раза в день, ...)
     @Default(1) int frequency,
+
+    /// Значение периода (1 раз в день, 1 раз в 2 дня, ...)
     @Default(1) int periodValue,
+
+    /// Тип периода (1 раз в день, 1 раз в неделю, ...)
     @Default(PeriodType.days) PeriodType periodType,
+
+    /// Начало недели - для еженедельных привычек
     @Default(Weekday.monday) Weekday weekStart,
   }) = _Habit;
 
+  /// Дейт-ренж привычки
+  /// Например для ежедневной привычки это дейтренж с 00:00 до 23:59 определенного дня
+  /// Для еженедельной это дейтренж с пн до вс с учетом начала недели
   @late
   DateRange get dateRange => this.periodType == PeriodType.days
       ? DayDateRange(value: this.periodValue)
@@ -26,6 +45,7 @@ abstract class Habit with _$Habit {
           : MonthDateRange(value: this.periodValue);
 }
 
+/// Отметка привычки - в какое время привычка была совершена
 @freezed
 abstract class HabitMark with _$HabitMark {
   factory HabitMark({
@@ -35,6 +55,7 @@ abstract class HabitMark with _$HabitMark {
   }) = _HabitMark;
 }
 
+/// День недели
 enum Weekday {
   monday,
   tuesday,
@@ -45,6 +66,7 @@ enum Weekday {
   sunday,
 }
 
+/// Перевод дня недели в строку
 extension WeekdayToStr on Weekday {
   String toVerboseStr() {
     if (this == Weekday.monday) return "понедельник";
@@ -58,25 +80,10 @@ extension WeekdayToStr on Weekday {
   }
 }
 
-enum HabitFrequency { daily, weekly, monthly }
-
-extension HabitFrequencyToStr on HabitFrequency {
-  String toVerboseStr() {
-    if (this == HabitFrequency.daily) {
-      return "Ежедневно";
-    }
-    if (this == HabitFrequency.weekly) {
-      return "Еженедельно";
-    }
-    if (this == HabitFrequency.monthly) {
-      return "Ежемесячно";
-    }
-    throw "Dunno how to handle: $this";
-  }
-}
-
+/// Тип периода прривычки (ежедневная, еженедельная, ежемесячная)
 enum PeriodType { days, weeks, months }
 
+/// Склонение периода (1 день, 2 дня, ...)
 extension PeriodToStr on PeriodType {
   String toVerboseStr(int value) {
     if (this == PeriodType.days) {
@@ -98,6 +105,7 @@ extension PeriodToStr on PeriodType {
   }
 }
 
+/// Частота и период в виде строки (1 раз в день, 2 раза в неделю, ...)
 class FrequencyAndPeriodStr {
   final int frequency;
   final int periodValue;
