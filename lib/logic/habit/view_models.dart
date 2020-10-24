@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:yahta2/logic/habit/models.dart';
 
+/// Вью-моделька привычки, используемая в списке привычек
 class HabitVM {
   final Habit habit;
   final List<HabitMark> habitMarks;
@@ -13,6 +14,7 @@ class HabitVM {
 
   String get title => habit.title;
 
+  /// Когда и где делать привычку
   String get motivationStr {
     List<String> parts = [];
 
@@ -45,26 +47,37 @@ class HabitVM {
     return false;
   }
 
+  /// Выполнена ли привычка, например 2 раза за день
   bool get done => habitMarks.length == habit.frequency;
 
+  /// Определяет выполнена ли привычка частично
   bool get partiallyDone =>
       habitMarks.length > 0 && habitMarks.length != habit.frequency;
 
+  /// Отображение прогресса привычки
   bool get showProgress => !done && habit.frequency != 1;
 
+  /// Необходимо для рендеринга виджетов
   Key get key => Key(habit.id.toString());
 
+  /// Направление свайпа привычки
+  /// Налево - создает отметку привычки
+  /// Направо - удаляет последнюю отметку привычки
   DismissDirection get swipeDirection => done
       ? DismissDirection.startToEnd
       : partiallyDone
           ? DismissDirection.horizontal
           : DismissDirection.endToStart;
 
+  /// Стиль текста привычка
+  /// Если выполнена, то серый + зачеркнутый текст
+  /// Если наступило время делать привычку, то жирный шрифт
   TextStyle get textStyle => TextStyle(
         decoration: done ? TextDecoration.lineThrough : null,
         color: done ? Colors.grey : null,
         fontWeight: !done && timeToPerformHabit ? FontWeight.bold : null,
       );
 
+  /// Переводит вью-модель в привычку
   Habit toHabit() => this.habit;
 }
