@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named
+// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies
 
 part of 'models.dart';
 
@@ -9,14 +9,16 @@ part of 'models.dart';
 
 T _$identity<T>(T value) => value;
 
+/// @nodoc
 class _$HabitTearOff {
   const _$HabitTearOff();
 
+// ignore: unused_element
   _Habit call(
       {int id,
       @required String title,
-      DateTime startTime,
-      String place,
+      @required DateTime startTime,
+      @required String place,
       int frequency = 1,
       int periodValue = 1,
       PeriodType periodType = PeriodType.days,
@@ -34,22 +36,40 @@ class _$HabitTearOff {
   }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $Habit = _$HabitTearOff();
 
+/// @nodoc
 mixin _$Habit {
+  /// Айди
   int get id;
+
+  /// Название
   String get title;
+
+  /// В какое время делать привычку
   DateTime get startTime;
+
+  /// В каком месте делать привычку
   String get place;
+
+  /// Как часто делать привычку (1 раз в день, 2 раза в день, ...)
   int get frequency;
+
+  /// Значение периода (1 раз в день, 1 раз в 2 дня, ...)
   int get periodValue;
+
+  /// Тип периода (1 раз в день, 1 раз в неделю, ...)
   PeriodType get periodType;
+
+  /// Начало недели - для еженедельных привычек
   Weekday get weekStart;
 
   $HabitCopyWith<Habit> get copyWith;
 }
 
+/// @nodoc
 abstract class $HabitCopyWith<$Res> {
   factory $HabitCopyWith(Habit value, $Res Function(Habit) then) =
       _$HabitCopyWithImpl<$Res>;
@@ -64,6 +84,7 @@ abstract class $HabitCopyWith<$Res> {
       Weekday weekStart});
 }
 
+/// @nodoc
 class _$HabitCopyWithImpl<$Res> implements $HabitCopyWith<$Res> {
   _$HabitCopyWithImpl(this._value, this._then);
 
@@ -98,6 +119,7 @@ class _$HabitCopyWithImpl<$Res> implements $HabitCopyWith<$Res> {
   }
 }
 
+/// @nodoc
 abstract class _$HabitCopyWith<$Res> implements $HabitCopyWith<$Res> {
   factory _$HabitCopyWith(_Habit value, $Res Function(_Habit) then) =
       __$HabitCopyWithImpl<$Res>;
@@ -113,6 +135,7 @@ abstract class _$HabitCopyWith<$Res> implements $HabitCopyWith<$Res> {
       Weekday weekStart});
 }
 
+/// @nodoc
 class __$HabitCopyWithImpl<$Res> extends _$HabitCopyWithImpl<$Res>
     implements _$HabitCopyWith<$Res> {
   __$HabitCopyWithImpl(_Habit _value, $Res Function(_Habit) _then)
@@ -148,41 +171,60 @@ class __$HabitCopyWithImpl<$Res> extends _$HabitCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 class _$_Habit with DiagnosticableTreeMixin implements _Habit {
   _$_Habit(
       {this.id,
       @required this.title,
-      this.startTime,
-      this.place,
+      @required this.startTime,
+      @required this.place,
       this.frequency = 1,
       this.periodValue = 1,
       this.periodType = PeriodType.days,
       this.weekStart = Weekday.monday})
       : assert(title != null),
+        assert(startTime != null),
+        assert(place != null),
         assert(frequency != null),
         assert(periodValue != null),
         assert(periodType != null),
         assert(weekStart != null);
 
   @override
+
+  /// Айди
   final int id;
   @override
+
+  /// Название
   final String title;
   @override
+
+  /// В какое время делать привычку
   final DateTime startTime;
   @override
+
+  /// В каком месте делать привычку
   final String place;
   @JsonKey(defaultValue: 1)
   @override
+
+  /// Как часто делать привычку (1 раз в день, 2 раза в день, ...)
   final int frequency;
   @JsonKey(defaultValue: 1)
   @override
+
+  /// Значение периода (1 раз в день, 1 раз в 2 дня, ...)
   final int periodValue;
   @JsonKey(defaultValue: PeriodType.days)
   @override
+
+  /// Тип периода (1 раз в день, 1 раз в неделю, ...)
   final PeriodType periodType;
   @JsonKey(defaultValue: Weekday.monday)
   @override
+
+  /// Начало недели - для еженедельных привычек
   final Weekday weekStart;
 
   bool _diddateRange = false;
@@ -271,36 +313,54 @@ abstract class _Habit implements Habit {
   factory _Habit(
       {int id,
       @required String title,
-      DateTime startTime,
-      String place,
+      @required DateTime startTime,
+      @required String place,
       int frequency,
       int periodValue,
       PeriodType periodType,
       Weekday weekStart}) = _$_Habit;
 
   @override
+
+  /// Айди
   int get id;
   @override
+
+  /// Название
   String get title;
   @override
+
+  /// В какое время делать привычку
   DateTime get startTime;
   @override
+
+  /// В каком месте делать привычку
   String get place;
   @override
+
+  /// Как часто делать привычку (1 раз в день, 2 раза в день, ...)
   int get frequency;
   @override
+
+  /// Значение периода (1 раз в день, 1 раз в 2 дня, ...)
   int get periodValue;
   @override
+
+  /// Тип периода (1 раз в день, 1 раз в неделю, ...)
   PeriodType get periodType;
   @override
+
+  /// Начало недели - для еженедельных привычек
   Weekday get weekStart;
   @override
   _$HabitCopyWith<_Habit> get copyWith;
 }
 
+/// @nodoc
 class _$HabitMarkTearOff {
   const _$HabitMarkTearOff();
 
+// ignore: unused_element
   _HabitMark call({int id, @required int habitId, @required DateTime created}) {
     return _HabitMark(
       id: id,
@@ -310,9 +370,11 @@ class _$HabitMarkTearOff {
   }
 }
 
+/// @nodoc
 // ignore: unused_element
 const $HabitMark = _$HabitMarkTearOff();
 
+/// @nodoc
 mixin _$HabitMark {
   int get id;
   int get habitId;
@@ -321,12 +383,14 @@ mixin _$HabitMark {
   $HabitMarkCopyWith<HabitMark> get copyWith;
 }
 
+/// @nodoc
 abstract class $HabitMarkCopyWith<$Res> {
   factory $HabitMarkCopyWith(HabitMark value, $Res Function(HabitMark) then) =
       _$HabitMarkCopyWithImpl<$Res>;
   $Res call({int id, int habitId, DateTime created});
 }
 
+/// @nodoc
 class _$HabitMarkCopyWithImpl<$Res> implements $HabitMarkCopyWith<$Res> {
   _$HabitMarkCopyWithImpl(this._value, this._then);
 
@@ -348,6 +412,7 @@ class _$HabitMarkCopyWithImpl<$Res> implements $HabitMarkCopyWith<$Res> {
   }
 }
 
+/// @nodoc
 abstract class _$HabitMarkCopyWith<$Res> implements $HabitMarkCopyWith<$Res> {
   factory _$HabitMarkCopyWith(
           _HabitMark value, $Res Function(_HabitMark) then) =
@@ -356,6 +421,7 @@ abstract class _$HabitMarkCopyWith<$Res> implements $HabitMarkCopyWith<$Res> {
   $Res call({int id, int habitId, DateTime created});
 }
 
+/// @nodoc
 class __$HabitMarkCopyWithImpl<$Res> extends _$HabitMarkCopyWithImpl<$Res>
     implements _$HabitMarkCopyWith<$Res> {
   __$HabitMarkCopyWithImpl(_HabitMark _value, $Res Function(_HabitMark) _then)
@@ -378,6 +444,7 @@ class __$HabitMarkCopyWithImpl<$Res> extends _$HabitMarkCopyWithImpl<$Res>
   }
 }
 
+/// @nodoc
 class _$_HabitMark with DiagnosticableTreeMixin implements _HabitMark {
   _$_HabitMark({this.id, @required this.habitId, @required this.created})
       : assert(habitId != null),

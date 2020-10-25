@@ -305,6 +305,21 @@ class HabitDbsCompanion extends UpdateCompanion<HabitDb> {
     }
     return map;
   }
+
+  @override
+  String toString() {
+    return (StringBuffer('HabitDbsCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('startTime: $startTime, ')
+          ..write('place: $place, ')
+          ..write('frequency: $frequency, ')
+          ..write('periodValue: $periodValue, ')
+          ..write('periodType: $periodType, ')
+          ..write('weekStart: $weekStart')
+          ..write(')'))
+        .toString();
+  }
 }
 
 class $HabitDbsTable extends HabitDbs with TableInfo<$HabitDbsTable, HabitDb> {
@@ -623,6 +638,16 @@ class HabitMarkDBsCompanion extends UpdateCompanion<HabitMarkDB> {
       map['created'] = Variable<DateTime>(created.value);
     }
     return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('HabitMarkDBsCompanion(')
+          ..write('id: $id, ')
+          ..write('habitId: $habitId, ')
+          ..write('created: $created')
+          ..write(')'))
+        .toString();
   }
 }
 
