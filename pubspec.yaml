@@ -70,6 +70,8 @@ dev_dependencies:
 
   freezed:
 
+  # линтер
+  effective_dart: ^1.2.4
 
 
 # For information on the generic Dart part of this file, see the
