@@ -4,8 +4,10 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:yahta2/logic/habit/models.dart';
 import 'package:yahta2/logic/habit/utils.dart';
 
+/// Событие изменения названия привычки
 typedef OnTitleChange = void Function(String title);
 
+/// Инпут названия привычки
 class HabitTitleInput extends StatefulWidget {
   final String initialTitle;
   final OnTitleChange onTitleChange;
@@ -24,6 +26,8 @@ class _HabitTitleInputState extends State<HabitTitleInput> {
   void initState() {
     super.initState();
     habitTitleTEC.text = widget.initialTitle;
+
+    /// Кидаем событие измененного названия
     habitTitleTEC.addListener(() => widget.onTitleChange(habitTitleTEC.text));
   }
 
@@ -35,8 +39,10 @@ class _HabitTitleInputState extends State<HabitTitleInput> {
       );
 }
 
+/// Событие изменения частоты привычки
 typedef OnFreqChange = void Function(int freq);
 
+/// Инпут частоты привычки
 class HabitFrequencyInput extends StatefulWidget {
   final int initialFreq;
   final OnFreqChange onFreqChange;
@@ -55,6 +61,8 @@ class _HabitFrequencyInputState extends State<HabitFrequencyInput> {
   void initState() {
     super.initState();
     habitFrequencyTEC.text = widget.initialFreq.toString();
+
+    /// Кидаем событие измененной частоты
     habitFrequencyTEC.addListener(
       () => setState(() {
         if (habitFrequencyTEC.text.isNotEmpty) {
@@ -75,6 +83,7 @@ class _HabitFrequencyInputState extends State<HabitFrequencyInput> {
       );
 }
 
+/// Надпись с частотой и периодом привычки
 class HabitFrequencyAndPeriodLabel extends StatelessWidget {
   final int frequency;
   final int periodValue;
@@ -105,9 +114,13 @@ class HabitFrequencyAndPeriodLabel extends StatelessWidget {
       );
 }
 
+/// Событие изменения значения периода привычки
 typedef OnPeriodValueChange = void Function(int periodValue);
+
+/// Событие изменения типа периода привычки
 typedef OnPeriodTypeChange = void Function(PeriodType periodType);
 
+/// Инпут значения и типа периода привычки
 class HabitPeriodInput extends StatefulWidget {
   final int initialPeriodValue;
   final PeriodType initialPeriodType;
@@ -136,6 +149,8 @@ class _HabitPeriodInputState extends State<HabitPeriodInput> {
   void initState() {
     super.initState();
     habitPeriodValueTEC.text = widget.initialPeriodValue.toString();
+
+    /// Кидаем событие измененного значения периода
     habitPeriodValueTEC.addListener(() {
       if (habitPeriodValueTEC.text.isNotEmpty) {
         widget.onPeriodValueChange(periodValue);
@@ -173,6 +188,8 @@ class _HabitPeriodInputState extends State<HabitPeriodInput> {
                 .toList(),
             onChanged: (periodType) {
               setState(() => this.periodType = periodType);
+
+              /// Кидаем событие измененного типа привычки
               widget.onPeriodTypeChange(this.periodType);
             },
           ),
@@ -182,8 +199,10 @@ class _HabitPeriodInputState extends State<HabitPeriodInput> {
   }
 }
 
+/// Событие изменения начала недели
 typedef OnWeekStartChange = void Function(Weekday weekStart);
 
+/// Инпут начала недели привычки
 class HabitWeekStartInput extends StatefulWidget {
   final Weekday initialWeekStart;
   final OnWeekStartChange onWeekStartChange;
@@ -227,8 +246,10 @@ class _HabitWeekStartInputState extends State<HabitWeekStartInput> {
   }
 }
 
+/// Событие изменения времени привычки
 typedef OnStartTimeChange = void Function(DateTime time);
 
+/// Инпут времени привычки
 class HabitStartTimeInput extends StatefulWidget {
   final DateTime initialStartTime;
   final OnStartTimeChange onStartTimeChange;
@@ -266,6 +287,8 @@ class _HabitStartTimeInputState extends State<HabitStartTimeInput> {
           );
           if (selectedTime != null) {
             controller.text = selectedTime.format(context);
+
+            /// Кидаем событие изменения времени привычки
             widget.onStartTimeChange(
               FixedDateTime.fromTimeOfDay(selectedTime).value,
             );
@@ -274,10 +297,14 @@ class _HabitStartTimeInputState extends State<HabitStartTimeInput> {
       );
 }
 
+/// Событие изменения шаблона места, по которому предлагается автокомплит
 typedef OnPlacePatternChange = Future<List<String>> Function(
     String placePattern);
+
+/// Событие изменения места привычки
 typedef OnPlaceChange = void Function(String place);
 
+/// Инпут места привычки
 class HabitPlaceInput extends StatefulWidget {
   final OnPlacePatternChange onPlacePatternChange;
   final OnPlaceChange onPlaceChange;
@@ -301,6 +328,8 @@ class _HabitPlaceInputState extends State<HabitPlaceInput> {
   void initState() {
     super.initState();
     controller.text = widget.initialPlace;
+
+    /// Кидаем событие изменения места привычки
     controller.addListener(() => widget.onPlaceChange(controller.text));
   }
 
