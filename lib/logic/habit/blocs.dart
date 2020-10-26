@@ -6,18 +6,19 @@ import 'package:bloc/bloc.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
-import 'package:yahta2/logic/habit/db.dart';
-import 'package:yahta2/logic/habit/view_models.dart';
-
+import 'db.dart';
 import 'models.dart';
+import 'view_models.dart';
 
 /// Базовое событие
 class HabitEvent {}
 
 /// Событие смены периода привычки (ежедневно > еженедельно)
 class FilterPeriodTypeEvent extends HabitEvent {
+  /// Тип периода
   final PeriodType periodType;
 
+  /// Создает событие
   FilterPeriodTypeEvent(this.periodType);
 }
 
@@ -26,15 +27,31 @@ class ToggleShowDoneEvent extends HabitEvent {}
 
 /// Событие обновления привычки
 class HabitUpdated extends HabitEvent {
+  /// См. Habit.id
   final int id;
+
+  /// См. Habit.title
   final String title;
+
+  /// См. Habit.frequency
   final int frequency;
+
+  /// См. Habit.periodValue
   final int periodValue;
+
+  /// См. Habit.periodType
   final PeriodType periodType;
+
+  /// См. Habit.weekStart
   final Weekday weekStart;
+
+  /// См. Habit.startTime
   final DateTime startTime;
+
+  /// См. Habit.place
   final String place;
 
+  /// Создает событие
   HabitUpdated({
     @required this.id,
     @required this.title,
@@ -46,6 +63,7 @@ class HabitUpdated extends HabitEvent {
     @required this.place,
   });
 
+  /// Обновляет привычку
   Habit updateHabit(Habit habit) => habit.copyWith(
         title: title,
         frequency: frequency,
@@ -59,35 +77,55 @@ class HabitUpdated extends HabitEvent {
 
 /// Событие удаления привычки
 class HabitDeleted extends HabitEvent {
+  /// Айди привычки
   final int habitId;
 
+  /// Создает событие
   HabitDeleted(this.habitId);
 }
 
 /// Событие выполнения привычки
 class HabitDone extends HabitEvent {
+  /// Привычка
   final Habit habit;
 
+  /// Создает событие
   HabitDone(this.habit);
 }
 
 /// Событие отмены выполнения привычки
 class HabitUndone extends HabitEvent {
+  /// Привычка
   final Habit habit;
 
+  /// Создает событие
   HabitUndone(this.habit);
 }
 
 /// Событие создания привычки
 class HabitCreated extends HabitEvent {
+  /// См. Habit.title
   final String title;
+
+  /// См. Habit.frequency
   final int frequency;
+
+  /// См. Habit.periodValue
   final int periodValue;
+
+  /// См. Habit.periodType
   final PeriodType periodType;
+
+  /// См. Habit.weekStart
   final Weekday weekStart;
+
+  /// См. Habit.startTime
   final DateTime startTime;
+
+  /// См. Habit.place
   final String place;
 
+  /// Создает событие
   HabitCreated({
     @required this.title,
     @required this.frequency,
@@ -98,15 +136,16 @@ class HabitCreated extends HabitEvent {
     @required this.place,
   });
 
+  /// Конвертит в привычку
   Habit toHabit() {
     return Habit(
-      periodValue: this.periodValue,
-      periodType: this.periodType,
-      title: this.title,
-      frequency: this.frequency,
-      weekStart: this.weekStart,
-      startTime: this.startTime,
-      place: this.place,
+      periodValue: periodValue,
+      periodType: periodType,
+      title: title,
+      frequency: frequency,
+      weekStart: weekStart,
+      startTime: startTime,
+      place: place,
     );
   }
 }
@@ -129,6 +168,7 @@ class HabitState {
   /// Фильтр привычек по периоду
   final PeriodType filterPeriodType;
 
+  /// Создает стейт
   HabitState({
     this.habits = const [],
     this.habitMarks = const [],
@@ -138,7 +178,7 @@ class HabitState {
 
   /// Мапа, где ключ айди привычки, значение - список отметок
   Map<int, List<HabitMark>> get idHabitMarks =>
-      groupBy(habitMarks, (HabitMark hm) => hm.habitId);
+      groupBy(habitMarks, (hm) => hm.habitId);
 
   /// Привычки, отсортированные по времени
   List<Habit> get sortedHabits =>
@@ -149,9 +189,10 @@ class HabitState {
       .map((h) => HabitVM.build(h, idHabitMarks[h.id] ?? []))
       .toList();
 
-  /// Вью-модельки, отфильтрованные по периоду + по завершенности, если такой флаг стоит
+  /// Вью-модельки,
+  /// отфильтрованные по периоду + по завершенности, если такой флаг стоит
   List<HabitVM> get habitVMsToShow => habitVMs
-      .where((HabitVM vm) => vm.habit.periodType == filterPeriodType)
+      .where((vm) => vm.habit.periodType == filterPeriodType)
       .where((vm) => showDone || !vm.done)
       .toList();
 
@@ -177,9 +218,13 @@ class HabitState {
 
 /// Блок привычек
 class HabitBloc extends Bloc<HabitEvent, HabitState> {
+  /// Репозиторий привычек
   final HabitRepository habitRepo;
+
+  /// Репозиторий настроек
   final SettingsRepository settingsRepository;
 
+  /// Создает блок
   HabitBloc({this.habitRepo, this.settingsRepository});
 
   @override
@@ -214,7 +259,7 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
         "sport_badminton_racket_fast_movement_swoosh_006.mp3",
       ];
       AudioCache().play(
-        sounds[new Random().nextInt(sounds.length)],
+        sounds[Random().nextInt(sounds.length)],
         mode: PlayerMode.LOW_LATENCY,
       );
 
@@ -232,7 +277,7 @@ class HabitBloc extends Bloc<HabitEvent, HabitState> {
         "zapsplat_warfare_knife_blade_draw_008_23993.mp3",
       ];
       AudioCache().play(
-        sounds[new Random().nextInt(sounds.length)],
+        sounds[Random().nextInt(sounds.length)],
         mode: PlayerMode.LOW_LATENCY,
       );
 
