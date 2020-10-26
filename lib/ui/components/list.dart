@@ -2,20 +2,22 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:yahta2/logic/habit/blocs.dart';
-import 'package:yahta2/logic/habit/models.dart';
-import 'package:yahta2/logic/habit/view_models.dart';
-import 'package:yahta2/ui/pages/form.dart';
 
-enum HabitAction { edit, delete }
+import '../../logic/habit/blocs.dart';
+import '../../logic/habit/models.dart';
+import '../../logic/habit/view_models.dart';
+import '../pages/form.dart';
 
+/// Лист-тайл привычки
 class HabitListTile extends StatelessWidget {
+  /// Вью-модель привычки
   final HabitVM vm;
 
+  /// Создает лист-тайл
   const HabitListTile({this.vm});
 
   @override
-  Widget build(context) => withHabitDoneDismiss(
+  Widget build(BuildContext context) => withHabitDoneDismiss(
         context,
         Material(
           elevation: 2,
@@ -46,12 +48,14 @@ class HabitListTile extends StatelessWidget {
         ),
       );
 
+  /// Создает дисмиссибл, который при свайпе влево создает отметку привычку,
+  /// при свайпе вправо удаляет крайнюю отметку привычки
   Dismissible withHabitDoneDismiss(BuildContext context, Widget child) =>
       Dismissible(
         key: vm.key,
         child: child,
         direction: vm.swipeDirection,
-        confirmDismiss: (DismissDirection dir) async {
+        confirmDismiss: (dir) async {
           HabitEvent event;
           if (dir == DismissDirection.endToStart) {
             event = HabitDone(vm.toHabit());
@@ -65,12 +69,16 @@ class HabitListTile extends StatelessWidget {
       );
 }
 
+/// Прогресс частоты привычки
+/// Например, привычка выполнена 1 / 2 раз в день
 class HabitFrequencyProgress extends StatelessWidget {
+  /// Создает прогресс
   const HabitFrequencyProgress({
     Key key,
     @required this.vm,
   }) : super(key: key);
 
+  /// Вью-модель привычки
   final HabitVM vm;
 
   @override
@@ -82,7 +90,10 @@ class HabitFrequencyProgress extends StatelessWidget {
       );
 }
 
+/// Боттом-нав-бар с типами периодов привычки
+/// При нажатии на боттом-нав-бар-айтем, меняется фильтр периода привычек
 class PeriodBottomNavBar extends StatefulWidget {
+  /// Создает боттом-нав-бар
   const PeriodBottomNavBar({
     Key key,
   }) : super(key: key);
@@ -96,7 +107,7 @@ class _PeriodBottomNavBarState extends State<PeriodBottomNavBar> {
 
   @override
   Widget build(BuildContext context) => BlocBuilder<HabitBloc, HabitState>(
-        builder: (BuildContext context, state) => BottomNavigationBar(
+        builder: (context, state) => BottomNavigationBar(
           items: [
             buildBottomNavigationBarItem(state, PeriodType.days),
             buildBottomNavigationBarItem(state, PeriodType.weeks),
@@ -117,22 +128,22 @@ class _PeriodBottomNavBarState extends State<PeriodBottomNavBar> {
     PeriodType periodType,
   ) {
     Icon icon;
-    Text title;
+    String title;
 
     if (periodType == PeriodType.days) {
       icon = Icon(Icons.view_day);
-      title = Text("День");
+      title = "День";
     }
     if (periodType == PeriodType.weeks) {
       icon = Icon(Icons.view_week);
-      title = Text("Неделя");
+      title = "Неделя";
     }
     if (periodType == PeriodType.months) {
       icon = Icon(Icons.calendar_today);
-      title = Text("Месяц");
+      title = "Месяц";
     }
 
-    List<Widget> stackChildren = [icon];
+    var stackChildren = <Widget>[icon];
 
     var undoneHabitCount = state.countUndoneWithPeriodType(periodType);
     if (undoneHabitCount > 0) {
@@ -152,7 +163,7 @@ class _PeriodBottomNavBarState extends State<PeriodBottomNavBar> {
         children: stackChildren,
         overflow: Overflow.visible,
       ),
-      title: title,
+      label: title,
     );
   }
 }
