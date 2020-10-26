@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:flutter/foundation.dart';
-import 'package:yahta2/logic/habit/utils.dart';
+import 'utils.dart';
 
 part 'models.freezed.dart';
 
 /// Привычка
 @freezed
 abstract class Habit with _$Habit {
+  /// Создает привычку
   factory Habit({
     /// Айди
     int id,
@@ -35,19 +36,21 @@ abstract class Habit with _$Habit {
   }) = _Habit;
 
   /// Дейт-ренж привычки
-  /// Например для ежедневной привычки это дейтренж с 00:00 до 23:59 определенного дня
+  /// Например для ежедневной привычки
+  ///   это дейтренж с 00:00 до 23:59 определенного дня
   /// Для еженедельной это дейтренж с пн до вс с учетом начала недели
   @late
-  DateRange get dateRange => this.periodType == PeriodType.days
-      ? DayDateRange(value: this.periodValue)
-      : this.periodType == PeriodType.weeks
-          ? WeekDateRange(weekStartDay: this.weekStart, value: this.periodValue)
-          : MonthDateRange(value: this.periodValue);
+  DateRange get dateRange => periodType == PeriodType.days
+      ? DayDateRange(value: periodValue)
+      : periodType == PeriodType.weeks
+          ? WeekDateRange(weekStartDay: weekStart, value: periodValue)
+          : MonthDateRange(value: periodValue);
 }
 
 /// Отметка привычки - в какое время привычка была совершена
 @freezed
 abstract class HabitMark with _$HabitMark {
+  /// Создает отметку привычки
   factory HabitMark({
     int id,
     @required int habitId,
@@ -57,17 +60,31 @@ abstract class HabitMark with _$HabitMark {
 
 /// День недели
 enum Weekday {
+  /// Понедельник
   monday,
+
+  /// Вторник
   tuesday,
+
+  /// Среда
   wednesday,
+
+  /// Четверг
   thursday,
+
+  /// Пятница
   friday,
+
+  /// Суббота
   saturday,
+
+  /// Воскресенье
   sunday,
 }
 
-/// Перевод дня недели в строку
+/// Екстеншены для недели
 extension WeekdayToStr on Weekday {
+  /// Перевод дня недели в строку
   String toVerboseStr() {
     if (this == Weekday.monday) return "понедельник";
     if (this == Weekday.tuesday) return "вторник";
@@ -80,11 +97,21 @@ extension WeekdayToStr on Weekday {
   }
 }
 
-/// Тип периода прривычки (ежедневная, еженедельная, ежемесячная)
-enum PeriodType { days, weeks, months }
+/// Тип периода прривычки
+enum PeriodType {
+  /// ежедневная
+  days,
 
-/// Склонение периода (1 день, 2 дня, ...)
+  /// еженедельная
+  weeks,
+
+  /// ежемесячная
+  months
+}
+
+/// Екстеншены для типа периода
 extension PeriodToStr on PeriodType {
+  /// Склонение периода (1 день, 2 дня, ...)
   String toVerboseStr(int value) {
     if (this == PeriodType.days) {
       if (value == 1) return "день";
@@ -107,10 +134,16 @@ extension PeriodToStr on PeriodType {
 
 /// Частота и период в виде строки (1 раз в день, 2 раза в неделю, ...)
 class FrequencyAndPeriodStr {
+  /// Частота
   final int frequency;
+
+  /// Значение периода
   final int periodValue;
+
+  /// Тип периода
   final PeriodType periodType;
 
+  /// Создает строку частоты и периода
   FrequencyAndPeriodStr({
     this.frequency = 1,
     this.periodValue = 1,
@@ -119,34 +152,28 @@ class FrequencyAndPeriodStr {
 
   @override
   String toString() {
-    var frequencyStr = this.frequency == 1
+    var frequencyStr = frequency == 1
         ? "раз"
-        : this.frequency == 2 || this.frequency == 3 || this.frequency == 4
+        : frequency == 2 || frequency == 3 || frequency == 4
             ? "раза"
             : "раз";
 
-    var periodStr = this.periodType == PeriodType.days
-        ? this.periodValue == 1
+    var periodStr = periodType == PeriodType.days
+        ? periodValue == 1
             ? "день"
-            : this.periodValue == 2 ||
-                    this.periodValue == 3 ||
-                    this.periodValue == 4
+            : periodValue == 2 || periodValue == 3 || periodValue == 4
                 ? "$periodValue дня"
                 : "$periodValue дней"
-        : this.periodType == PeriodType.weeks
-            ? this.periodValue == 1
+        : periodType == PeriodType.weeks
+            ? periodValue == 1
                 ? "неделю"
-                : this.periodValue == 2 ||
-                        this.periodValue == 3 ||
-                        this.periodValue == 4
+                : periodValue == 2 || periodValue == 3 || periodValue == 4
                     ? "$periodValue недели"
                     : "$periodValue недель"
-            : this.periodType == PeriodType.months
-                ? this.periodValue == 1
+            : periodType == PeriodType.months
+                ? periodValue == 1
                     ? "месяц"
-                    : this.periodValue == 2 ||
-                            this.periodValue == 3 ||
-                            this.periodValue == 4
+                    : periodValue == 2 || periodValue == 3 || periodValue == 4
                         ? "$periodValue месяца"
                         : "$periodValue месяцев"
                 : "wtf: $this";
