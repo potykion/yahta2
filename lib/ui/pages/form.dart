@@ -1,16 +1,17 @@
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:yahta2/logic/habit/blocs.dart';
-import 'package:yahta2/logic/habit/db.dart';
-import 'package:yahta2/logic/habit/models.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:yahta2/logic/habit/utils.dart';
-import 'package:yahta2/ui/components/form.dart';
+import 'package:provider/provider.dart';
 
+import '../../logic/habit/blocs.dart';
+import '../../logic/habit/db.dart';
+import '../../logic/habit/models.dart';
+import '../../logic/habit/utils.dart';
+import '../components/form.dart';
+
+/// Страничка редактирования/создания привычки
 class HabitFormPage extends StatefulWidget {
+  /// Урл страницы
   static const routeName = "/form";
-
-  const HabitFormPage({Key key}) : super(key: key);
 
   @override
   _HabitFormPageState createState() => _HabitFormPageState();
@@ -31,7 +32,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    List habitAndPeriodType = ModalRoute.of(context).settings.arguments as List;
+    var habitAndPeriodType = ModalRoute.of(context).settings.arguments as List;
     var habit = habitAndPeriodType[0] as Habit;
     var periodType = habitAndPeriodType[1] as PeriodType;
     setState(() {
@@ -48,7 +49,7 @@ class _HabitFormPageState extends State<HabitFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> actions = [];
+    var actions = <Widget>[];
 
     if (hId != null) {
       actions.add(IconButton(

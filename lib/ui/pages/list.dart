@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:yahta2/logic/habit/blocs.dart';
-import 'package:yahta2/logic/habit/models.dart';
-import 'package:yahta2/ui/components/list.dart';
-import 'package:yahta2/ui/pages/form.dart';
 
+import '../../logic/habit/blocs.dart';
+import '../../logic/habit/models.dart';
+import '../components/list.dart';
+import 'form.dart';
+
+/// Страничка со списком привычек
 class HabitListPage extends StatefulWidget {
+  /// Урл странички
   static const routeName = "/list";
 
   @override
