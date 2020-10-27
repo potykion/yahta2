@@ -1,7 +1,17 @@
 # https://dart.dev/guides/language/analysis-options
 analyzer:
+  # Врубаем построже типизацию
   strong-mode:
     implicit-casts: false
     implicit-dynamic: false
 
+  # Игнорим кодогенерацию
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+
+# Врубаем линтер
+# https://dart.dev/guides/language/analysis-options#effective-dart-rules
 include: package:effective_dart/analysis_options.yaml
+
+

@@ -4,12 +4,16 @@ import 'models.dart';
 
 /// Промежуток дат
 abstract class DateRange {
+  /// Время, от которого считается промежуток
   final DateTime now;
+
+  /// Длительность промежутка, например 2 дня
   final int value;
 
+  /// Создает промежуток
   DateRange({DateTime now, int value})
-      : this.now = now ?? DateTime.now(),
-        this.value = value ?? 1;
+      : now = now ?? DateTime.now(),
+        value = value ?? 1;
 
   /// Начало промежутка
   DateTime get from;
@@ -24,6 +28,7 @@ abstract class DateRange {
 /// Дневной промежуток дат
 /// Например, 2020-10-23 00:00 - 2020-10-23 23:59
 class DayDateRange extends DateRange {
+  /// Создает промежуток
   DayDateRange({DateTime now, int value}) : super(now: now, value: value);
 
   DateTime get from => DateTime(now.year, now.month, now.day);
@@ -40,6 +45,7 @@ class WeekDateRange extends DateRange {
   /// 2020-10-20 00:00 - 2020-10-26 23:59
   Weekday weekStartDay;
 
+  /// Создает помежуток
   WeekDateRange({DateTime now, int value, this.weekStartDay = Weekday.monday})
       : super(now: now, value: value);
 
@@ -66,6 +72,7 @@ class WeekDateRange extends DateRange {
 /// Месячный промежуток дат
 /// Например, 2020-10-01 00:00 - 2020-10-31 23:59
 class MonthDateRange extends DateRange {
+  /// Создает промежуток
   MonthDateRange({DateTime now, int value}) : super(now: now, value: value);
 
   DateTime get from => DateTime(now.year, now.month, 1);
@@ -84,6 +91,7 @@ bool idEquals(dynamic a, dynamic b) => a.id == b.id;
 /// Дейттайм с фиксированной датой - 2020-01-01
 /// Используется в Habit.startTime
 class FixedDateTime {
+  /// Значение дейттайма
   final DateTime value;
 
   FixedDateTime._(this.value);

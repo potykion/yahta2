@@ -186,7 +186,7 @@ class HabitState {
 
   /// Вью-модельки привычек, которые используются в списке привычек
   List<HabitVM> get habitVMs => sortedHabits
-      .map((h) => HabitVM.build(h, idHabitMarks[h.id] ?? []))
+      .map((h) => HabitVM(habit: h, habitMarks: idHabitMarks[h.id] ?? []))
       .toList();
 
   /// Вью-модельки,

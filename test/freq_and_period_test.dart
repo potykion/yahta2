@@ -10,21 +10,57 @@ void main() {
     });
 
     test("Тестим дни", () {
-      expect(FrequencyAndPeriodStr(periodValue: 1, periodType: PeriodType.days,).toString(), "1 раз в день");
-      expect(FrequencyAndPeriodStr(periodValue: 2, periodType: PeriodType.days).toString(), "1 раз в 2 дня");
-      expect(FrequencyAndPeriodStr(periodValue: 5, periodType: PeriodType.days).toString(), "1 раз в 5 дней");
+      expect(
+        FrequencyAndPeriodStr(periodValue: 1, periodType: PeriodType.days)
+            .toString(),
+        "1 раз в день",
+      );
+      expect(
+        FrequencyAndPeriodStr(periodValue: 2, periodType: PeriodType.days)
+            .toString(),
+        "1 раз в 2 дня",
+      );
+      expect(
+        FrequencyAndPeriodStr(periodValue: 5, periodType: PeriodType.days)
+            .toString(),
+        "1 раз в 5 дней",
+      );
     });
 
     test("Тестим недели", () {
-      expect(FrequencyAndPeriodStr(periodValue: 1, periodType: PeriodType.weeks).toString(), "1 раз в неделю");
-      expect(FrequencyAndPeriodStr(periodValue: 2, periodType: PeriodType.weeks).toString(), "1 раз в 2 недели");
-      expect(FrequencyAndPeriodStr(periodValue: 5, periodType: PeriodType.weeks).toString(), "1 раз в 5 недель");
+      expect(
+        FrequencyAndPeriodStr(periodValue: 1, periodType: PeriodType.weeks)
+            .toString(),
+        "1 раз в неделю",
+      );
+      expect(
+        FrequencyAndPeriodStr(periodValue: 2, periodType: PeriodType.weeks)
+            .toString(),
+        "1 раз в 2 недели",
+      );
+      expect(
+        FrequencyAndPeriodStr(periodValue: 5, periodType: PeriodType.weeks)
+            .toString(),
+        "1 раз в 5 недель",
+      );
     });
 
     test("Тестим месяцы", () {
-      expect(FrequencyAndPeriodStr(periodValue: 1, periodType: PeriodType.months).toString(), "1 раз в месяц");
-      expect(FrequencyAndPeriodStr(periodValue: 2, periodType: PeriodType.months).toString(), "1 раз в 2 месяца");
-      expect(FrequencyAndPeriodStr(periodValue: 5, periodType: PeriodType.months).toString(), "1 раз в 5 месяцев");
+      expect(
+        FrequencyAndPeriodStr(periodValue: 1, periodType: PeriodType.months)
+            .toString(),
+        "1 раз в месяц",
+      );
+      expect(
+        FrequencyAndPeriodStr(periodValue: 2, periodType: PeriodType.months)
+            .toString(),
+        "1 раз в 2 месяца",
+      );
+      expect(
+        FrequencyAndPeriodStr(periodValue: 5, periodType: PeriodType.months)
+            .toString(),
+        "1 раз в 5 месяцев",
+      );
     });
   });
 }

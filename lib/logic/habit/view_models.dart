@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:yahta2/logic/habit/models.dart';
+import 'models.dart';
 
 /// Вью-моделька привычки, используемая в списке привычек
 class HabitVM {
+  /// Привычка
   final Habit habit;
+
+  /// Отметка привычки
   final List<HabitMark> habitMarks;
 
+  /// Создает вью-модель
   HabitVM({this.habit, this.habitMarks});
 
-  factory HabitVM.build(Habit habit, List<HabitMark> habitMarks) =>
-      HabitVM(habit: habit, habitMarks: habitMarks);
-
+  /// Название привычки
   String get title => habit.title;
 
   /// Когда и где делать привычку
   String get motivationStr {
-    List<String> parts = [];
+    var parts = <String>[];
 
     if (habit.startTime != null) {
       parts.add("Время: ${DateFormat.Hm().format(habit.startTime)}");
@@ -79,5 +81,5 @@ class HabitVM {
       );
 
   /// Переводит вью-модель в привычку
-  Habit toHabit() => this.habit;
+  Habit toHabit() => habit;
 }

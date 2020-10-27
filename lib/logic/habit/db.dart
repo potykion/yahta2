@@ -2,40 +2,51 @@ import 'dart:io';
 
 import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:yahta2/logic/habit/utils.dart';
 
 import 'models.dart';
+import 'utils.dart';
 
 part 'db.g.dart';
 
 /// Табличка с привычками
 class HabitDbs extends Table {
+  /// См. Habit.id
   IntColumn get id => integer().autoIncrement()();
 
+  /// См. Habit.title
   TextColumn get title => text().withLength(min: 1)();
 
+  /// См. Habit.startTime
   DateTimeColumn get startTime => dateTime()();
 
+  /// См. Habit.place
   TextColumn get place => text().withLength()();
 
+  /// См. Habit.frequency
   IntColumn get frequency => integer()();
 
+  /// См. Habit.periodValue
   IntColumn get periodValue => integer()();
 
+  /// См. Habit.periodType
   IntColumn get periodType => intEnum<PeriodType>()();
 
+  /// См. Habit.weekStart
   IntColumn get weekStart => intEnum<Weekday>()();
 }
 
 /// Табличка с отметками привычек
 class HabitMarkDBs extends Table {
+  /// Айди отметки
   IntColumn get id => integer().autoIncrement()();
 
+  /// Айди привычки
   IntColumn get habitId => integer()();
 
+  /// Дата создания отметки; по умолчанию текущее время
   DateTimeColumn get created => dateTime().withDefault(currentDateAndTime)();
 }
 
@@ -51,6 +62,7 @@ LazyDatabase _openConnection() => LazyDatabase(
 /// Бдшечка
 @UseMoor(tables: [HabitDbs, HabitMarkDBs])
 class MyDatabase extends _$MyDatabase {
+  /// Создает бд с соединением к бд-файлу
   MyDatabase() : super(_openConnection());
 
   @override
@@ -138,8 +150,10 @@ class HabitDBConverter {
 
 /// Персистенс для привычек и отметок
 class HabitRepository {
+  /// Бд
   final MyDatabase db;
 
+  /// Создает репозиторий
   HabitRepository(this.db);
 
   /// Вставляет привычку в бд, получая айди, возвращает привычку с айди
@@ -150,9 +164,8 @@ class HabitRepository {
   }
 
   /// Выводит список привычек из бд
-  Future<List<Habit>> listHabits() async => (await db.listHabits())
-      .map((h) => HabitDBConverter.dbToHabit(h))
-      .toList();
+  Future<List<Habit>> listHabits() async =>
+      (await db.listHabits()).map(HabitDBConverter.dbToHabit).toList();
 
   /// Выводит список отметок привычек из бд
   Future<List<HabitMark>> listHabitMarks() async => (await db.listHabitMarks())
@@ -169,10 +182,10 @@ class HabitRepository {
   /// фильтрует отметки в зависимости от того,
   /// содержит ли дейт-ренж привычки отметку
   Future<List<HabitMark>> listHabitMarksDependingOnFreq() async {
-    List<Habit> habits = await this.listHabits();
-    var habitMarks = await this.listHabitMarks();
+    var habits = await listHabits();
+    var habitMarks = await listHabitMarks();
 
-    Map<int, DateRange> habitIdToFreq = Map.fromIterables(
+    var habitIdToFreq = Map<int, DateRange>.fromIterables(
         habits.map((h) => h.id), habits.map((h) => h.dateRange));
     var habitMarksInDateRange = habitMarks
         .where((hm) => habitIdToFreq[hm.habitId].containsDate(hm.created))
@@ -181,7 +194,8 @@ class HabitRepository {
     return habitMarksInDateRange;
   }
 
-  /// Вставляет отметку привычки в бд, получая айди, возвращает отметку привычки с айди
+  /// Вставляет отметку привычки в бд, получая айди,
+  /// возвращает отметку привычки с айди
   Future<HabitMark> insertHabitMark(HabitMark habitMark) async =>
       habitMark.copyWith(
         id: await db.insertHabitMark(
@@ -218,6 +232,7 @@ class HabitRepository {
 /// Персистенс для настроек
 class SettingsRepository {
   /// Сохраняет флаг показа выполненных привычек
+  // ignore: avoid_positional_boolean_parameters
   Future setShowDone(bool showDone) async =>
       (await SharedPreferences.getInstance()).setBool("showDone", showDone);
 

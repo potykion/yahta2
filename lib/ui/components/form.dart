@@ -1,17 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:yahta2/logic/habit/models.dart';
-import 'package:yahta2/logic/habit/utils.dart';
 
-/// Событие изменения названия привычки
-typedef OnTitleChange = void Function(String title);
+import '../../logic/habit/models.dart';
+import '../../logic/habit/utils.dart';
 
 /// Инпут названия привычки
 class HabitTitleInput extends StatefulWidget {
+  /// Начальное значение названия
   final String initialTitle;
-  final OnTitleChange onTitleChange;
 
+  /// Событие изменения названия привычки
+  final Function(String title) onTitleChange;
+
+  /// Создает инпут
   const HabitTitleInput({Key key, this.initialTitle, this.onTitleChange})
       : super(key: key);
 
@@ -39,14 +41,15 @@ class _HabitTitleInputState extends State<HabitTitleInput> {
       );
 }
 
-/// Событие изменения частоты привычки
-typedef OnFreqChange = void Function(int freq);
-
 /// Инпут частоты привычки
 class HabitFrequencyInput extends StatefulWidget {
+  /// Изначальная частота
   final int initialFreq;
-  final OnFreqChange onFreqChange;
 
+  /// Событие изменения частоты привычки
+  final Function(int freq) onFreqChange;
+
+  /// Создает инпут
   const HabitFrequencyInput({Key key, this.initialFreq, this.onFreqChange})
       : super(key: key);
 
@@ -85,10 +88,16 @@ class _HabitFrequencyInputState extends State<HabitFrequencyInput> {
 
 /// Надпись с частотой и периодом привычки
 class HabitFrequencyAndPeriodLabel extends StatelessWidget {
+  /// Частота
   final int frequency;
+
+  /// Значение периода
   final int periodValue;
+
+  /// Тип периода
   final PeriodType periodType;
 
+  /// Создает надпись
   const HabitFrequencyAndPeriodLabel({
     Key key,
     this.frequency,
@@ -96,10 +105,11 @@ class HabitFrequencyAndPeriodLabel extends StatelessWidget {
     this.periodType,
   }) : super(key: key);
 
+  /// Частота и период в виде строки
   String get frequencyAndPeriodStr => FrequencyAndPeriodStr(
-        frequency: this.frequency,
-        periodValue: this.periodValue,
-        periodType: this.periodType,
+        frequency: frequency,
+        periodValue: periodValue,
+        periodType: periodType,
       ).toString();
 
   @override
@@ -114,19 +124,21 @@ class HabitFrequencyAndPeriodLabel extends StatelessWidget {
       );
 }
 
-/// Событие изменения значения периода привычки
-typedef OnPeriodValueChange = void Function(int periodValue);
-
-/// Событие изменения типа периода привычки
-typedef OnPeriodTypeChange = void Function(PeriodType periodType);
-
 /// Инпут значения и типа периода привычки
 class HabitPeriodInput extends StatefulWidget {
+  /// Изначальное значение периода
   final int initialPeriodValue;
-  final PeriodType initialPeriodType;
-  final OnPeriodValueChange onPeriodValueChange;
-  final OnPeriodTypeChange onPeriodTypeChange;
 
+  /// Изначальный тип периода
+  final PeriodType initialPeriodType;
+
+  /// Событие изменения значения периода привычки
+  final Function(int periodValue) onPeriodValueChange;
+
+  /// Событие изменения типа периода привычки
+  final Function(PeriodType periodType) onPeriodTypeChange;
+
+  /// Создает инпут
   const HabitPeriodInput(
       {Key key,
       this.initialPeriodValue,
@@ -199,14 +211,15 @@ class _HabitPeriodInputState extends State<HabitPeriodInput> {
   }
 }
 
-/// Событие изменения начала недели
-typedef OnWeekStartChange = void Function(Weekday weekStart);
-
 /// Инпут начала недели привычки
 class HabitWeekStartInput extends StatefulWidget {
+  /// Изначальное начало недели
   final Weekday initialWeekStart;
-  final OnWeekStartChange onWeekStartChange;
 
+  /// Событие изменения начала недели
+  final Function(Weekday weekStart) onWeekStartChange;
+
+  /// Создает инпут
   const HabitWeekStartInput(
       {Key key, this.initialWeekStart, this.onWeekStartChange})
       : super(key: key);
@@ -246,14 +259,15 @@ class _HabitWeekStartInputState extends State<HabitWeekStartInput> {
   }
 }
 
-/// Событие изменения времени привычки
-typedef OnStartTimeChange = void Function(DateTime time);
-
 /// Инпут времени привычки
 class HabitStartTimeInput extends StatefulWidget {
+  /// Начальное время старта
   final DateTime initialStartTime;
-  final OnStartTimeChange onStartTimeChange;
 
+  /// Событие изменения времени привычки
+  final Function(DateTime time) onStartTimeChange;
+
+  /// Создает инпут
   const HabitStartTimeInput(
       {Key key, this.initialStartTime, this.onStartTimeChange})
       : super(key: key);
@@ -278,7 +292,7 @@ class _HabitStartTimeInputState extends State<HabitStartTimeInput> {
         decoration: InputDecoration(labelText: "Время"),
         readOnly: true,
         onTap: () async {
-          TimeOfDay selectedTime = await showTimePicker(
+          var selectedTime = await showTimePicker(
             context: context,
             helpText: "В какое время делать привычку?",
             cancelText: "Отмена",
@@ -297,19 +311,18 @@ class _HabitStartTimeInputState extends State<HabitStartTimeInput> {
       );
 }
 
-/// Событие изменения шаблона места, по которому предлагается автокомплит
-typedef OnPlacePatternChange = Future<List<String>> Function(
-    String placePattern);
-
-/// Событие изменения места привычки
-typedef OnPlaceChange = void Function(String place);
-
 /// Инпут места привычки
 class HabitPlaceInput extends StatefulWidget {
-  final OnPlacePatternChange onPlacePatternChange;
-  final OnPlaceChange onPlaceChange;
+  /// Событие изменения шаблона места, по которому предлагается автокомплит
+  final Future<List<String>> Function(String placePattern) onPlacePatternChange;
+
+  /// Событие изменения места привычки
+  final Function(String place) onPlaceChange;
+
+  /// Начальное место
   final String initialPlace;
 
+  /// Создает инпут
   const HabitPlaceInput({
     Key key,
     this.onPlacePatternChange,
@@ -335,9 +348,9 @@ class _HabitPlaceInputState extends State<HabitPlaceInput> {
 
   @override
   Widget build(BuildContext context) {
-    return TypeAheadFormField(
+    return TypeAheadFormField<String>(
       textFieldConfiguration: TextFieldConfiguration<String>(
-        controller: this.controller,
+        controller: controller,
         decoration: InputDecoration(
           labelText: "Место",
           hintText: "В каком месте делать привычку?",
@@ -347,11 +360,9 @@ class _HabitPlaceInputState extends State<HabitPlaceInput> {
       hideOnEmpty: true,
       hideOnLoading: true,
       hideSuggestionsOnKeyboardHide: false,
-      onSuggestionSelected: (String suggestion) =>
-          this.controller.text = suggestion,
-      suggestionsCallback: (String pattern) =>
-          widget.onPlacePatternChange(pattern),
-      itemBuilder: (BuildContext context, String suggestion) => ListTile(
+      onSuggestionSelected: (suggestion) => controller.text = suggestion,
+      suggestionsCallback: (pattern) => widget.onPlacePatternChange(pattern),
+      itemBuilder: (context, suggestion) => ListTile(
         title: Text(suggestion),
       ),
     );

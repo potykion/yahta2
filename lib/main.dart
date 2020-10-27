@@ -2,15 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
-import 'package:yahta2/logic/habit/blocs.dart';
-import 'package:yahta2/logic/habit/db.dart';
-import 'package:yahta2/ui/pages/form.dart';
-import 'package:yahta2/ui/pages/list.dart';
 
-var flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+import 'logic/habit/blocs.dart';
+import 'logic/habit/db.dart';
+import 'ui/pages/form.dart';
+import 'ui/pages/list.dart';
+
+/// Плагин для локальных пушей
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 Future<void> main() async {
-  // Вызывается для штук до запуска приложения, например пуши, чтение переменных среды
+  // Вызывается для штук до запуска приложения,
+  // например пуши, чтение переменных среды
   WidgetsFlutterBinding.ensureInitialized();
 
   // Сетап плагина уведомлений
@@ -41,9 +45,10 @@ Future<void> main() async {
   runApp(MyApp());
 }
 
+/// Приложуха
 class MyApp extends StatelessWidget {
   @override
-  Widget build(context) =>
+  Widget build(BuildContext context) =>
       // DI
       MultiProvider(
         providers: [
@@ -77,9 +82,11 @@ class MyApp extends StatelessWidget {
               // Удаление обводки у инпутов
               border: InputBorder.none,
             ),
-            // Незаполненная часть прогресс-индикатора (прозрачность делаем для ripple-эффекта)
+            // Незаполненная часть прогресс-индикатора
+            //  (прозрачность делаем для ripple-эффекта)
             backgroundColor: Colors.transparent,
-            // Заполненная часть прогресс-индикатора (прозрачность делаем для ripple-эффекта)
+            // Заполненная часть прогресс-индикатора
+            //  (прозрачность делаем для ripple-эффекта)
             accentColor: Colors.yellow.withAlpha(63),
             // Курсор без стрелочки
             cursorColor: Color(0xFF191923),
