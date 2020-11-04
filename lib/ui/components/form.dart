@@ -173,8 +173,7 @@ class _HabitPeriodInputState extends State<HabitPeriodInput> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
+  Widget build(BuildContext context) => Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Flexible(
@@ -208,7 +207,6 @@ class _HabitPeriodInputState extends State<HabitPeriodInput> {
         )
       ],
     );
-  }
 }
 
 /// Инпут начала недели привычки
@@ -238,8 +236,7 @@ class _HabitWeekStartInputState extends State<HabitWeekStartInput> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return DropdownButtonFormField<Weekday>(
+  Widget build(BuildContext context) => DropdownButtonFormField<Weekday>(
       decoration: InputDecoration(labelText: "Начало недели"),
       isExpanded: true,
       value: weekStart,
@@ -256,7 +253,6 @@ class _HabitWeekStartInputState extends State<HabitWeekStartInput> {
         widget.onWeekStartChange(weekStart);
       },
     );
-  }
 }
 
 /// Инпут времени привычки
@@ -347,8 +343,7 @@ class _HabitPlaceInputState extends State<HabitPlaceInput> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return TypeAheadFormField<String>(
+  Widget build(BuildContext context) => TypeAheadFormField<String>(
       textFieldConfiguration: TextFieldConfiguration<String>(
         controller: controller,
         decoration: InputDecoration(
@@ -366,5 +361,4 @@ class _HabitPlaceInputState extends State<HabitPlaceInput> {
         title: Text(suggestion),
       ),
     );
-  }
 }

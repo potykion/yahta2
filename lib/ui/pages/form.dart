@@ -49,42 +49,40 @@ class _HabitFormPageState extends State<HabitFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    var actions = <Widget>[];
-
-    if (hId != null) {
-      actions.add(IconButton(
-        icon: Icon(Icons.delete),
-        onPressed: () => showDialog<void>(
-            context: context,
-            builder: (context) => AlertDialog(
-                  title: Text("Удаление привычки"),
-                  content: Text("Вы хотите удалить привычку?"),
-                  actions: [
-                    FlatButton(
-                      child: Text("Нет"),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    FlatButton(
-                      child: Text("Да"),
-                      onPressed: () {
-                        context.bloc<HabitBloc>().add(HabitDeleted(hId));
-                        // Закрываем диалог + закрываем форму
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      },
-                    )
-                  ],
-                )),
-      ));
-    }
-
-    actions.add(IconButton(
-      icon: Icon(Icons.check),
-      onPressed: () {
-        context.bloc<HabitBloc>().add(buildHabitEvent());
-        Navigator.pop(context);
-      },
-    ));
+    var actions = <Widget>[
+      if (hId != null)
+        IconButton(
+          icon: Icon(Icons.delete),
+          onPressed: () => showDialog<void>(
+              context: context,
+              builder: (context) => AlertDialog(
+                    title: Text("Удаление привычки"),
+                    content: Text("Вы хотите удалить привычку?"),
+                    actions: [
+                      FlatButton(
+                        child: Text("Нет"),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      FlatButton(
+                        child: Text("Да"),
+                        onPressed: () {
+                          context.bloc<HabitBloc>().add(HabitDeleted(hId));
+                          // Закрываем диалог + закрываем форму
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                      )
+                    ],
+                  )),
+        ),
+      IconButton(
+        icon: Icon(Icons.check),
+        onPressed: () {
+          context.bloc<HabitBloc>().add(buildHabitEvent());
+          Navigator.pop(context);
+        },
+      )
+    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -118,12 +116,11 @@ class _HabitFormPageState extends State<HabitFormPage> {
                 periodValue: hPeriodValue,
                 periodType: hPeriodType,
               ),
-              hPeriodType == PeriodType.weeks
-                  ? HabitWeekStartInput(
-                      initialWeekStart: hWeekStart,
-                      onWeekStartChange: (w) => setState(() => hWeekStart = w),
-                    )
-                  : Container(),
+              if (hPeriodType == PeriodType.weeks)
+                HabitWeekStartInput(
+                  initialWeekStart: hWeekStart,
+                  onWeekStartChange: (w) => setState(() => hWeekStart = w),
+                ),
               HabitStartTimeInput(
                 initialStartTime: hStartTime,
                 onStartTimeChange: (time) => setState(() => hStartTime = time),
